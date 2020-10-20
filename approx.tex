@@ -218,7 +218,7 @@ In the \emph{single-source min-cut} (SSMC) problem, the input is a $G=(V,E)$ and
 \For{$i$ from $0$ to $\lf\lg|U|\rf$}
  \State Compute minimum isolating cuts $\{S^i_v:v\in R\}$ on inputs $G$ and $R^i$ \linel{Sv}
  \State For each $v\in R^i\sm s$ where $w(\pt S^i_v)\le\la$, add all vertices in $S^i_v\cap U$ to $D$
- \State $R^{i+1}$\gets$ subsample of $R^i$ where each vertex in $R^i\sm s$ is sampled independently with probability $1/2$, and $s$ is sampled with probability $1$
+ \State $R^{i+1}\gets$ subsample of $R^i$ where each vertex in $R^i\sm s$ is sampled independently with probability $1/2$, and $s$ is sampled with probability $1$
 \EndFor
 \State\Return $D$
 \end{algorithmic}
@@ -368,7 +368,7 @@ Now, consider the following modification to the statement of \lem{step}, where w
 
  By a similarly modified \cor{Dmax}, for the choice of $i$ (\line{i}), 
 
-\[ \E\bigg[\bigg|\bigcup_{v\in R^i_\sma}(S^i_v\cap U\cap V_u)] \ge \Om(|D^*|/\log^2|U|)$ by a similarly modified \cor{Dmax},
+\[ \E\bigg[\bigg|\bigcup_{v\in R^i_\sma}(S^i_v\cap U\cap V_u)] \ge \Om(|D^*|/\log^2|U|) \] by a similarly modified \cor{Dmax},
 
 
  $\E\big[\big|\bigcup_{v\in R^i_\sma}S^i_v\big|\big] $.

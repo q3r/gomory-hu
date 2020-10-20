@@ -1,0 +1,404 @@
+%
+\documentclass{article}
+\usepackage{amsmath,amssymb,bbm,amsthm}
+\usepackage{fullpage}
+\usepackage{thm-restate,color,xcolor,xspace}
+\usepackage{hyperref,cleveref}
+\usepackage{algorithm,algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+%%%%% BEGIN Jason's macros %%%%%
+%\newcommand{\f}{\displaystyle\frac}
+\newcommand{\f}{\frac}
+\newcommand{\cd}{\cdot}
+\newcommand{\bn}{\binom}
+\newcommand{\sr}{\sqrt}
+\newcommand{\cds}{\cdots}
+\newcommand{\lds}{\ldots}
+\newcommand{\vds}{\vdots}
+\newcommand{\dds}{\ddots}
+\newcommand{\pge}{\succeq}
+\newcommand{\ple}{\preceq}
+\newcommand{\sm}{\setminus}
+\newcommand{\s}{\subseteq}
+\newcommand{\su}{\supseteq}
+
+\newcommand{\sumni}{\sum_{n=1}^\infty}
+\newcommand{\sumin}{\sum_{i=1}^n}
+\newcommand{\bigcupni}{\bigcup_{n=1}^\infty}
+\newcommand{\bigcupin}{\bigcup_{i=1}^n}
+\newcommand{\bigcapni}{\bigcap_{n=1}^\infty}
+\newcommand{\bigcapin}{\bigcap_{i=1}^n}
+
+\newcommand{\BE}{\begin{enumerate}}
+\newcommand{\EE}{\end{enumerate}}
+\newcommand{\im}{\item}
+\newcommand{\BI}{\begin{itemize}}
+\newcommand{\EI}{\end{itemize}}
+\def\BAL#1\EAL{\begin{align*}#1\end{align*}}
+\def\BALN#1\EALN{\begin{align}#1\end{align}}
+\def\BG#1\EG{\begin{gather}#1\end{gather}}
+
+\newcommand{\Sum}{\displaystyle\sum\limits}
+\newcommand{\Prod}{\displaystyle\prod\limits}
+\newcommand{\Int}{\displaystyle\int\limits}
+\newcommand{\Lim}{\displaystyle\lim\limits}
+\newcommand{\Max}{\displaystyle\max\limits}
+\newcommand{\Min}{\displaystyle\min\limits}
+
+\newcommand{\logn}{\log n}
+
+\newcommand{\dx}{\frac d{dx}}
+\newcommand{\dy}{\frac d{dy}}
+\newcommand{\dz}{\frac d{dz}}
+\newcommand{\dt}{\frac d{dt}}
+
+\newcommand{\inv}{^{-1}}
+
+\newcommand{\R}{\mathbb R}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\F}{\mathbb F}
+\newcommand{\C}{\mathbb C}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Q}{\mathbb Q}
+
+\newcommand{\eps}{\epsilon}
+\newcommand{\e}{\epsilon}
+\newcommand{\de}{\delta}
+\newcommand{\De}{\Delta}
+\newcommand{\la}{\lambda}
+\newcommand{\g}{\gamma}
+\newcommand{\G}{\Gamma}
+\newcommand{\pt}{\partial}
+\newcommand{\al}{\alpha}
+\newcommand{\be}{\beta}
+\newcommand{\om}{\omega}
+\newcommand{\Om}{\Omega}
+\newcommand{\el}{\ell}
+\renewcommand{\th}{\theta}
+\newcommand{\Th}{\Theta}
+\newcommand{\m}{\mathcal}
+\newcommand{\ol}{\overline}
+
+\newcommand{\Ra}{\Rightarrow}
+
+\newcommand{\lf}{\lfloor}
+\newcommand{\rf}{\rfloor}
+\newcommand{\lc}{\lceil}
+\newcommand{\rc}{\rceil}
+
+\newcommand{\E}{\mathbb E}
+\newcommand{\Var}{\textup{Var}}
+\newcommand{\Cov}{\textup{Cov}}
+\newcommand{\1}{\mathbbm 1}
+\newcommand{\poly}{\textup{poly}}
+\newcommand{\polylog}{\textup{polylog}}
+\newcommand{\pl}{\textup{polylog}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\vol}{\textbf{\textup{vol}}}
+
+\newcommand{\rank}{\textup{rank}}
+\newcommand{\spn}{\textup{span}}
+\newcommand{\Tr}{\textup{Tr}}
+
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
+\newcommand{\lb}{\left[}
+\newcommand{\rb}{\right]}
+\newcommand{\lmt}{\left[\begin{matrix}}
+\newcommand{\rmt}{\end{matrix}\right]}
+
+
+\newtheorem{theorem}{Theorem}
+
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{subclaim}[theorem]{Subclaim}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{assumption}[theorem]{Assumption}
+
+\newcommand{\BT}{\begin{theorem}}
+\newcommand{\ET}{\end{theorem}}
+\newcommand{\BL}{\begin{lemma}}
+\newcommand{\EL}{\end{lemma}}
+\newcommand{\BD}{\begin{definition}}
+\newcommand{\ED}{\end{definition}}
+\newcommand{\BC}{\begin{corollary}}
+\newcommand{\EC}{\end{corollary}}
+\newcommand{\BO}{\begin{observation}}
+\newcommand{\EO}{\end{observation}}
+\newcommand{\BCL}{\begin{claim}}
+\newcommand{\ECL}{\end{claim}}
+\newcommand{\BSCL}{\begin{subclaim}}
+\newcommand{\ESCL}{\end{subclaim}}
+\newcommand{\BF}{\begin{fact}}
+\newcommand{\EF}{\end{fact}}
+\newcommand{\BA}{\begin{assumption}}
+\newcommand{\EA}{\end{assumption}}
+\newcommand{\BP}{\begin{proof}}
+\newcommand{\EP}{\end{proof}}
+\newcommand{\BSP}{\begin{subproof}}
+\newcommand{\ESP}{\end{subproof}}
+\newcommand{\BPS}{\begin{proof}[Proof (Sketch)]}
+\newcommand{\EPS}{\end{proof}}
+\Crefname{observation}{Observation}{Observations}
+\Crefname{claim}{Claim}{Claims}
+\Crefname{subclaim}{Subclaim}{Subclaims}
+\Crefname{fact}{Fact}{Facts}
+\Crefname{assumption}{Assumption}{Assumptions}
+
+\newenvironment{subproof}[1][\proofname]{%
+  \renewcommand{\qedsymbol}{$\diamond$}%
+  \begin{proof}[#1]%
+}{%
+  \end{proof}%
+}
+
+\newcommand{\alert}{\textcolor{red}}
+\newcommand{\para}{\paragraph}
+%\newcommand{\defn}{\textbf}
+
+\newcommand{\tO}{\tilde{O}}
+
+\newcommand{\thml}[1]{\label{thm:#1}}
+\newcommand{\thm}[1]{\Cref{thm:#1}}
+\newcommand{\leml}[1]{\label{lem:#1}}
+\newcommand{\lem}[1]{\Cref{lem:#1}}
+\newcommand{\defnl}[1]{\label{def:#1}}
+\newcommand{\defn}[1]{\Cref{def:#1}}
+\newcommand{\clml}[1]{\label{clm:#1}}
+\newcommand{\clm}[1]{\Cref{clm:#1}}
+\newcommand{\corl}[1]{\label{cor:#1}}
+\newcommand{\cor}[1]{\Cref{cor:#1}}
+\newcommand{\obsl}[1]{\label{obs:#1}}
+\newcommand{\obs}[1]{\Cref{obs:#1}}
+\newcommand{\eqnl}[1]{\label{eq:#1}}
+\newcommand{\eqn}[1]{(\ref{eq:#1})}
+\newcommand{\linel}[1]{\label{line:#1}}
+\renewcommand{\line}[1]{line~\ref{line:#1}}
+\newcommand{\secl}[1]{\label{sec:#1}}
+\renewcommand{\sec}[1]{\Cref{sec:#1}}
+%%%%% END Jason's macros %%%%%
+
+\renewcommand{\emph}[1]{\textbf{\textup{#1}}}
+\newcommand{\mincut}{\textsf{\textup{mincut}}}
+\newcommand{\Rsmall}{R_\textup{small}}
+\newcommand{\sma}{{\textup{small}}}
+\newcommand{\lar}{{\textup{large}}}
+
+\begin{document}
+
+\title{Approximate Gomory-Hu Tree in Poly-logarithmic Max-flows}
+\author{}
+\date{\today}
+\maketitle
+
+\BD[Minimum isolating cuts]
+Consider a weighted, undirected graph $G=(V,E)$ and a subset $R\s V$ ($|R|\ge2$). The \emph{minimum isolating cuts} for $R$ is a collection of sets $\{S_v:v\in R\}$ such that for each vertex $v\in R$, the set $S_v$ satisfies $S_v\cap R=\{v\}$ and has the minimum value of $w(\pt S'_v)$ over all sets $S'_v$ satisfying $S'_v\cap R=\{v\}$.
+\ED
+
+\BL
+Fix a subset $R\s V$ ($|R|\ge2$). There is an algorithm that computes the minimum isolating cuts $\{S_v:v\in R\}$ for $R$ using $\lc\lg|R|\rc$ calls to $s$--$t$ max-flow on weighted graphs of $O(n)$ vertices and $O(m)$ edges, and takes $\tO(m)$ deterministic time outside of the max-flow calls. If the original graph $G$ is unweighted, then the inputs to the max-flow calls are also unweighted. Moreover, the sets $S_v:v\in R$ are disjoint.
+\EL
+
+\BD[Single-source min-cut]
+In the \emph{single-source min-cut} (SSMC) problem, the input is a $G=(V,E)$ and a source vertex $s\in V$, and we need to output a $(s,v)$-mincut for each $v\in V\sm s$. In the \emph{$(1+\e)$-approximate SSMC} problem, the input is the same, and we need to output a $(1+\e)$-approximate $(s,v)$-mincut for each $v\in V\sm s$.
+\ED
+
+\section{$(1+\e)$-approximate SSMC}
+
+
+\begin{algorithm}
+\caption{\textsc{CutThresholdStep}$(G=(V,E),s,U,\la)$} \label{alg:main}
+\begin{algorithmic}[1]
+\State Initialize $R^0\gets U$ and $D\gets\emptyset$
+\For{$i$ from $0$ to $\lf\lg|U|\rf$}
+ \State Compute minimum isolating cuts $\{S^i_v:v\in R\}$ on inputs $G$ and $R^i$ \linel{Sv}
+ \State For each $v\in R^i\sm s$ where $w(\pt S^i_v)\le\la$, add all vertices in $S^i_v\cap U$ to $D$
+ \State $R^{i+1}$\gets$ subsample of $R^i$ where each vertex in $R^i\sm s$ is sampled independently with probability $1/2$, and $s$ is sampled with probability $1$
+\EndFor
+\State\Return $D$
+\end{algorithmic}
+\end{algorithm}
+
+\BL\leml{step}
+\alert{Assume that for all $v$, there is a unique $(s,v)$-mincut.}
+Let $D^*$ be all vertices $v\in U\sm s$ for which the $(s,v)$-mincut has weight at most $\la$. Then, $D\s D^*$ and $\E[|D|] \ge \Om(|D^*|/\log|U|)$. 
+\EL
+\BP
+We first prove that $D\s D^*$. Each vertex $u\in D^*$ belongs to some $S^i_v$ satisfying $w(\pt S^i_v)<\la$ and $S^i_v\cap U=\{v\}$ for some $v\in U\sm s$. In particular, $\pt S^i_v$ is an $(s,u)$-cut with weight at most $\la$. It follows that the $(s,u)$-mincut also has weight at most $\la$, so $u\in D$.
+
+It remains to prove that $\E[|D|]\ge\Om(|D^*|/\log|U|)$. Consider the Steiner Gomory-Hu tree $T$ of $G$ with terminal set $U$. Imagine rooting the tree $T$ at vertex $s$. By definition of the Steiner Gomory-Hu tree, a vertex $v\in U$ is in $D^*$ iff its path to the root $s$ in $T$ has at least one edge of weight at most $\la$. For each vertex $v\in U\sm s$, let $r(v)$ be defined as the child vertex of the lowest weight edge on the path from $v$ to $s$ in $T$. \alert{The lowest weight edge is unique because there is only one $(v,s)$-mincut.}
+
+For each vertex $v\in D^*$, consider the subtree $T_v=(V_v,E_v)$ rooted at $v$, and define $n_v$ as the number of vertices in the subtree. We say that a vertex $v\in D^*$ is \emph{active} if $v\in R^i$ for $i=\lf\lg n_{r(v)}\rf$. In addition, if $V_{r(v)}\cap R^i=\{v\}$, then we say that $v$ \emph{hits} all of the vertices in $V_{r(v)}$ (including itself). In particular, in order for $v$ to hit any other vertex, it must be active. For completeness, we say that any vertex in $U\sm D^*$ is not active and does not hit any vertex.
+
+To prove that $\E[|D|] \ge \Om(|D^*|/\log|U|)$, we will show that
+ \BE
+ \im each vertex $u$ that is hit is in $D^*$,
+ \im the total number of pairs $(u,v)$ for which $v\in D^*$ hits $u$ is $\Om(|D^*|)$ in expectation, and
+ \im with probability at least $1-\f1{C|U|^3}$ for an arbitrarily large constant $C>0$, each vertex $u$ is hit by at most $O(\log|U|)$ vertices $v\in D^*$.
+ \EE
+
+For (1), consider the path from $u$ to the root $s$ in $T$, and take any vertex $v\in D^*$ on the path that is active (possibly $u$ itself), which must exist because $u$ is hit by some vertex. By definition, for $i=\lf\lg n_{r(v)}\rf$, we have $V_{r(v)}\cap R^i=\{v\}$, so $\pt V_{r(v)}$ is a $(v,R^i\sm v)$-cut.  By the definition of $r(v)$, we have that $\pt V_{r(v)}$ is a $(v,s)$-mincut. On the other hand, we have that $\pt S^i_v$ is a $(v,R^i\sm v)$-mincut, so in particular, it is a $(v,s)$-cut. It follows that $\pt V_{r(v)}$ and $\pt S^i_v$ are both $(v,s)$-mincuts and $(v,R^i\sm v)$-mincuts. \alert{Since the $(v,s)$-mincut is unique,} we must have $V_{r(v)} = S^i_v$. Since $u\in V_{r(v)}=S^i_v$, it is added to $D^*$ on \line{Sv}. 
+
+For (2), for $i=\lf\lg n_{r(v)}\rf$, we have $v\in R^i$ with probability exactly $1/2^i = \Th(1/n_{r(v)})$, and with probability $\Om(1)$, no other vertex in $V_{r(v)}$ joins $R^i$. Therefore, $v$ is active with probability $\Om(1/n_{r(v)})$. Conditioned on $v$ being active, it hits exactly $n_{r(v)}$ many vertices. It follows that $v$ hits $\Om(1)$ vertices in expectation.
+
+For (3), the number of vertices $v$ that hit vertex $u$ is at most the number of active vertices $v$ on the path from $u$ to $s$ in $T$. Label these vertices $u=v_1,v_2,\lds,v_\el=s$ in order. Each vertex $v_j\in D^*$ is active with probability $\Th(1/n_{r(v_j)})$, which is at most $\Th(1/j)$ since $v_1,\lds,v_j \in V_{r(v_j)}$. Each vertex $v_j\notin D^*$ is never active. Therefore, the expected number of active vertices on the path from $u$ to $s$ is at most $\sum_{j=1}^\el\Th(1/j)=\Th(\ln\el)\le \Th(\ln|U|)$. A standard Chernoff bound shows that with probability at least $1-\f1{C|U|^3}$ for any constant $C>0$, the number of active vertices on the path is indeed $O(\ln|U|)$, where the $O(\cd)$ hides the dependency on $C$. Taking a union bound over all $u\in U$, the probability that this is true for all vertices is at least $1-\f1{C|U|^2}$.
+
+Finally, we show why properties (1) to (3) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)$. In the event that property~(3) fails, the total number of pairs $(u,v)$ for which $v$ hits $u$ can be trivially upper bounded by $|U|^2$. Since this occurs with probability at most $\f1{C|U|^2}$, the total contribution to the expectation $\Om(|D^*|)$ in property~(2) is at most $1/C$. Therefore, the contribution to the expectation in the event that property~(3) succeeds is at least $\Om(|D^*|)-1/C$, which is $\Om(|D^*|)$ for large enough $C>0$. In this case, since each vertex is hit at most $O(\log|U|)$ times, there are at least $\Om(|D^*|/\log|U|)$ vertices hit in expectation.
+\EP
+
+The following corollary will be useful in the next section:
+\BC\corl{Dmax}
+Let $D_{\max}$ be the largest set $\bigcup_{v\in R^i} (S^i_v\cap U)$ over all iterations $i$. Then, $\E[|D_{\max}|] \ge \Om(|D^*|/\log^2|U|)$.
+\EC
+\BP
+There are $\lf\lg{U}\rf+1$ iterations in which we add to $D$, so $|D_{\max}|\ge |D|/(\lf\lg|U|\rf+1)$.
+Combining this with $\E[|D|]\ge\Om(|D^*|/\log|U|)$ from \lem{step} proves the claim. 
+\EP
+
+\begin{algorithm}
+\caption{\textsc{CutThreshold}$(G=(V,E),s,\la)$} \label{alg:main}
+\begin{algorithmic}[1]
+\State Initialize $U\gets V$ and $D\gets\emptyset$
+\For{$O(\log^2n)$ iterations}
+ \State $D'\gets \textsc{CutThresholdStep}(G,s,U,\la)$
+ \State Update $D\gets D\cup D'$ and $U\gets U\sm D'$
+\EndFor
+\State\Return $D$
+\end{algorithmic}
+\end{algorithm}
+
+
+\BC\corl{threshold}
+W.h.p., the output of \textsc{CutThreshold} is exactly all vertices $v\in U\sm s$ for which the $(s,v)$-mincut has weight at most $\la$. 
+\EC
+\BP
+Let $D^*$ be the targeted output.
+By \lem{step}, $|U\cap D^*|$ decreases by $\Om(|D^*|/\log n)$ in expectation. After $O(\log^2n)$ iterations, we have $\E[|U\cap D^*|] \le 1/\poly(n)$, so w.h.p., $U\cap D^*=\emptyset$. Each vertex in $D^*$ that is removed from $U$ is added to $D$, and no vertices in $U\sm D^*$ are added to $D$, so w.h.p., the algorithm returns the correct set $D^*$.
+\EP
+
+
+\begin{algorithm}
+\caption{\textsc{ApproxSSMC}$(G=(V,E),s,\e)$} \label{alg:main}
+\begin{algorithmic}[1]
+ \State Initialize bounds: $\la_{\min} \gets$ minimum weight of an edge in $G$, and $\la_{\max}\gets$ sum of weights of edges in $G$ %\Comment{Every $(s,v)$-mincut has weight in $[\la_{\min},\la_{\max}]$}
+ \For{all integers $i\ge0$ s.t.\ $(1+\e)^i\la_{\min} \in [\la_{\min},(1+\e)\la_{\max}]$}
+ \State $\la_i\gets (1+\e)^i\la_{\min}$
+ \State $D_i\gets \textsc{CutThreshold}(G,s,\la)$
+\EndFor
+\State For each vertex $v\in V$, take the largest $D_i$ containing $v$, and set $\tilde\la(v)\gets \la_i$
+\State\Return $\tilde\la:V\to \R$
+\end{algorithmic}
+\end{algorithm}
+
+\BL
+W.h.p., the output $\tilde\la$ of \textsc{ApproxSSMC} satisfies $\mincut(s,v) \le \tilde\la(v) \le (1+\e)\mincut(s,v)$.
+\EL
+\BP
+Follows from \cor{threshold} and the fact that for all $v\in V$, there is an integer $i$ with $\la_i\in[\mincut(s,v),(1+\e)\mincut(s,v))$. 
+\EP
+
+\section{Approximate Gomory-Hu Steiner Tree}
+
+
+\BD[Gomory-Hu Steiner tree]
+Given a graph $G=(V,E)$ and a set of terminals $U\s V$, the Gomory-Hu Steiner tree is a weighted tree $T$ on the vertices $U$, together with a function $f:V\to U$, such that
+ \BI
+ \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s$--$t$ path in $T$. %Let $U_s$ and $U_t$ be the vertices of the connected components of $T-(u,v)$, where $s\in U_s$ and $t\in U_t$.
+Then, the set $f\inv(T_{(u,v)})\s V$ is an $(s,t)$-mincut, and its value is $w_T(u,v)$.
+ \EI
+\ED
+
+\BD[Approximate Gomory-Hu Steiner tree]
+Given a graph $G=(V,E)$ and a set of terminals $U\s V$, the $(1+\e)$-approximate Gomory-Hu Steiner tree is a weighted tree $T$ on the vertices $U$, together with a function $f:V\to U$, such that
+ \BI
+ \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s$--$t$ path in $T$. %Let $U_s$ and $U_t$ be the vertices of the connected components of $T-(u,v)$, where $s\in U_s$ and $t\in U_t$.
+Then, the set $f\inv(T_{(u,v)})\s V$ is a $(1+\e)$-approximate $(s,t)$-mincut, and its value is $w_T(u,v)$.
+ \EI
+\ED
+
+
+\begin{algorithm}[H]
+\caption{\textsc{ApproxSteinerGHTree}$(G=(V,E),U,\e)$} \label{alg:main}
+\begin{algorithmic}[1]
+\State $s\gets$ uniformly random vertex in $U$
+\State $\la\gets $ global Steiner mincut of $G$ with terminals $U$
+\State $R^0,R^1,\lds,R^{\lf\lg|U|\rf}\gets \textsc{CutThresholdStep}(G,s,U,(1+\e)\la)$ \linel{thr}
+\State For each $j\in\{0,1,\lds,\lf\lg|U|\rf\}$, let $R^j_\sma\gets \{ v\in R^j : |S^j_v\cap U|\le|U|/2 \}$  
+\State Let $i\in\{0,1,\lds,\lf\lg|U|\rf\}$ be the iteration maximizing $\big|\bigcup_{v\in R^i_\sma} (S^i_v\cap U)\big|$ \linel{i}
+
+\ 
+\For{each $v\in  R^i_\sma$} \Comment{Construct recursive graphs and apply recursion}
+ \State Let $G_v$ be the graph $G$ with vertices $V\sm S^i_v$ contracted to a single vertex $x_v$ \Comment{$S^i_v$ are disjoint}
+ \State Let $U_v\gets S^i_v\cap U$
+ \State $(T_v,f_v)\gets \textsc{ApproxSteinerGHTree}(G_v,U,\e)$
+\EndFor
+\State Let $G_\lar$ be the graph $G$ with vertices $S^i_v$ contracted to a single vertex $y_v$ for all $v\in R^i_\sma$
+\State Let $U_\lar\gets U\sm\bigcup_{v\in R^i_\sma}(S^i_v\cap U)$
+\State $(T_\lar,f_\lar)\gets \textsc{ApproxSteinerGHTree}(G_\lar,U_\lar,\e)$
+
+\
+\State s \Comment{Combine Steiner Gomory-Hu trees together}
+\State\Return blah
+
+\end{algorithmic}
+\end{algorithm}
+
+\BL
+\alert{Assume that for all distinct $s,t\in V$, there is a unique $(s,t)$-mincut.}
+Consider the Steiner Gomory-Hu tree $T$ of $G$ with terminal set $U$. Let $E'$ be the edges of $T$ with weight at most $\la$. For each edge $e\in E'$, let $V_e\s V$ be a connected component of $T-e$ satisfying $|V_e\cap U|\le|U|/2$, which must exist. Define $D'=\bigcup_{e\in E'}(V_e\cap U)$.
+Then, $\E\big[\big|\bigcup_{v\in R^i_\sma}S^i_v\big|\big] \ge \Om(|D'|/\log^2|U|)$.
+\EL
+\BP
+\alert{unfinished}
+
+Root the Steiner Gomory-Hu tree $T$ at the chosen vertex $s$. Let $E'_s\s E'$ be the edges $(u,v)\in E'$ such that the connected component $V'_e$ of $T-e$ not containing $s$ satisfies $|V'_e\cap U|\le|U|/2$. Finally, define $D'_s=\bigcup_{e\in E'_s}(V'_e\cap U)$.
+
+We first claim that, over the random selection of $s\in U$, we have $\E[|D'_s|]\ge |D'|/2$. To show this, we claim that for each vertex in $D'$, with probability at least $1/2$, it joins $V'_e$ for some $e\in E'_s$. Indeed, since $s\in U$ is selected uniformly randomly, we have $s\notin V_e$ with probability at least $1/2$, in which case $V'_e=V_e$ and $|V'_e\cap U|=|V_e\cap U|\le|U|/2$ and hence $e\in E'_s$. 
+
+Let us now condition on the choice of $s\in U$.
+By construction, in the tree $T$ rooted at $s$, the vertices in $D'_s$ can be partitioned into subtrees as follows: $D'_s = \bigcup_{u\in U'_s}V_u$ for some $U'_s\s U$, where $V_u$ is the vertices in the subtree rooted at $u$, and the sets $V_u$ are disjoint.
+
+Now, consider the following modification to the statement of \lem{step}, where we replace $D^*$ everywhere with $D^*\cap V_u$. The proof essentially follows identically, and we obtain $\E[|D\cap V_u|] \ge \Om(|D^*\cap V_u|/\log|U|)$ as the modified \lem{step}. 
+\[ \E\bigg[\bigg|\bigcup_{u\in U'_s} .\]
+
+ By a similarly modified \cor{Dmax}, for the choice of $i$ (\line{i}), 
+
+\[ \E\bigg[\bigg|\bigcup_{v\in R^i_\sma}(S^i_v\cap U\cap V_u)] \ge \Om(|D^*|/\log^2|U|)$ by a similarly modified \cor{Dmax},
+
+
+ $\E\big[\big|\bigcup_{v\in R^i_\sma}S^i_v\big|\big] $.
+
+We can modify the statement of \lem{step} on each $V_u\cap U$ ; the proof is essentially the same. 
+\EP
+
+\BL
+For any distinct vertices $p,q\in U_\lar$, $\mincut_{G_\lar}(u,v) = \mincut_G(u,v)$.
+\EL
+\BP
+Since $G_\lar$ is a contraction of $G$, we have $\mincut_{G_\lar}(p,q) \ge \mincut_G(p,q)$. To show the reverse inequality, fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. We show that for each $v\in  R^i_\sma$, either $S^i_v\s S$ or $S^i_v\s V\sm S$. Assuming this, the cut $\pt S$ stays intact when the sets $S^i_v$ are contracted to form $G_\lar$, so $\mincut_{G_\lar}(p,q) \le w(\pt S) = \mincut_G(p,q)$.
+
+Consider any $v\in R^i_\sma$, and suppose first that $v\in S$. Then, $S^i_v\cap S$ is still a $(v,R^i\sm v)$-cut, and $S^i_v\cup S$ is still a $(p,q)$-cut. By the submodularity of cuts,
+\[ w(\pt_GS^i_v) + w(\pt_GS) \ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)). \]
+In particular, $S^i_v\cap S$ must be a minimum $(v,R^i\sm v)$-cut. Since $S^i_v$ is the minimal $(v,R^i\sm v)$-mincut, it follows that $S^i_v\cap S = S^i_v$, or equivalently, $S^i_v\s S$.
+
+Suppose now that $v\notin S$. In this case, we can swap $p$ and $q$, and swap $S$ and $V\sm S$, and repeat the above argument to get $S^i_v\s V\sm S$.
+\EP
+
+\BL
+For any $v\in  R^i_\sma$ and any distinct vertices $p,q\in U_v$, $\mincut_{G_v}(u,v)\le(1+\e)\mincut_G(u,v)$.
+\EL
+\BP
+Fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. Since $S^i_v\cup S$ is a $(p,q)$-cut, it is in particular a Steiner cut for terminals $U$, so $w(S^i_v\cup S)\ge\la$. Also, $w(S^i_v)\le(1+\e)\la$ by the choice of the threshold $(1+\e)\la$ (\line{thr}). Together with the submodularity of cuts, we obtain
+\[ (1+\e)\la+w(\pt_GS) \ge w(\pt_GS^i_v) + w(\pt_GS) \ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)) \ge \la + w(\pt_G(S^i_v\cap S)) .\]
+The set $S^i_v\cap S$ stays intact under the contraction from $G$ to $G_v$, so $w(\pt_{G_v}(S^i_v\cap S))=w(\pt_G(S^i_v\cap S))$. Therefore,
+\[ \mincut_{G_v}(u,v)\le w(\pt_{G_v}(S^i_v\cap S))=w(\pt_G(S^i_v\cap S)) \le w(\pt_GS)+\e\la \le \mincut_G(u,v) + \e\,\mincut_G(u,v) ,\]
+as promised.
+\EP
+
+\end{document}
+

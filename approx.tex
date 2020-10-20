@@ -377,7 +377,7 @@ We can modify the statement of \lem{step} on each $V_u\cap U$ ; the proof is ess
 \EP
 
 \BL
-For any distinct vertices $p,q\in U_\lar$, $\mincut_{G_\lar}(u,v) = \mincut_G(u,v)$.
+For any distinct vertices $p,q\in U_\lar$, $\mincut_{G_\lar}(p,q) = \mincut_G(p,q)$.
 \EL
 \BP
 Since $G_\lar$ is a contraction of $G$, we have $\mincut_{G_\lar}(p,q) \ge \mincut_G(p,q)$. To show the reverse inequality, fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. We show that for each $v\in  R^i_\sma$, either $S^i_v\s S$ or $S^i_v\s V\sm S$. Assuming this, the cut $\pt S$ stays intact when the sets $S^i_v$ are contracted to form $G_\lar$, so $\mincut_{G_\lar}(p,q) \le w(\pt S) = \mincut_G(p,q)$.
@@ -390,7 +390,7 @@ Suppose now that $v\notin S$. In this case, we can swap $p$ and $q$, and swap $S
 \EP
 
 \BL
-For any $v\in  R^i_\sma$ and any distinct vertices $p,q\in U_v$, $\mincut_{G_v}(u,v)\le(1+\e)\mincut_G(u,v)$.
+For any $v\in  R^i_\sma$ and any distinct vertices $p,q\in U_v$, $\mincut_{G_v}(p,q)\le(1+\e)\mincut_G(p,q)$.
 \EL
 \BP
 Fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. Since $S^i_v\cup S$ is a $(p,q)$-cut, it is in particular a Steiner cut for terminals $U$, so $w(S^i_v\cup S)\ge\la$. Also, $w(S^i_v)\le(1+\e)\la$ by the choice of the threshold $(1+\e)\la$ (\line{thr}). Together with the submodularity of cuts, we obtain

@@ -200,108 +200,18 @@
 Consider a weighted, undirected graph $G=(V,E)$ and a subset $R\s V$ ($|R|\ge2$). The \emph{minimum isolating cuts} for $R$ is a collection of sets $\{S_v:v\in R\}$ such that for each vertex $v\in R$, the set $S_v$ satisfies $S_v\cap R=\{v\}$ and has the minimum value of $w(\pt S'_v)$ over all sets $S'_v$ satisfying $S'_v\cap R=\{v\}$.
 \ED
 
+%\alert{DP: In the above definition, should we also mention that sets $S_v$ must be disjoint? At the moment, this is in the next lemma. Would putting it in the definition might make life a bit easier in terms of just having to refer to the definition when invoking this property?}
+
 \BL
-Fix a subset $R\s V$ ($|R|\ge2$). There is an algorithm that computes the minimum isolating cuts $\{S_v:v\in R\}$ for $R$ using $\lc\lg|R|\rc$ calls to $s$--$t$ max-flow on weighted graphs of $O(n)$ vertices and $O(m)$ edges, and takes $\tO(m)$ deterministic time outside of the max-flow calls. If the original graph $G$ is unweighted, then the inputs to the max-flow calls are also unweighted. Moreover, the sets $S_v:v\in R$ are disjoint.
+Fix a subset $R\s V$ ($|R|\ge2$). There is an algorithm that computes the minimum isolating cuts $\{S_v:v\in R\}$ for $R$ using $O(\log|R|)$ calls to $s$--$t$ max-flow on weighted graphs of $O(n)$ vertices and $O(m)$ edges, and takes $\tO(m)$ deterministic time outside of the max-flow calls. If the original graph $G$ is unweighted, then the inputs to the max-flow calls are also unweighted. Moreover, the sets $\{S_v:v\in R\}$ are disjoint.
 \EL
+
+%\alert{DP: In the above lemma, should we use $\lceil \lg |R|\rceil$ or $O(\log |R|)$? It depends on whether the constant is important to preserve.}
 
 \BD[Single-source min-cut]
-In the \emph{single-source min-cut} (SSMC) problem, the input is a $G=(V,E)$ and a source vertex $s\in V$, and we need to output a $(s,v)$-mincut for each $v\in V\sm s$. In the \emph{$(1+\e)$-approximate SSMC} problem, the input is the same, and we need to output a $(1+\e)$-approximate $(s,v)$-mincut for each $v\in V\sm s$.
+In the \emph{single-source min-cut} (SSMC) problem, the input is an undirected graph $G=(V,E)$ and a source vertex $s\in V$, and we need to output a $(s,v)$-mincut for each $v\in V\sm \{s\}$. In the \emph{$(1+\e)$-approximate SSMC} problem, the input is the same, and we need to output a $(1+\e)$-approximate $(s,v)$-mincut for each $v\in V\sm \{s\}$.
 \ED
 
-\section{$(1+\e)$-approximate SSMC}
-
-
-\begin{algorithm}
-\caption{\textsc{CutThresholdStep}$(G=(V,E),s,U,W)$} 
-\begin{algorithmic}[1]
-\State Initialize $R^0\gets U$ and $D\gets\emptyset$
-\For{$i$ from $0$ to $\lf\lg|U|\rf$}
- \State Compute minimum isolating cuts $\{S^i_v:v\in R^i\}$ on inputs $G$ and $R^i$ \linel{Sv}
- \State For each $v\in R^i\sm s$ where $w(\pt S^i_v)\le W$, add all vertices in $S^i_v\cap U$ to $D$
- \State $R^{i+1}u\gets$ subsample of $R^i$ where each vertex in $R^i\sm s$ is sampled independently with probability $1/2$, and $s$ is sampled with probability $1$
-\EndFor
-\State\Return $D$
-\end{algorithmic}
-\end{algorithm}
-
-\BL\leml{step}
-Let $D^*$ be all vertices $v\in U\sm s$ for which the $(s,v)$-mincut has weight at most $ W$. Then, $D\s D^*$ and $\E[|D|] \ge \Om(|D^*|/\log|U|)$. 
-\EL
-\BP
-We first prove that $D\s D^*$. Each vertex $u\in D^*$ belongs to some $S^i_v$ satisfying $w(\pt S^i_v)< W$ and $S^i_v\cap U=\{v\}$ for some $v\in U\sm s$. In particular, $\pt S^i_v$ is an $(s,u)$-cut with weight at most $ W$. It follows that the $(s,u)$-mincut also has weight at most $ W$, so $u\in D$.
-
-It remains to prove that $\E[|D|]\ge\Om(|D^*|/\log|U|)$. Consider a rooted minimal Steiner Gomory-Hu tree $T$ of $G$ on terminals $U$ rooted at $s$, which exists by \thm{rooted}. By definition of the Steiner Gomory-Hu tree, a vertex $v\in U$ is in $D^*$ iff its path to the root $s$ in $T$ has at least one edge of weight at most $ W$. For each vertex $v\in U\sm s$, let $r(v)$ be defined as the child vertex of the lowest weight edge on the path from $v$ to $s$ in $T$. If there are multiple lowest weight edges, choose the one with the maximum depth. %\alert{The lowest weight edge is unique because there is only one $(v,s)$-mincut.}
-
-For each vertex $v\in D^*$, consider the subtree $T_v=(V_v,E_v)$ rooted at $v$, and define $n_v$ as the number of vertices in the subtree. We say that a vertex $v\in D^*$ is \emph{active} if $v\in R^i$ for $i=\lf\lg n_{r(v)}\rf$. In addition, if $V_{r(v)}\cap R^i=\{v\}$, then we say that $v$ \emph{hits} all of the vertices in $V_{r(v)}$ (including itself). In particular, in order for $v$ to hit any other vertex, it must be active. For completeness, we say that any vertex in $U\sm D^*$ is not active and does not hit any vertex.
-
-To prove that $\E[|D|] \ge \Om(|D^*|/\log|U|)$, we will show that
- \BE
- \im[(a)] each vertex $u$ that is hit is in $D^*$,
- \im[(b)] the total number of pairs $(u,v)$ for which $v\in D^*$ hits $u$ is $\Om(|D^*|)$ in expectation, and
- \im[(c)] with probability at least $1-\f1{C|U|^3}$ for an arbitrarily large constant $C>0$, each vertex $u$ is hit by at most $O(\log|U|)$ vertices $v\in D^*$.
- \EE
-
-For (a), consider the path from $u$ to the root $s$ in $T$, and take any vertex $v\in D^*$ on the path that is active (possibly $u$ itself), which must exist because $u$ is hit by some vertex. By definition, for $i=\lf\lg n_{r(v)}\rf$, we have $V_{r(v)}\cap R^i=\{v\}$, so $\pt V_{r(v)}$ is a $(v,R^i\sm v)$-cut.  By the definition of $r(v)$, we have that $\pt V_{r(v)}$ is a $(v,s)$-mincut. On the other hand, we have that $\pt S^i_v$ is a $(v,R^i\sm v)$-mincut, so in particular, it is a $(v,s)$-cut. It follows that $\pt V_{r(v)}$ and $\pt S^i_v$ are both $(v,s)$-mincuts and $(v,R^i\sm v)$-mincuts. Since $T$ is a minimal Gomory-Hu Steiner tree, we must have $V_{r(v)} \s S^i_v$. Since $u\in V_{r(v)}\s S^i_v$, it is added to $D^*$ on \line{Sv}. 
-
-For (b), for $i=\lf\lg n_{r(v)}\rf$, we have $v\in R^i$ with probability exactly $1/2^i = \Th(1/n_{r(v)})$, and with probability $\Om(1)$, no other vertex in $V_{r(v)}$ joins $R^i$. Therefore, $v$ is active with probability $\Om(1/n_{r(v)})$. Conditioned on $v$ being active, it hits exactly $n_{r(v)}$ many vertices. It follows that $v$ hits $\Om(1)$ vertices in expectation.
-
-For (c), the number of vertices $v$ that hit vertex $u$ is at most the number of active vertices $v$ on the path from $u$ to $s$ in $T$. Label these vertices $u=v_1,v_2,\lds,v_\el=s$ in order. Each vertex $v_j\in D^*$ is active with probability $\Th(1/n_{r(v_j)})$, which is at most $\Th(1/j)$ since $v_1,\lds,v_j \in V_{r(v_j)}$. Each vertex $v_j\notin D^*$ is never active. Therefore, the expected number of active vertices on the path from $u$ to $s$ is at most $\sum_{j=1}^\el\Th(1/j)=\Th(\ln\el)\le \Th(\ln|U|)$. A standard Chernoff bound shows that with probability at least $1-\f1{C|U|^3}$ for any constant $C>0$, the number of active vertices on the path is indeed $O(\ln|U|)$, where the $O(\cd)$ hides the dependency on $C$. Taking a union bound over all $u\in U$, the probability that this is true for all vertices is at least $1-\f1{C|U|^2}$.
-
-Finally, we show why properties (a) to (c) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)$. In the event that property~(c) fails, the total number of pairs $(u,v)$ for which $v$ hits $u$ can be trivially upper bounded by $|U|^2$. Since this occurs with probability at most $\f1{C|U|^2}$, the total contribution to the expectation $\Om(|D^*|)$ in property~(b) is at most $1/C$. Therefore, the contribution to the expectation in the event that property~(c) succeeds is at least $\Om(|D^*|)-1/C$, which is $\Om(|D^*|)$ for large enough $C>0$. In this case, since each vertex is hit at most $O(\log|U|)$ times, there are at least $\Om(|D^*|/\log|U|)$ vertices hit in expectation.
-\EP
-
-The following corollary will be useful in the next section:
-\BC\corl{Dmax}
-Let $D_{\max}$ be the largest set $\bigcup_{v\in R^i} (S^i_v\cap U)$ over all iterations $i$. Then, $\E[|D_{\max}|] \ge \Om(|D^*|/\log^2|U|)$.
-\EC
-\BP
-There are $\lf\lg{U}\rf+1$ iterations in which we add to $D$, so $|D_{\max}|\ge |D|/(\lf\lg|U|\rf+1)$.
-Combining this with $\E[|D|]\ge\Om(|D^*|/\log|U|)$ from \lem{step} proves the claim. 
-\EP
-
-\begin{algorithm}
-\caption{\textsc{CutThreshold}$(G=(V,E),s, W)$}
-\begin{algorithmic}[1]
-\State Initialize $U\gets V$ and $D\gets\emptyset$
-\For{$O(\log^2n)$ iterations}
- \State $D'\gets \textsc{CutThresholdStep}(G,s,U, W)$
- \State Update $D\gets D\cup D'$ and $U\gets U\sm D'$
-\EndFor
-\State\Return $D$
-\end{algorithmic}
-\end{algorithm}
-
-
-\BC\corl{threshold}
-W.h.p., the output of \textsc{CutThreshold} is exactly all vertices $v\in U\sm s$ for which the $(s,v)$-mincut has weight at most $ W$. 
-\EC
-\BP
-Let $D^*$ be the targeted output.
-By \lem{step}, $|U\cap D^*|$ decreases by $\Om(|D^*|/\log n)$ in expectation. After $O(\log^2n)$ iterations, we have $\E[|U\cap D^*|] \le 1/\poly(n)$, so w.h.p., $U\cap D^*=\emptyset$. Each vertex in $D^*$ that is removed from $U$ is added to $D$, and no vertices in $U\sm D^*$ are added to $D$, so w.h.p., the algorithm returns the correct set $D^*$.
-\EP
-
-
-\begin{algorithm}
-\caption{\textsc{ApproxSSMC}$(G=(V,E),s,\e)$}
-\begin{algorithmic}[1]
- \State Initialize bounds: $ W_{\min} \gets$ minimum weight of an edge in $G$, and $ W_{\max}\gets$ sum of weights of edges in $G$ %\Comment{Every $(s,v)$-mincut has weight in $[ W_{\min}, W_{\max}]$}
- \For{all integers $i\ge0$ s.t.\ $(1+\e)^i W_{\min} \in [ W_{\min},(1+\e) W_{\max}]$}
- \State $ W_i\gets (1+\e)^i W_{\min}$
- \State $D_i\gets \textsc{CutThreshold}(G,s, W)$
-\EndFor
-\State For each vertex $v\in V$, take the largest $D_i$ containing $v$, and set $\tilde\la(v)\gets  W_i$
-\State\Return $\tilde\la:V\to \R$
-\end{algorithmic}
-\end{algorithm}
-
-\BL
-W.h.p., the output $\tilde\la$ of \textsc{ApproxSSMC} satisfies $\mincut(s,v) \le \tilde\la(v) \le (1+\e)\mincut(s,v)$.
-\EL
-\BP
-Follows from \cor{threshold} and the fact that for all $v\in V$, there is an integer $i$ with $ W_i\in[\mincut(s,v),(1+\e)\mincut(s,v))$. 
-\EP
-
-\section{Approximate Gomory-Hu Steiner Tree}
 
 \BD[Gomory-Hu Steiner tree]
 Given a graph $G=(V,E)$ and a set of terminals $U\s V$, the Gomory-Hu Steiner tree is a weighted tree $T$ on the vertices $U$, together with a function $f:V\to U$, such that
@@ -332,6 +242,112 @@ The following theorem, proved in APPENDIX, establishes the existence of a rooted
 \begin{restatable}{theorem}{Rooted}\thml{rooted}
 For any graph $G=(V,E)$, terminals $U\s V$, and root $s\in U$, there exists a rooted minimal Gomory-Hu Steiner tree rooted at $s$.
 \end{restatable}
+
+
+\section{$(1+\e)$-approximate SSMC}
+
+
+\begin{algorithm}
+\caption{\textsc{CutThresholdStep}$(G=(V,E),s,U,W)$} 
+\begin{algorithmic}[1]
+\State Initialize $R^0\gets U$ and $D\gets\emptyset$
+\For{$i$ from $0$ to $\lf\lg|U|\rf$}
+ \State Compute minimum isolating cuts $\{S^i_v:v\in R^i\}$ on inputs $G$ and $R^i$ \linel{Sv}
+ \State For each $v\in R^i\sm \{s\}$ where $w(\pt S^i_v)\le W$, add all vertices in $S^i_v\cap U$ to $D$
+ \State $R^{i+1}\gets$ subsample of $R^i$ where each vertex in $R^i\sm \{s\}$ is sampled independently with probability $1/2$, and $s$ is sampled with probability $1$
+\EndFor
+\State\Return $D$
+\end{algorithmic}
+\end{algorithm}
+
+Let $D$ be the output of the algorithm, and let $D^*$ be all vertices $v\in U\sm \{s\}$ for which the $(s,v)$-mincut has weight at most $W$. 
+
+\BL\leml{step}
+$D\s D^*$ and $\E[|D|] = \Om(|D^*|/\log|U|)$. 
+\EL
+\BP
+We first prove that $D\s D^*$. Each vertex $u\in D$ belongs to some $S^i_v$ satisfying $w(\pt S^i_v)\le W$. %and $S^i_v\cap U=\{v\}$ for some $v\in U\sm s$. 
+In particular, $\pt S^i_v$ is an $(s,u)$-cut with weight at most $ W$. It follows that the $(s,u)$-mincut also has weight at most $ W$, and therefore, $u\in D$.
+
+It remains to prove that $\E[|D|]\ge\Om(|D^*|/\log|U|)$. Consider a rooted minimal Steiner Gomory-Hu tree $T$ of $G$ on terminals $U$ rooted at $s$, which exists by \thm{rooted}. By definition of the Steiner Gomory-Hu tree, a vertex $v\in U$ is in $D^*$ iff its path to the root $s$ in $T$ has at least one edge of weight at most $ W$. For each vertex $v\in U\sm \{s\}$, let $r(v)$ be defined as the child vertex of the lowest weight edge on the path from $v$ to $s$ in $T$. If there are multiple lowest weight edges, choose the one with the maximum depth. %\alert{The lowest weight edge is unique because there is only one $(v,s)$-mincut.}
+
+%\alert{DP: 1. Need to define rooted minimal Steiner Gomory-Hu tree which is used in the para above. 3. Should we talk about breaking ties among multiple lowest weight edges or add a perturbation at the outset and claim that mincuts are unique? This last fact needs a proof since there could be exponential number of $s-t$ mincuts, so just adding an inverse polynomial perturabtion does not immediately imply uniqueness. But, perhaps use the (classic) isolation lemma?} \textcolor{blue}{I had assumed all $s-t$ mincuts unique in a previous write-up. I do think the new version is better since we also obtain better bounds for unweighted graphs which we can't use isolation lemma for. But maybe a note to the reader that assuming all min-cuts are unique could help with a first reading}
+
+For each vertex $v\in D^*$, consider the subtree rooted at $v$, define $U_v$ to be the vertices in the subtree, and define $n_v$ as the number of vertices in the subtree. We say that a vertex $v\in D^*$ is \emph{active} if $v\in R^i$ for $i=\lf\lg n_{r(v)}\rf$. In addition, if $U_{r(v)}\cap R^i=\{v\}$, then we say that $v$ \emph{hits} all of the vertices in $U_{r(v)}$ (including itself). In particular, in order for $v$ to hit any other vertex, it must be active. For completeness, we say that any vertex in $U\sm D^*$ is not active and does not hit any vertex.
+
+\alert{The above definitions are fine, but would be easier to read with (a) some intuition behind when you say that a vertex is active and process of hitting other vertices, and (b) a figure illustrating the notation.}
+
+\textcolor{blue}{Jason: TODO add a figure here.}
+
+
+To prove that $\E[|D|] \ge \Om(|D^*|/\log|U|)$, we will show that
+ \BE
+ \im[(a)] each vertex $u$ that is hit is in $D$, 
+ \im[(b)] the total number of pairs $(u,v)$ for which $v\in D^*$ hits $u$ is at least $c |D^*|$ in expectation for some small enough constant $c>0$, and
+ \im[(c)] with probability at least $1-\f c{2|U|^2}$ (for the constant $c>0$ in~(b)), each vertex $u$ is hit by at most $O(\log|U|)$ vertices $v\in D^*$. %\alert{DP: There's some play on constants here between the constant hidden in $O(.)$ and the constant in the denominator? Should we make this more explicit?}
+ \EE
+
+For (a), consider the path from $u$ to the root $s$ in $T$, and take any vertex $v\in D^*$ on the path that is active (possibly $u$ itself). Such a vertex must exist since $u$ is hit by some vertex. By definition, for $i=\lf\lg n_{r(v)}\rf$, we have $U_{r(v)}\cap R^i=\{v\}$, so $\pt U_{r(v)}$ is a $(v,R^i\sm \{v\})$-cut.  By the definition of $r(v)$, we have that $\pt U_{r(v)}$ is a $(v,s)$-mincut. On the other hand, we have that $\pt f\inv(S^i_v)$ is a $(v,R^i\sm v)$-mincut, so in particular, it is a $(v,s)$-cut. It follows that $\pt f\inv(U_{r(v)})$ and $\pt f\inv(S^i_v)$ are both $(v,s)$-mincuts and $(v,R^i\sm v)$-mincuts. Since $T$ is a minimal Gomory-Hu Steiner tree, we must have $f\inv(U_{r(v)}) \s S^i_v$. Since $u\in U_{r(v)}\s f\inv(U_{r(v)})\s S^i_v$, it is added to $D$ on \line{Sv}. 
+
+For (b), for $i=\lf\lg n_{r(v)}\rf$, we have $v\in R^i$ with probability exactly $1/2^i = \Th(1/n_{r(v)})$, and with probability $\Om(1)$, no other vertex in $U_{r(v)}$ joins $R^i$. Therefore, $v$ is active with probability $\Om(1/n_{r(v)})$. Conditioned on $v$ being active, it hits exactly $n_{r(v)}$ many vertices. It follows that $v$ hits $\Om(1)$ vertices in expectation.
+
+For (c), the number of vertices $v$ that hit vertex $u$ is at most the number of active vertices $v$ on the path from $u$ to $s$ in $T$. Label these vertices $u=v_1,v_2,\lds,v_\el=s$ in order. Each vertex $v_j\in D^*$ is active with probability $\Th(1/n_{r(v_j)})$, which is at most $\Th(1/j)$ since $v_1,\lds,v_j \in U_{r(v_j)}$. Each vertex $v_j\notin D^*$ is never active. Therefore, the expected number of active vertices on the path from $u$ to $s$ is at most $\sum_{j=1}^\el\Th(1/j)=\Th(\ln\el)\le \Th(\ln|U|)$. A standard Chernoff bound shows that with probability at least $1-\f c{2|U|^3}$ for any constant $c>0$, the number of active vertices on the path is indeed $O(\ln|U|)$, where the $O(\cd)$ hides the dependency on $c$. Taking a union bound over all $u\in U$, the probability that this is true for all vertices is at least $1-\f c{2|U|^2}$.
+
+Finally, we show why properties (a) to (c) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)$. In the event that property~(c) fails, the total number of pairs $(u,v)$ for which $v$ hits $u$ can be trivially upper bounded by $|U|^2$. Since this occurs with probability at most $\f c{2|U|^2}$, the total contribution to the expectation $c|D^*|$ in property~(b) is at most $c/2$. Therefore, the contribution to the expectation in the event that property~(c) succeeds is at least $c|D^*|-c/2\ge (c/2)|D^*|$. In this case, since each vertex is hit at most $O(\log|U|)$ times, there are at least $\Om(|D^*|/\log|U|)$ vertices hit in expectation.
+\EP
+
+%The following corollary will be useful in the next section:
+%\BC\corl{Dmax}
+%Let $D_{\max}$ be the largest set $\bigcup_{v\in R^i} (S^i_v\cap U)$ over all iterations $i$, and let $i_{\max}$ be the corresponding iteration. Then, $\E[|D_{\max}|] \ge \Om(|D^*|/\log^2|U|)$.
+%\EC
+%\BP
+%There are $\lf\lg{U}\rf+1$ iterations in which we add to $D$, so $|D_{\max}|\ge |D|/(\lf\lg|U|\rf+1)$.
+%Combining this with $\E[|D|]\ge\Om(|D^*|/\log|U|)$ from \lem{step} proves the claim. 
+%\EP
+
+\begin{algorithm}
+\caption{\textsc{CutThreshold}$(G=(V,E),s, W)$}
+\begin{algorithmic}[1]
+\State Initialize $U\gets V$ and $D_{\textup{total}}\gets\emptyset$
+\For{$O(\log^2n)$ iterations}
+ \State $D\gets \textsc{CutThresholdStep}(G,s,U, W)$
+ \State Update $D_{\textup{total}}\gets D_{\textup{total}}\cup D$ and $U\gets U\sm D$
+\EndFor
+\State\Return $D_{\textup{total}}$
+\end{algorithmic}
+\end{algorithm}
+
+
+\BC\corl{threshold}
+W.h.p., the output $D_{\textup{total}}$ of \textsc{CutThreshold} is exactly all vertices $v\in U\sm \{s\}$ for which the $(s,v)$-mincut has weight at most $ W$. 
+\EC
+\BP
+%Let $D^*$ be the targeted output.
+By \lem{step}, $|U\cap D^*|$ decreases by $\Om(|D^*|/\log n)$ in expectation. After $O(\log^2n)$ iterations, we have $\E[|U\cap D^*|] \le 1/\poly(n)$, so w.h.p., $U\cap D^*=\emptyset$. Each vertex in $D^*$ that is removed from $U$ is added to $D_{\textup{total}}$, and no vertices in $U\sm D^*$ are added to $D_{\textup{total}}$, so w.h.p., the algorithm returns the correct set $D^*$.
+\EP
+
+
+\begin{algorithm}
+\caption{\textsc{ApproxSSMC}$(G=(V,E),s,\e)$}
+\begin{algorithmic}[1]
+ \State Initialize bounds: $ W_{\min} \gets$ minimum weight of an edge in $G$, and $ W_{\max}\gets$ maximum weight of an edge %\Comment{Every $(s,v)$-mincut has weight in $[ W_{\min}, W_{\max}]$}
+ \For{all integers $i\ge0$ s.t.\ $(1+\e)^i W_{\min} \in [ W_{\min},(1+\e) n W_{\max}]$}
+ \State $ W_i\gets (1+\e)^i W_{\min}$
+ \State $D_i\gets \textsc{CutThreshold}(G,s, W)$
+\EndFor
+\State For each vertex $v\in V$, take the largest $D_i$ containing $v$, and set $\tilde\la(v)\gets  W_i$
+\State\Return $\tilde\la:V\to \R$
+\end{algorithmic}
+\end{algorithm}
+
+\BL
+W.h.p., the output $\tilde\la$ of \textsc{ApproxSSMC} satisfies $\mincut(s,v) \le \tilde\la(v) \le (1+\e)\mincut(s,v)$.
+\EL
+\BP
+Follows from \cor{threshold} and the fact that for all $v\in V$, there is an integer $i$ with $ W_i\in[\mincut(s,v),(1+\e)\mincut(s,v))$. 
+\EP
+
+\section{Approximate Gomory-Hu Steiner Tree}
 
 \begin{algorithm}[H]
 \caption{\textsc{ApproxSteinerGHTree}$(G=(V,E),U,\e)$} 
@@ -442,8 +458,9 @@ Finally, we prove \lem{P} below.
 
 \BP[Proof (\lem{P})]
 Let $D^*$ be all vertices $v\in U\sm s$ for which the $(v,s)$-mincut has weight at most $ W$, and let $D^*_\sma\s D^*$ be all vertices $v\in U\sm s$ for which there exists an $(v,s)$-cut of weight at most $W$ whose side containing $v$ has at most $|U|/2$ vertices in $U$. Define $D_\sma = \bigcup_{j=0}^{\lf\lg|U|\rf}\bigcup_{v\in R^i_\sma} (S^i_v\cap U)$.
-Let $P_{\text{ordered}}(G,U,W)$ be the set of ordered pairs $(u,v):u,v\in V$ for which there exists an $(u,v)$-mincut of weight at most $W$ with at most $|U|/2$ vertices in $U$ on the side $S(u,v)\s V$ containing $u$. Observe that $|P_{\text{ordered}}(G,U,W)| \ge |P(G,U,W)|$, since for each pair $(u,v)$.
+Let $P_{\text{ordered}}(G,U,W)$ be the set of ordered pairs $(u,v):u,v\in V$ for which there exists an $(u,v)$-mincut of weight at most $W$ with at most $|U|/2$ vertices in $U$ on the side $S(u,v)\s V$ containing $u$. %Observe that $|P_{\text{ordered}}(G,U,W)| \ge |P(G,U,W)|$, since for each pair $(u,v)$.
 %For each ordered pair $(u,v)$ for which $\{u,v\}\in P(G,U,W)$, For each unordered pair $\{u,v\}\in P(G,U,W)$, consider the $(u,v)$-mincut of weight at most $W$. Let $S(\{u,v\})\s V$ be the side of the mincut with the smaller number of vertices in $U$, with a tie broken arbitrarily, and let $f(\{u,v\})\in\{u,v\}$ be whichever vertex ($u$ or $v$) is in $S(\{u,v\})$.
+We now state and prove the following four properties:
 
 \BE
 \im[(a)] For all $u,v\in U$, $\{u,v\}\in P(G,U,W)$ if and only if either $(u,v)\in P_{\text{ordered}}(G,U,W)$ or $(v,u)\in P_{\text{ordered}}(G,U,W)$ (or both).
@@ -454,7 +471,7 @@ Let $P_{\text{ordered}}(G,U,W)$ be the set of ordered pairs $(u,v):u,v\in V$ for
 
 Property (a) follows by definition.
 Property~(b) follows from the fact that $u\in D^*_\sma$ whenever $s\notin S(u,v)$, which happens with probability at least $1/2$. 
-Property~(c) follows because any vertex $v\in U\sm S(u,v)$ satisfies $(u,v)\in P_{\text{ordered}}(G,U,W)$, of which there are at least $|U|/2$. Property~(d) can be proved for $\textsc{CutThresholdStep}(G,U,W)$ identically to the proof of \lem{step}, substituting $D^*$ for $D^*_\sma$. The only property we need is that $D^*_\sma$ is downward-closed, in the sense that for any vertex $v\in D^*_\sma$, all vertices in the subtree rooted at $v$ are also in $D^*_\sma$. Property~(c) actually concerns $\textsc{CutThresholdStep}(G,U,(1+\e)\la)$, but observe that the set $D_\sma$ can only increase if the weight parameter is increased from $W$ to $(1+\e)\la$.
+Property~(c) follows because any vertex $v\in U\sm S(u,v)$ satisfies $(u,v)\in P_{\text{ordered}}(G,U,W)$, of which there are at least $|U|/2$. Property~(d) can be proved for $\textsc{CutThresholdStep}(G,U,W)$ identically to the proof of \lem{step}, substituting $D^*$ for $D^*_\sma$. The only property we need is that $D^*_\sma$ is downward-closed, in the sense that for any vertex $v\in D^*_\sma$, all vertices in the subtree rooted at $v$ are also in $D^*_\sma$. Property~(d) actually concerns $\textsc{CutThresholdStep}(G,U,(1+\e)\la)$, but observe that the set $D_\sma$ can only increase if the weight parameter is increased from $W$ to $(1+\e)\la$.
 
 With properties (a) to (d) in hand, we now finish the proof of \lem{P}. Consider the iteration $i$ maximizing the size of $D^i_\sma := \bigcup_{v\in R^i_\sma} (S^i_v\cap U)$ (\line{max}), so that $|D^i_\sma|\ge|D_\sma|/(\lf\lg|U|\rf+1)$. For any vertex $u\in D^i_\sma$, all pairs $(u,v)\in P_{\text{ordered}}(G,U,W)$ (over all $v\in U$) disappear from $P_{\text{ordered}}(G_\sma,U_\sma,W)$, which is at least $|U|/2$ many by (c). In other words, 
 \[ |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| \ge \f{|U|}2|D^i_\sma| \ge\Om\lp\f{|D_\sma|}{\log|U|}\rp   .\]
@@ -469,7 +486,7 @@ Finally, applying (a) gives
 \EG
 Finally, we have $P(G_\lar,U_\lar,W) \s P(G,U,W)$ since the $(u,v)$-mincut for $u,v\in U_\lar$ can only increase in $G_\lar$ due to $G_\lar$ being a contraction of $G$ (in fact it says the same by \lem{large}). Therefore,
 \[ |P(G,U,W)| - |P(G_\lar,U_\lar,W)| = |P(G,U,W) \sm P(G_\lar,U_\lar,W)| ,\]
-and combining with the previous inequality concludes the proof.
+and combining with the bound on $\E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|]$ concludes the proof.
 \EP
 
 \subsection{Weighted graphs}

@@ -2,10 +2,11 @@
 \documentclass{article}
 \usepackage{amsmath,amssymb,bbm,amsthm}
 \usepackage{fullpage}
-\usepackage{thm-restate,color,xcolor,xspace}
+\usepackage{thm-restate,color,xcolor,xspace,graphicx}
 \usepackage{hyperref,cleveref}
 \usepackage{algorithm,algorithmicx}
 \usepackage[noend]{algpseudocode}
+\bibliographystyle{alpha}
 
 %%%%% BEGIN Jason's macros %%%%%
 %\newcommand{\f}{\displaystyle\frac}
@@ -183,6 +184,16 @@
 \renewcommand{\sec}[1]{\Cref{sec:#1}}
 %%%%% END Jason's macros %%%%%
 
+
+\makeatletter
+\newcounter{algocounter}
+\@ifpackageloaded{hyperref}%
+  {\newcommand{\mylabel}[2]% #1=name, #2 = contents
+    {\refstepcounter{algocounter}\protected@write\@auxout{}{\string\newlabel{#1}{{\textcolor{black}{\textup{#2}}}{\thepage}%
+      {\@currentlabelname}{\@currentHref}{}}}}}%
+\makeatother
+
+
 \renewcommand{\emph}[1]{\textbf{\textup{#1}}}
 \newcommand{\mincut}{\textsf{\textup{mincut}}}
 \newcommand{\Rsmall}{R_\textup{small}}
@@ -195,6 +206,10 @@
 \author{}
 \date{\today}
 \maketitle
+
+\section{Introduction}
+
+\subsection{Preliminaries}
 
 \BD[Minimum isolating cuts]
 Consider a weighted, undirected graph $G=(V,E)$ and a subset $R\s V$ ($|R|\ge2$). The \emph{minimum isolating cuts} for $R$ is a collection of sets $\{S_v:v\in R\}$ such that for each vertex $v\in R$, the set $S_v$ satisfies $S_v\cap R=\{v\}$ and has the minimum value of $w(\pt S'_v)$ over all sets $S'_v$ satisfying $S'_v\cap R=\{v\}$.
@@ -243,12 +258,33 @@ The following theorem, proved in APPENDIX, establishes the existence of a rooted
 For any graph $G=(V,E)$, terminals $U\s V$, and root $s\in U$, there exists a rooted minimal Gomory-Hu Steiner tree rooted at $s$.
 \end{restatable}
 
+\subsection{Our Results}
+
+\begin{restatable}{theorem}{ApproxU}\thml{approx-u}
+Let $G$ be a unweighted, undirected graph. There is a randomized algorithm that w.h.p., outputs a $(1+\e)$-approximate Gomory-Hu Steiner tree and runs in $\tO(m)$ time plus calls to max-flow on instances with a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges. Using the $m^{4/3+o(1)}$-time max-flow algorithm for unweighted graphs of Liu~and~Sidford, the algorithm runs in $m^{4/3+o(1)}\e\inv$ time.
+\end{restatable}
+\begin{restatable}{theorem}{ApproxW}\thml{approx-w}
+Let $G$ be a weighted, undirected graph with aspect ratio $\De$.
+There is a randomized algorithm that w.h.p., outputs a $(1+\e)$-approximate Gomory-Hu Steiner tree and runs in $\tO(m)$ time plus calls to max-flow on instances with a total of $\tO(n\e\inv\log^2\De)$ vertices and $\tO(n\e\inv\log^2\De)$ edges. Assuming polynomial aspect ratio and using the $\tO(m+n^{1.5})$ time max-flow algorithm of ???, the algorithm runs in $\tO(m+n^{1.5})$ time.
+\end{restatable}
+
+Our algorithms use the following subroutine, which we call Cut Threshold \alert{better name?}, which may have further applications on their own:
+
+\begin{restatable}{theorem}{Thr}\thml{thr}
+Let $G=(V,E)$ be a weighted, undirected graph, let $s\in V$, and let $\la\ge0$ be a parameter. There is an algorithm that outputs all vertices $v\in V$ with $\mincut(s,v)\le\la$, and runs in $\tO(m)$ time plus $\pl(n)$ calls to max-flow on $O(n)$-vertex, $O(m)$-edge graphs.
+\end{restatable}
+
+In particular, \thm{thr} implies an algorithm for approximate single-source min-cut that is faster than running approximate min-cut separately for each vertex.
+
+\begin{restatable}{theorem}{SSMC}\thml{ssmc}
+Let $G$ be a weighted, undirected graph with aspect ratio $\De$, and let $s\in V$. There is an algorithm that outputs, for each vertex $v\in V\sm\{s\}$, a $(1+\e)$-approximation of $\mincut(s,v)$, and runs in $\tO(m\log\De)$ time plus $\pl(n)\log\De$ calls to max-flow on $O(n)$-vertex, $O(m)$-edge graphs.
+\end{restatable}
 
 \section{$(1+\e)$-approximate SSMC}
 
 
 \begin{algorithm}
-\caption{\textsc{CutThresholdStep}$(G=(V,E),s,U,W)$} 
+\mylabel{step}{\textsc{CutThresholdStep}}\caption{\ref{step}$(G=(V,E),s,U,W)$} 
 \begin{algorithmic}[1]
 \State Initialize $R^0\gets U$ and $D\gets\emptyset$
 \For{$i$ from $0$ to $\lf\lg|U|\rf$}
@@ -273,12 +309,16 @@ It remains to prove that $\E[|D|]\ge\Om(|D^*|/\log|U|)$. Consider a rooted minim
 
 %\alert{DP: 1. Need to define rooted minimal Steiner Gomory-Hu tree which is used in the para above. 3. Should we talk about breaking ties among multiple lowest weight edges or add a perturbation at the outset and claim that mincuts are unique? This last fact needs a proof since there could be exponential number of $s-t$ mincuts, so just adding an inverse polynomial perturabtion does not immediately imply uniqueness. But, perhaps use the (classic) isolation lemma?} \textcolor{blue}{I had assumed all $s-t$ mincuts unique in a previous write-up. I do think the new version is better since we also obtain better bounds for unweighted graphs which we can't use isolation lemma for. But maybe a note to the reader that assuming all min-cuts are unique could help with a first reading}
 
-For each vertex $v\in D^*$, consider the subtree rooted at $v$, define $U_v$ to be the vertices in the subtree, and define $n_v$ as the number of vertices in the subtree. We say that a vertex $v\in D^*$ is \emph{active} if $v\in R^i$ for $i=\lf\lg n_{r(v)}\rf$. In addition, if $U_{r(v)}\cap R^i=\{v\}$, then we say that $v$ \emph{hits} all of the vertices in $U_{r(v)}$ (including itself). In particular, in order for $v$ to hit any other vertex, it must be active. For completeness, we say that any vertex in $U\sm D^*$ is not active and does not hit any vertex.
+For each vertex $v\in D^*$, consider the subtree rooted at $v$, define $U_v$ to be the vertices in the subtree, and define $n_v$ as the number of vertices in the subtree. We say that a vertex $v\in D^*$ is \emph{active} if $v\in R^i$ for $i=\lf\lg n_{r(v)}\rf$. In addition, if $U_{r(v)}\cap R^i=\{v\}$, then we say that $v$ \emph{hits} all of the vertices in $U_{r(v)}$ (including itself); see Figure~\ref{fig:hits}. In particular, in order for $v$ to hit any other vertex, it must be active. For completeness, we say that any vertex in $U\sm D^*$ is not active and does not hit any vertex.
 
-\alert{The above definitions are fine, but would be easier to read with (a) some intuition behind when you say that a vertex is active and process of hitting other vertices, and (b) a figure illustrating the notation.}
+\alert{The above definitions are fine, but would be easier to read with (a) some intuition behind when you say that a vertex is active and process of hitting other vertices, and (b) a figure illustrating the notation.} 
 
-\textcolor{blue}{Jason: TODO add a figure here.}
+\textcolor{blue}{Jason: added a figure.}
 
+\begin{figure}\centering
+\includegraphics[scale=1]{hits.pdf}
+\caption{Let $i=\lf\lg n_{r(v)}\rf=\lf\lg 7\rf=2$, and let the red vertices be those sampled in $R^2$. Vertex $v$ is active and hits $u$ because $v$ is the only vertex in $U_{r(v)}$ that is red.}\label{fig:hits}
+\end{figure}
 
 To prove that $\E[|D|] \ge \Om(|D^*|/\log|U|)$, we will show that
  \BE
@@ -291,7 +331,7 @@ For (a), consider the path from $u$ to the root $s$ in $T$, and take any vertex 
 
 For (b), for $i=\lf\lg n_{r(v)}\rf$, we have $v\in R^i$ with probability exactly $1/2^i = \Th(1/n_{r(v)})$, and with probability $\Om(1)$, no other vertex in $U_{r(v)}$ joins $R^i$. Therefore, $v$ is active with probability $\Om(1/n_{r(v)})$. Conditioned on $v$ being active, it hits exactly $n_{r(v)}$ many vertices. It follows that $v$ hits $\Om(1)$ vertices in expectation.
 
-For (c), the number of vertices $v$ that hit vertex $u$ is at most the number of active vertices $v$ on the path from $u$ to $s$ in $T$. Label these vertices $u=v_1,v_2,\lds,v_\el=s$ in order. Each vertex $v_j\in D^*$ is active with probability $\Th(1/n_{r(v_j)})$, which is at most $\Th(1/j)$ since $v_1,\lds,v_j \in U_{r(v_j)}$. Each vertex $v_j\notin D^*$ is never active. Therefore, the expected number of active vertices on the path from $u$ to $s$ is at most $\sum_{j=1}^\el\Th(1/j)=\Th(\ln\el)\le \Th(\ln|U|)$. A standard Chernoff bound shows that with probability at least $1-\f c{2|U|^3}$ for any constant $c>0$, the number of active vertices on the path is indeed $O(\ln|U|)$, where the $O(\cd)$ hides the dependency on $c$. Taking a union bound over all $u\in U$, the probability that this is true for all vertices is at least $1-\f c{2|U|^2}$.
+For (c), the number of vertices $v$ that hit vertex $u$ is at most the number of active vertices $v$ for which $r(v)$ is on the path from $u$ to $s$ in $T$. Label these vertices $u=v_1,v_2,\lds,v_\el=s$, ordered by increasing distance from $u$ to $r(v_i)$ in $T$. Each vertex $v_j\in D^*$ is active with probability $\Th(1/n_{r(v_j)})$, which is at most $\Th(1/j)$ since $v_1,\lds,v_j \in U_{r(v_j)}$. Each vertex $v_j\notin D^*$ is never active. Therefore, the expected number of active vertices on the path from $u$ to $s$ is at most $\sum_{j=1}^\el\Th(1/j)=\Th(\ln\el)\le \Th(\ln|U|)$. A standard Chernoff bound shows that with probability at least $1-\f c{2|U|^3}$ for any constant $c>0$, the number of active vertices on the path is indeed $O(\ln|U|)$, where the $O(\cd)$ hides the dependency on $c$. Taking a union bound over all $u\in U$, the probability that this is true for all vertices is at least $1-\f c{2|U|^2}$.
 
 Finally, we show why properties (a) to (c) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)$. In the event that property~(c) fails, the total number of pairs $(u,v)$ for which $v$ hits $u$ can be trivially upper bounded by $|U|^2$. Since this occurs with probability at most $\f c{2|U|^2}$, the total contribution to the expectation $c|D^*|$ in property~(b) is at most $c/2$. Therefore, the contribution to the expectation in the event that property~(c) succeeds is at least $c|D^*|-c/2\ge (c/2)|D^*|$. In this case, since each vertex is hit at most $O(\log|U|)$ times, there are at least $\Om(|D^*|/\log|U|)$ vertices hit in expectation.
 \EP
@@ -306,11 +346,11 @@ Finally, we show why properties (a) to (c) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)
 %\EP
 
 \begin{algorithm}
-\caption{\textsc{CutThreshold}$(G=(V,E),s, W)$}
+\mylabel{thr}{\textsc{CutThreshold}}\caption{\ref{thr}$(G=(V,E),s, W)$}
 \begin{algorithmic}[1]
 \State Initialize $U\gets V$ and $D_{\textup{total}}\gets\emptyset$
 \For{$O(\log^2n)$ iterations}
- \State $D\gets \textsc{CutThresholdStep}(G,s,U, W)$
+ \State $D\gets \ref{step}(G,s,U, W)$
  \State Update $D_{\textup{total}}\gets D_{\textup{total}}\cup D$ and $U\gets U\sm D$
 \EndFor
 \State\Return $D_{\textup{total}}$
@@ -319,21 +359,22 @@ Finally, we show why properties (a) to (c) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)
 
 
 \BC\corl{threshold}
-W.h.p., the output $D_{\textup{total}}$ of \textsc{CutThreshold} is exactly all vertices $v\in U\sm \{s\}$ for which the $(s,v)$-mincut has weight at most $ W$. 
+W.h.p., the output $D_{\textup{total}}$ of \ref{thr} is exactly all vertices $v\in U\sm \{s\}$ for which the $(s,v)$-mincut has weight at most $ W$. 
 \EC
 \BP
 %Let $D^*$ be the targeted output.
 By \lem{step}, $|U\cap D^*|$ decreases by $\Om(|D^*|/\log n)$ in expectation. After $O(\log^2n)$ iterations, we have $\E[|U\cap D^*|] \le 1/\poly(n)$, so w.h.p., $U\cap D^*=\emptyset$. Each vertex in $D^*$ that is removed from $U$ is added to $D_{\textup{total}}$, and no vertices in $U\sm D^*$ are added to $D_{\textup{total}}$, so w.h.p., the algorithm returns the correct set $D^*$.
 \EP
-
+In other words, \ref{thr} is an algorithm that fulfills \thm{thr}, restated below.
+\Thr*
 
 \begin{algorithm}
 \caption{\textsc{ApproxSSMC}$(G=(V,E),s,\e)$}
 \begin{algorithmic}[1]
- \State Initialize bounds: $ W_{\min} \gets$ minimum weight of an edge in $G$, and $ W_{\max}\gets$ maximum weight of an edge %\Comment{Every $(s,v)$-mincut has weight in $[ W_{\min}, W_{\max}]$}
- \For{all integers $i\ge0$ s.t.\ $(1+\e)^i W_{\min} \in [ W_{\min},(1+\e) n W_{\max}]$}
- \State $ W_i\gets (1+\e)^i W_{\min}$
- \State $D_i\gets \textsc{CutThreshold}(G,s, W)$
+ \State Initialize bounds: $ w_{\min} \gets$ minimum weight of an edge in $G$, and $ w_{\max}\gets$ maximum weight of an edge %\Comment{Every $(s,v)$-mincut has weight in $[ w_{\min}, w_{\max}]$}
+ \For{all integers $i\ge0$ s.t.\ $(1+\e)^i w_{\min} \in [ w_{\min},(1+\e) n w_{\max}]$}
+ \State $ W_i\gets (1+\e)^i w_{\min}$
+ \State $D_i\gets \ref{thr}(G,s, W)$
 \EndFor
 \State For each vertex $v\in V$, take the largest $D_i$ containing $v$, and set $\tilde\la(v)\gets  W_i$
 \State\Return $\tilde\la:V\to \R$
@@ -344,22 +385,30 @@ By \lem{step}, $|U\cap D^*|$ decreases by $\Om(|D^*|/\log n)$ in expectation. Af
 W.h.p., the output $\tilde\la$ of \textsc{ApproxSSMC} satisfies $\mincut(s,v) \le \tilde\la(v) \le (1+\e)\mincut(s,v)$.
 \EL
 \BP
-Follows from \cor{threshold} and the fact that for all $v\in V$, there is an integer $i$ with $ W_i\in[\mincut(s,v),(1+\e)\mincut(s,v))$. 
+For all $v\in V\sm\{s\}$, we have $w_{\min}\le\mincut(s,v)\le w(\pt(\{s\}))\le nw_{\max}$, so there is an integer $i$ with $ W_i\in[\mincut(s,v),(1+\e)\mincut(s,v))$. The lemma follows from \cor{threshold} applied to this $i$.
+%Follows from \cor{threshold} and the fact that for all $v\in V$, there is an integer $i$ with $ W_i\in[\mincut(s,v),(1+\e)\mincut(s,v))$. 
 \EP
+
+We have therefore proved \thm{ssmc}, restated below.
+\SSMC*
 
 \section{Approximate Gomory-Hu Steiner Tree}
 
+\subsection{Unweighted Graphs}
+
+Let $\e>0$ be a fixed parameter throughout the recursive algorithm.
+
 \begin{algorithm}[H]
-\caption{\textsc{ApproxSteinerGHTree}$(G=(V,E),U,\e)$} 
+\mylabel{approxGH}{\textsc{ApproxSteinerGHTree}}\caption{\ref{approxGH}$(G=(V,E),U)$} 
 \begin{algorithmic}[1]
-\State $\la_0\gets $ global Steiner mincut of $G$ with terminals $U$ \Comment{Sparsify if necessary}
-\If{}
- \State $G'\gets\textsc{Sparsify}(G,)$
- \State\Return \textsc{ApproxSteinerGHTree}$(G=(V,E),U,\e)$
-\EndIf
+\State $\la_0\gets $ global Steiner mincut of $G$ with terminals $U$ %\Comment{Sparsify if necessary}
+%\If{}
+% \State $G'\gets\textsc{Sparsify}(G,)$
+% \State\Return \ref{approxGH}$(G=(V,E),U,\e)$
+%\EndIf
 
 \State $s\gets$ uniformly random vertex in $U$
-\State Call $\textsc{CutThresholdStep}(G,s,U,(1+\e)\la)$, and let $R^j$ and $S^j_v:v\in R^j$ ($0\le j\le\lg|U|$) be the intermediate variables in the algorithm\linel{thr}
+\State Call $\ref{step}(G,s,U,(1+\e)\la)$, and let $R^j$ and $S^j_v:v\in R^j$ ($0\le j\le\lg|U|$) be the intermediate variables in the algorithm\linel{thr}
 \State For each $j\in\{0,1,\lds,\lf\lg|U|\rf\}$, let $R^j_\sma\gets \{ v\in R^j : |S^j_v\cap U|\le|U|/2 \}$  
 \State Let $i\in\{0,1,\lds,\lf\lg|U|\rf\}$ be the iteration maximizing $\big|\bigcup_{v\in R^i_\sma} (S^i_v\cap U)\big|$ \linel{i}
 
@@ -367,15 +416,18 @@ Follows from \cor{threshold} and the fact that for all $v\in V$, there is an int
 \For{each $v\in  R^i_\sma$} \Comment{Construct recursive graphs and apply recursion}
  \State Let $G_v$ be the graph $G$ with vertices $V\sm S^i_v$ contracted to a single vertex $x_v$ \Comment{$S^i_v$ are disjoint}
  \State Let $U_v\gets S^i_v\cap U$
- \State $(T_v,f_v)\gets \textsc{ApproxSteinerGHTree}(G_v,U_v,\e)$
+ \State $(T_v,f_v)\gets\ref{approxGH}(G_v,U_v)$
 \EndFor
 \State Let $G_\lar$ be the graph $G$ with vertices $S^i_v$ contracted to a single vertex $y_v$ for all $v\in R^i_\sma$
 \State Let $U_\lar\gets U\sm\bigcup_{v\in R^i_\sma}(S^i_v\cap U)$
-\State $(T_\lar,f_\lar)\gets \textsc{ApproxSteinerGHTree}(G_\lar,U_\lar,\e)$
+\State $(T_\lar,f_\lar)\gets\ref{approxGH}(G_\lar,U_\lar)$
 
 \
-\State s \Comment{Combine Steiner Gomory-Hu trees together}
-\State\Return blah
+\State Construct $T$ by starting with the disjoint union $T_\lar\cup\bigcup_{v\in R^i_\sma}T_v$ and, for each $v\in R^i_\sma$, adding an edge between $f_v(x_v)\in U_v$ and $f_\lar(y_v)\in U_\lar$ of weight $w(\pt_GS^i_v)$ 
+
+\Comment{Combine Steiner Gomory-Hu trees together} \linel{combine-T}
+\State Construct $f:V\to U$ by $f(v')=f_\lar(v')$ if $v'\in U_\lar$ and $f(v')=f_v(v')$ if $v'\in U_v$ for some $v\in R^i_\sma$\linel{combine-f}
+\State\Return $(T,f)$
 
 \end{algorithmic}
 \end{algorithm}
@@ -396,9 +448,10 @@ Suppose now that $v\notin S$. In this case, we can swap $p$ and $q$, and swap $S
 \EP
 
 \BL\leml{small}
-For any $v\in  R^i_\sma$ and any distinct vertices $p,q\in U_v$, $\mincut_{G_v}(p,q)\le(1+\e)\mincut_G(p,q)$.
+For any $v\in  R^i_\sma$ and any distinct vertices $p,q\in U_v$, $\mincut_G(p,q)\le\mincut_{G_v}(p,q)\le(1+\e)\mincut_G(p,q)$.
 \EL
 \BP
+The lower bound $\mincut_G(p,q)\le\mincut_{G_v}(p,q)$ holds because $G_v$ is a contraction of $G$, so we focus on the upper bound.
 Fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. Since $S^i_v\cup S$ is a $(p,q)$-cut, it is in particular a Steiner cut for terminals $U$, so $w(S^i_v\cup S)\ge\la$. Also, $w(S^i_v)\le(1+\e)\la$ by the choice of the threshold $(1+\e)\la$ (\line{thr}). Together with the submodularity of cuts, we obtain
 \[ (1+\e)\la+w(\pt_GS) \ge w(\pt_GS^i_v) + w(\pt_GS) \ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)) \ge \la + w(\pt_G(S^i_v\cap S)) .\]
 The set $S^i_v\cap S$ stays intact under the contraction from $G$ to $G_v$, so $w(\pt_{G_v}(S^i_v\cap S))=w(\pt_G(S^i_v\cap S))$. Therefore,
@@ -406,11 +459,16 @@ The set $S^i_v\cap S$ stays intact under the contraction from $G$ to $G_v$, so $
 as promised.
 \EP
 
-\BL
-\textsc{ApproxSteinerGHTree}$(G=(V,E),U,\e)$ outputs a $(1+\e)^{\lg|U|}$-approximate Gomory-Hu Steiner tree.
+\BL\leml{approx}
+\ref{approxGH}$(G=(V,E),U)$ outputs a $(1+\e)^{\lg|U|}$-approximate Gomory-Hu Steiner tree.
 \EL
 \BP
-\alert{(sketch) Can only go to $G_v$ at most $\lg|U|$ times, picks up $(1+\e)$ factor each time}
+We apply induction on $|U|$. 
+Since $|U_v|\le|U|/2$ for all $v\in R^i_\sma$, by induction, the recursive outputs $(T_v,f_v)$ are Gomory-Hu Steiner trees with approximation $(1+\e)^{\lg|U_v|}\le(1+\e)^{\lg|U|-1}$.  By definition, this means that for all $s,t\in U_v$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_v$, letting $U'_v\s U_v$ be the vertices of the connected component of $T_v-(u,u')$ containing $s$, we have that $f\inv_v(U'_v)$ is a $(1+\e)^{\lg|U|-1}$-approximate $(s,t)$-mincut in $G_v$ with value is $w_T(u,u')$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By construction of $(T,f)$ (lines~\ref{line:combine-T}~and~\ref{line:combine-f}), the set $f\inv(U')$ is simply $f\inv_v(U'_v)$ with the vertex $x_v$ replaced by $V\sm S^i_v$ in the case that $x_v\in f\inv(U')$. Since $G_v$ is simply $G$ with all vertices $V\sm S^i_v$ contracted to $x_v$, we conclude that $w_{G_v}(\pt f\inv_v(U'_v)) = w_G(\pt f\inv(U'))$. By \lem{small}, the values $\mincut_G(s,t)$ and $\mincut_{G_v}(s,t)$ are within factor $(1+\e)$ of each other, so $w_G(\pt f\inv(U'))$ approximates the $(s,t)$-mincut in $G$ to a factor $(1+\e)\cd(1+\e)^{\lg|U|-1} = (1+\e)^{\lg|U|}$. In other words, the Gomory-Hu Steiner tree condition for $(T,f)$ is satisfied for all $s,t\in U_v$ for some $v\in R^i_\sma$.
+
+By induction, the recursive output $(T_\lar,f_\lar)$ is a Gomory-Hu Steiner tree with approximation $(1+\e)^{\lg|U_\lar|}\le(1+\e)^{\lg|U|}$. Again, consider $s,t\in U_\lar$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_\lar$, and let $U'_\lar\s U_\lar$ be the vertices of the connected component of $T_\lar-(u,u')$ containing $s$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By a similar argument, we have $w_{G_\lar}(\pt f\inv_\lar(U'_\lar)) = w_G(\pt f\inv(U'))$. By \lem{large}, we also have $\mincut_G(s,t)=\mincut_{G_\lar}(s,t)$, so $w_G(\pt f\inv(U'))$ is a $(1+\e)^{\lg|U|}$-approximate $(s,t)$-mincut in $G$, fulfilling the Gomory-Hu Steiner tree condition for $(T,f)$ in the case $s,t\in U_\lar$.
+
+There are two remaining cases: $s\in U_v$ and $t\in U_{v'}$ for distinct $v,v'\in R^i_\sma$, and $s\in U_v$ and $t\in U_\lar$; we treat both cases simultaneously. Since $G$ has Steiner mincut $\la$, each of the contracted graphs $G_\lar$ and $G_v$ has Steiner mincut at least $\la$. By induction, every edge in $T_v$ and $T_\lar$ or $T_{v'}$ (depending on case) has weight at least $(1+\e)^{-\lg|U|}\la$. By construction, the $s$--$t$ path in $T$ has at least one edge of the form $(f_v(x_v),f_\lar(y_v))$, added on \line{combine-T}; this edge has weight $w(\pt_GS^i_v)\le(1+\e)\la$. Therefore, the minimum-weight edge on the $s$--$t$ path in $T$ has weight at least $(1+\e)^{-\lg|U|}\la$ and at most $(1+\e)\la$; in particular, it is a $(1+\e)^{\lg|U|}$-approximation of $\mincut_G(s,t)$. If the edge is of the form $(f_v(x_v),f_\lar(y_v))$, then by construction, the relevant set $f\inv(U')$ is exactly $S^i_v$, which is a $(1+\e)$-approximate $(s,t)$-mincut in $G$. If the edge is in $T_\lar$ or $T_v$ or $T_{v'}$, then we can apply the same arguments used previously. %\alert{(sketch) Can only go to $G_v$ at most $\lg|U|$ times, picks up $(1+\e)$ factor each time}
 \EP
 
 \subsection{Running Time Bound}
@@ -421,7 +479,7 @@ However, progress on $(G_\lar,U_\lar,\e)$ is unclear; in particular, $|U_\lar|$ 
 In particular, we will consider its size $|P(G,U,W)|$, and show the following expected reduction:
 
 \BL\leml{P}
-For any $W\le(1+\e)\la$, over the random selection of $s$ and the randomness in \textsc{CutThresholdStep}, we have
+For any $W\le(1+\e)\la$, over the random selection of $s$ and the randomness in \ref{step}, we have
 \[ \E[|P(G_\lar,U_\lar,W)|] \le \lp1-\Om\lp\f1{\log^2n}\rp\rp|P(G,U,W)| .\]
 \EL
 
@@ -438,21 +496,28 @@ In other words, w.h.p., we have $|P(G,U,W)|=0$ at the end, or equivalently, the 
 \EP
 
 Combining both recursive measures of progress together, we obtain the following bound on the recursion depth:
-\BL
-Let $W_{\min}=\min_{s,t\in U}\mincut(s,t)$ and $W_{\max}=\max_{s,t\in U}\mincut(s,t)$ be the minimum and maximum mincuts between two terminals. W.h.p., the depth of the recursion free of \textsc{ApproxSteinerGHTree} is $O(\e\inv\log^3n(\logn+\log(W_{\max}/W_{\min})))$.
+\BL\leml{depth}
+%Let $w_{\min}=\min_{s,t\in U}\mincut(s,t)$ and $w_{\max}=\max_{s,t\in U}\mincut(s,t)$ be the minimum and maximum mincuts between two terminals.
+Let $w_{\min}$ and $w_{\max}$ be the minimum weight and maximum weight of any edge in $G$.
+W.h.p., the depth of the recursion free of \ref{approxGH} is $O(\e\inv\log^3n\log(n\De))$.
 \EL
 \BP
-For any $\Th(\log^3n)$ successive recursive calls down the recursion tree, either one call was on a graph $G_v$, or $\Th(\log^3n)$ of them were on the graph $G_\lar$. In the former case, $|U|$ drops by half, and in the latter case, by \cor{mincut-increase}, the global Steiner mincut increases by factor $(1+\e)$. The former can happen $O(\logn)$ times, and the latter $O(\e\inv\log(W_{\max}/W_{\min}))$ times, hence the bound.
+For any $\Th(\log^3n)$ successive recursive calls down the recursion tree, either one call was on a graph $G_v$, or $\Th(\log^3n)$ of them were on the graph $G_\lar$. In the former case, $|U|$ drops by half, so it can happen $O(\logn)$ times total. In the latter case, by \cor{mincut-increase}, the global Steiner mincut increases by factor $(1+\e)$. Let $w_{\min}$ and $w_{\max}$ be the minimum and maximum weights in $G$, so that $\De=w_{\max}/w_{\min}$. Note that for any recursive instance $(G',U')$ and any $s,t\in U'$, we have $w_{\min}\le\mincut_{G'}(s,t)\le w(\pt(\{s\}))\le nw_{\max}$, so the global Steiner mincut of $(G',U')$ is always in the range $[w_{\min},nw_{\max}]$. It follows that calling $G_\lar$ can happen $O(\e\inv\log(nw_{\max}/w_{\min}))$ times, hence the bound.
 \EP
 
-\BC
-For an unweighted graph $G=(V,E)$, and terminals $U\s V$, $\textsc{ApproxSteinerGHTree}(G,V,\e)$ takes time $\tO(m\e\inv)$ plus $\e\inv\pl(n)$ many calls to max-flow on $O(n)$-vertex, $O(m)$-edge graphs.
-\EC
+We state the next theorem for \emph{unweighted} graphs only. For weighted graphs, there is no nice bound on the number of new edges created throughout the algorithm, and therefore no easy bound on the overall running time. In the next section, we introduce a graph sparsification step to handle this issue.
+
+\BL\leml{runtime}
+For an \emph{unweighted} graph $G=(V,E)$, and terminals $U\s V$, $\ref{approxGH}(G,V,\e)$ takes time $\tO(m\e\inv)$ plus calls to max-flow on instances with a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges.% many calls to max-flow on $O(n)$-vertex, $O(m)$-edge graphs.
+\EL
 \BP
-For a given recursion level, consider the instances $\{ (G_i,U_i,W_i)\}$ across that level. By construction, the terminals $U_i$ partition $U$. Moreover, the total number of vertices over all $G_i$ is at most $n+2(|U|-1)$ since each branch creates $2$ new vertices and there are at most $|U|-1$ branches. The total number of new edges created is at most the sum of weights of the edges in the final $(1+\e)$-approximate Gomory-Hu Steiner tree. For an unweighted graph, this is $O(m)$ by the following well-known argument. Root the Gomory-Hu Steiner tree $T$ at any vertex $r\in U$; for any $v\in U\sm r$ with parent $u$, the cut $\pt\{v\}$ in $G$ is a $(u,v)$-cut of value $\deg(v)$, so $w_T(u,v)\le\deg(v)$. Overall, the sum of the edge weights in $T$ is at most $\sum_{v\in U}\deg(v)\le2m$.
+For a given recursion level, consider the instances $\{ (G_i,U_i,W_i)\}$ across that level. By construction, the terminals $U_i$ partition $U$. Moreover, the total number of vertices over all $G_i$ is at most $n+2(|U|-1)=O(n)$ since each branch creates $2$ new vertices and there are at most $|U|-1$ branches. The total number of new edges created is at most the sum of weights of the edges in the final $(1+\e)$-approximate Gomory-Hu Steiner tree. For an unweighted graph, this is $O(m)$ by the following well-known argument. Root the Gomory-Hu Steiner tree $T$ at any vertex $r\in U$; for any $v\in U\sm r$ with parent $u$, the cut $\pt\{v\}$ in $G$ is a $(u,v)$-cut of value $\deg(v)$, so $w_T(u,v)\le\deg(v)$. Overall, the sum of the edge weights in $T$ is at most $\sum_{v\in U}\deg(v)\le2m$.
+
+Therefore, there are $O(n)$ vertices and $O(m)$ edges in each recursion level. By \lem{depth}, there are $O(\e\inv\log^4n)$ levels (since $\De=1$ for an unweighted graph), for a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges. In particular, the instances to the max-flow calls have $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges in total.
 \EP
 
-For weighted graphs, there is no nice bound on the number of new edges created throughout the algorithm. In the next section, we introduce a graph sparsification step to handle this issue.
+Combining \Cref{lem:approx,lem:runtime} and resetting $\e\gets\Th(\e/\logn)$, we obtain \thm{approx-u}, restated below.
+\ApproxU*
 
 Finally, we prove \lem{P} below.
 
@@ -466,12 +531,12 @@ We now state and prove the following four properties:
 \im[(a)] For all $u,v\in U$, $\{u,v\}\in P(G,U,W)$ if and only if either $(u,v)\in P_{\text{ordered}}(G,U,W)$ or $(v,u)\in P_{\text{ordered}}(G,U,W)$ (or both).
 \im[(b)] For each pair $(u,v)\in P_{\text{ordered}}(G,U,W)$, we have $u\in D^*_\sma$ with probability at least $1/2$,
 \im[(c)] For each $u\in D^*_\sma$, there are at least $|U|/2$ vertices $v\in U$ for which $(u,v)\in P_{\text{ordered}}(G,U,W)$.
-\im[(d)] Over the randomness in \textsc{CutThresholdStep}$(G,U,(1+\e)\la)$, $\E[|D_\sma|]\ge\Om(|D^*_\sma|/\log|R|)$.
+\im[(d)] Over the randomness in \ref{step}$(G,U,(1+\e)\la)$, $\E[|D_\sma|]\ge\Om(|D^*_\sma|/\log|R|)$.
 \EE
 
 Property (a) follows by definition.
 Property~(b) follows from the fact that $u\in D^*_\sma$ whenever $s\notin S(u,v)$, which happens with probability at least $1/2$. 
-Property~(c) follows because any vertex $v\in U\sm S(u,v)$ satisfies $(u,v)\in P_{\text{ordered}}(G,U,W)$, of which there are at least $|U|/2$. Property~(d) can be proved for $\textsc{CutThresholdStep}(G,U,W)$ identically to the proof of \lem{step}, substituting $D^*$ for $D^*_\sma$. The only property we need is that $D^*_\sma$ is downward-closed, in the sense that for any vertex $v\in D^*_\sma$, all vertices in the subtree rooted at $v$ are also in $D^*_\sma$. Property~(d) actually concerns $\textsc{CutThresholdStep}(G,U,(1+\e)\la)$, but observe that the set $D_\sma$ can only increase if the weight parameter is increased from $W$ to $(1+\e)\la$.
+Property~(c) follows because any vertex $v\in U\sm S(u,v)$ satisfies $(u,v)\in P_{\text{ordered}}(G,U,W)$, of which there are at least $|U|/2$. Property~(d) can be proved for $\ref{step}(G,U,W)$ identically to the proof of \lem{step}, substituting $D^*$ for $D^*_\sma$. The only property we need is that $D^*_\sma$ is downward-closed, in the sense that for any vertex $v\in D^*_\sma$, all vertices in the subtree rooted at $v$ are also in $D^*_\sma$. Property~(d) actually concerns $\ref{step}(G,U,(1+\e)\la)$, but observe that the set $D_\sma$ can only increase if the weight parameter is increased from $W$ to $(1+\e)\la$.
 
 With properties (a) to (d) in hand, we now finish the proof of \lem{P}. Consider the iteration $i$ maximizing the size of $D^i_\sma := \bigcup_{v\in R^i_\sma} (S^i_v\cap U)$ (\line{max}), so that $|D^i_\sma|\ge|D_\sma|/(\lf\lg|U|\rf+1)$. For any vertex $u\in D^i_\sma$, all pairs $(u,v)\in P_{\text{ordered}}(G,U,W)$ (over all $v\in U$) disappear from $P_{\text{ordered}}(G_\sma,U_\sma,W)$, which is at least $|U|/2$ many by (c). In other words, 
 \[ |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| \ge \f{|U|}2|D^i_\sma| \ge\Om\lp\f{|D_\sma|}{\log|U|}\rp   .\]
@@ -491,14 +556,52 @@ and combining with the bound on $\E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|]$ conclude
 
 \subsection{Weighted graphs}
 
-Include a sparsification step to force linear number of edges on each recursive instance
+%Include a sparsification step to force linear number of edges on each recursive instance
 
+For weighted graphs, we cannot easily bound the total size of the recursive instances. Instead, to keep the sizes of the instances small, we sparsify the recursive instances to have roughly the same number of edges and vertices. By the proof of \lem{runtime}, the total number of vertices over all instances in a given recursion level is at most $n+2(|U|-1)=O(n)$. Therefore, if each such instance is sparsified, the total number of edges becomes $\tO(n)$, and the algorithm is efficient.
 
+It turns out we only need to re-sparsify the graph in two cases: when we branch down to a graph $G_v$ (and not $G_\lar$), and when the mincut $\la$ increases by a constant factor, say $2$. The former can happen at most $O(\logn)$ times down any recursion branch, since $|U|$ decreases by a factor $2$ each time, and the latter occurs $O(\log(n\De))$ times down any branch. Each time, we sparsify up to factor $1+\Th(\e/\log(n\De))$, so that the total error along any branch is $1+\Th(\e)$. 
 
+We now formalize our arguments. We begin with the specification routine due to Benczur and Karger~\cite{BenczurKarger1996}.
 
+%\BD[Strength]
+%Given a graph $G=(V,E)$, the \emph{strength} of an edge $e\in E$ is the maximum global mincut of any vertex-induced subgraph of $G$ that contains $e$.
+%\ED
+%\BT\thml{str}
+%Given a weighted, undirected graph $G=(V,E)$, there exists a deterministic algorithm in $\tO(m)$ time that computes values $k'_e:e\in E$ such that
+% \BE
+% \im For each edge $e\in E$, the strength of $e$ is at least $k'_e$, and 
+% \im $\sum_{e\in E}k'_e = O(n)$.
+% \EE
+%\ET
+\BT\thml{sparsify}
+Given a weighted, undirected graph $G$, a parameters $\e,\de>0$, there is a randomized algorithm that with probability at least $1-\de$ outputs a $(1+\e)$-approximate sparsifier of $G$ with $O(n\log(n/\de))$ edges.
+%and let $k'_e:e\in E$ be values satisfying the two conditions in \thm{str}. Let $H$ be a weighted, undirected graph obtained by independently sampling each edge $e\in E$ with probability $p_e=\Th(\f{\log n}{\e^2k'_e})$ and (if sampled) weighting the sampled edge by $w_e/p_e$. Then w.h.p., $H$ is a $(1+\e)$-approximate sparsifier of $G$ with $O(n\logn)$ edges.
+\ET
 
+We now derive approximation and running time bounds.
+\BT
+Suppose that the recursive algorithm \ref{approxGH} sparsifies the input under the following three cases, using \thm{sparsify} with the same parameter $\e$ and the parameter $\de=1/\poly(n)$:
+ \BE
+ \im The instance was the original input, or
+ \im The instance was obtained from calling $(G_v,U_v)$, or
+ \im The instance was obtained from calling $(G_\lar,U_\lar)$, and the Steiner mincut increased by factor at least $2$ since the last sparsification.
+ \EE
+Then w.h.p., the algorithm outputs a $(1+\e)^{O(\log(n\De))}$-approximate Gomory-Hu Steiner tree and takes $\tO(m)$ time plus calls to max-flow on instances with a total of $\tO(n\e\inv\log\De)$ vertices and $\tO(n\e\inv\log\De)$ edges.
+\ET
+\BP
+We first argue about the approximation factor. Along any branch of the recursion tree, there is at most $1$ sparsification of type~(1), at most $O(\logn)$ many of type~(2), and at most $O(\log(n\De))$ many of type~(3). Each sparsification distorts the pairwise mincuts by a $(1+\e)$ factor, so the total distortion is $(1+\e)^{O(\log(n\De)}$.
 
+Next, we consider the running time. The recursion tree can be broken into chains of recursive $G_\lar$ calls, so that each chain begins with either the original instance or some intermediate $G_v$ call, which is sparsified by either~(1)~or~(2). Fix a chain, and let $n'$ be the number of vertices at the start of the chain, so that the number of edges is $O(n'\log n)$. Within each chain, the number of vertices can only decrease down the chain. After each sparsification, many sparsifications of type~(2), and between two consecutive sparsifications, the number of edges can only decrease down the chain since the graph can only contract. It follows that each instance in the chain has at most $n'$ vertices and $O(n'\logn)$ edges. By \lem{depth}, each chain has length $O(\e\inv\log^3n\log(n\De))$, so the total number of vertices and edges in the chain is $\tO(n'\e\inv\log\De)$. Imagine charging these vertices and edges to the $n'$ vertices at the root of the chain.
+In other words, to bound the total number of edges in the recursion tree, it suffices to bound the total number of vertices in the original instance and in intermediate $G_v$ calls. 
 
+In the recursion tree, there are $n$ original vertices and at most $2(|U|-1)$ new vertices, since each branch creates $2$ new vertices and there are at most $|U|-1$ branches. Each vertex joins $O(\logn)$ many $G_v$ calls, since every time a vertex joins one, the number of terminals drops by half; note that a vertex is never duplicated in the recursion tree. It follows that there are $O(n\logn)$ many vertices in intermediate $G_v$ calls, along with the $n$ vertices in the original instance. Hence, from our charging scheme, we conclude that there are a total of $\tO(n\e\inv\log\De)$ vertices and edges in the recursion tree. In particular, the instances to the max-flow calls have $\tO(n\e\inv\log\De)$ vertices and edges in total.
+\EP
+
+Resetting $\e\gets\Th(\e/\log(n\De))$, we have thus proved \thm{approx-w}, restated below.
+\ApproxW*
+
+\bibliography{refs}
 \appendix
 
 \section{Rooted minimal Gomory-Hu Steiner tree}

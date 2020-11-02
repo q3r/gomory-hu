@@ -1,0 +1,74 @@
+\alert{DP: We need to merge in these prelims into the previous section, perhaps into techniques?}
+
+\BD[Minimum isolating cuts]
+Consider a weighted, undirected graph $G=(V,E)$ and a subset $R\s V$ ($|R|\ge2$). The \emph{minimum isolating cuts} for $R$ is a collection of sets $\{S_v:v\in R\}$ such that for each vertex $v\in R$, the set $S_v$ satisfies $S_v\cap R=\{v\}$ and has the minimum value of $w(\pt S'_v)$ over all sets $S'_v$ satisfying $S'_v\cap R=\{v\}$.
+\ED
+
+%\alert{DP: In the above definition, should we also mention that sets $S_v$ must be disjoint? At the moment, this is in the next lemma. Would putting it in the definition might make life a bit easier in terms of just having to refer to the definition when invoking this property?}
+
+\BL
+Fix a subset $R\s V$ ($|R|\ge2$). There is an algorithm that computes the minimum isolating cuts $\{S_v:v\in R\}$ for $R$ using $O(\log|R|)$ calls to $s$--$t$ max-flow on weighted graphs of $O(n)$ vertices and $O(m)$ edges, and takes $\tO(m)$ deterministic time outside of the max-flow calls. If the original graph $G$ is unweighted, then the inputs to the max-flow calls are also unweighted. Moreover, the sets $\{S_v:v\in R\}$ are disjoint.
+\EL
+
+%\alert{DP: In the above lemma, should we use $\lceil \lg |R|\rceil$ or $O(\log |R|)$? It depends on whether the constant is important to preserve.}
+
+\BD[Single-source min-cut]
+In the \emph{single-source min-cut} (SSMC) problem, the input is an undirected graph $G=(V,E)$ and a source vertex $s\in V$, and we need to output a $(s,v)$-mincut for each $v\in V\sm \{s\}$. In the \emph{$(1+\e)$-approximate SSMC} problem, the input is the same, and we need to output a $(1+\e)$-approximate $(s,v)$-mincut for each $v\in V\sm \{s\}$.
+\ED
+
+
+\BD[Gomory-Hu Steiner tree]
+Given a graph $G=(V,E)$ and a set of terminals $U\s V$, the Gomory-Hu Steiner tree is a weighted tree $T$ on the vertices $U$, together with a function $f:V\to U$, such that
+ \BI
+ \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s$--$t$ path in $T$. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
+Then, the set $f\inv(U')\s V$ is an $(s,t)$-mincut, and its value is $w_T(u,v)$.
+ \EI
+\ED
+
+\BD[Approximate Gomory-Hu Steiner tree]
+Given a graph $G=(V,E)$ and a set of terminals $U\s V$, the $(1+\e)$-approximate Gomory-Hu Steiner tree is a weighted tree $T$ on the vertices $U$, together with a function $f:V\to U$, such that
+ \BI
+ \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s$--$t$ path in $T$. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
+Then, the set $f\inv(U')\s V$ is a $(1+\e)$-approximate $(s,t)$-mincut, and its value is $w_T(u,v)$.
+ \EI
+\ED
+
+\BD[Rooted minimal Gomory-Hu Steiner tree]\label{defn:minimalGH}
+Given a graph $G=(V,E)$ and a set of terminals $U\s V$, a rooted minimal Gomory-Hu Steiner tree is a Gomory-Hu Steiner tree on $U$, rooted at some vertex $r\in U$, with the following additional property:
+ \BI
+ \im[$(*)$] For all $s,t\in U$ where $s$ is a descendant of $t$ in the rooted tree $T$, consider the minimum-weight edge $(u,v)$ on the unique $s$--$t$ path in $T$; if there are multiple minimum weight edges, let $(u, v)$ denote the one that is {\em closest to $s$}. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
+Then, $\pt_Gf\inv(U')\s V$ is a \emph{minimal} $(s,t)$-mincut, and its value is $w_T(u,v)$.
+ \EI
+\ED
+
+The following theorem, proved in the appendix, establishes the existence of a rooted minimal Gomory-Hu Steiner tree rooted at any given vertex.
+
+\begin{restatable}{theorem}{Rooted}\thml{rooted}
+For any graph $G=(V,E)$, terminals $U\s V$, and root $s\in U$, there exists a rooted minimal Gomory-Hu Steiner tree rooted at $s$.
+\end{restatable}
+
+\eat{
+
+\subsection{Our Results}
+
+\begin{restatable}{theorem}{ApproxU}\thml{approx-u}
+Let $G$ be an unweighted, undirected graph. There is a randomized algorithm that w.h.p., outputs a $(1+\e)$-approximate Gomory-Hu Steiner tree and runs in $\tO(m)$ time plus calls to max-flow on instances with a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges. Using the $m^{4/3+o(1)}$-time max-flow algorithm for unweighted graphs of Liu~and~Sidford, the algorithm runs in $m^{4/3+o(1)}\e\inv$ time.
+\end{restatable}
+\begin{restatable}{theorem}{ApproxW}\thml{approx-w}
+Let $G$ be a weighted, undirected graph with aspect ratio $\De$.
+There is a randomized algorithm that w.h.p., outputs a $(1+\e)$-approximate Gomory-Hu Steiner tree and runs in $\tO(m)$ time plus calls to max-flow on instances with a total of $\tO(n\e\inv\log^2\De)$ vertices and $\tO(n\e\inv\log^2\De)$ edges. Assuming polynomial aspect ratio and using the $\tO(m+n^{1.5})$ time max-flow algorithm of ???, the algorithm runs in $\tO(m+n^{1.5})$ time.
+\end{restatable}
+
+Our algorithms use the following subroutine, which we call Cut Threshold \alert{better name?}, which may have further applications on their own:
+
+\begin{restatable}{theorem}{Thr}\thml{thr}
+Let $G=(V,E)$ be a weighted, undirected graph, let $s\in V$, and let $\la\ge0$ be a parameter. There is an algorithm that outputs all vertices $v\in V$ with $\mincut(s,v)\le\la$, and runs in $\tO(m)$ time plus $\pl(n)$ calls to max-flow on $O(n)$-vertex, $O(m)$-edge graphs.
+\end{restatable}
+
+In particular, \thm{thr} implies an algorithm for approximate single-source min-cut that is faster than running approximate min-cut separately for each vertex.
+
+\begin{restatable}{theorem}{SSMC}\thml{ssmc}
+Let $G$ be a weighted, undirected graph with aspect ratio $\De$, and let $s\in V$. There is an algorithm that outputs, for each vertex $v\in V\sm\{s\}$, a $(1+\e)$-approximation of $\mincut(s,v)$, and runs in $\tO(m\log\De)$ time plus $\pl(n)\log\De$ calls to max-flow on $O(n)$-vertex, $O(m)$-edge graphs.
+\end{restatable}
+
+}

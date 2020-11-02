@@ -1,0 +1,251 @@
+%
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,bbm,amsthm}
+\usepackage{fullpage}
+\usepackage{thm-restate,color,xcolor,xspace,graphicx}
+\usepackage{hyperref,cleveref}
+\usepackage{algorithm,algorithmicx}
+\usepackage[noend]{algpseudocode}
+\bibliographystyle{alpha}
+
+%%%%% BEGIN Jason's macros %%%%%
+%\newcommand{\f}{\displaystyle\frac}
+\newcommand{\f}{\frac}
+\newcommand{\cd}{\cdot}
+\newcommand{\bn}{\binom}
+\newcommand{\sr}{\sqrt}
+\newcommand{\cds}{\cdots}
+\newcommand{\lds}{\ldots}
+\newcommand{\vds}{\vdots}
+\newcommand{\dds}{\ddots}
+\newcommand{\pge}{\succeq}
+\newcommand{\ple}{\preceq}
+\newcommand{\sm}{\setminus}
+\newcommand{\s}{\subseteq}
+\newcommand{\su}{\supseteq}
+
+\newcommand{\sumni}{\sum_{n=1}^\infty}
+\newcommand{\sumin}{\sum_{i=1}^n}
+\newcommand{\bigcupni}{\bigcup_{n=1}^\infty}
+\newcommand{\bigcupin}{\bigcup_{i=1}^n}
+\newcommand{\bigcapni}{\bigcap_{n=1}^\infty}
+\newcommand{\bigcapin}{\bigcap_{i=1}^n}
+
+\newcommand{\BE}{\begin{enumerate}}
+\newcommand{\EE}{\end{enumerate}}
+\newcommand{\im}{\item}
+\newcommand{\BI}{\begin{itemize}}
+\newcommand{\EI}{\end{itemize}}
+\def\BAL#1\EAL{\begin{align*}#1\end{align*}}
+\def\BALN#1\EALN{\begin{align}#1\end{align}}
+\def\BG#1\EG{\begin{gather}#1\end{gather}}
+
+\newcommand{\Sum}{\displaystyle\sum\limits}
+\newcommand{\Prod}{\displaystyle\prod\limits}
+\newcommand{\Int}{\displaystyle\int\limits}
+\newcommand{\Lim}{\displaystyle\lim\limits}
+\newcommand{\Max}{\displaystyle\max\limits}
+\newcommand{\Min}{\displaystyle\min\limits}
+
+\newcommand{\logn}{\log n}
+
+\newcommand{\dx}{\frac d{dx}}
+\newcommand{\dy}{\frac d{dy}}
+\newcommand{\dz}{\frac d{dz}}
+\newcommand{\dt}{\frac d{dt}}
+
+\newcommand{\inv}{^{-1}}
+
+\newcommand{\R}{\mathbb R}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\F}{\mathbb F}
+\newcommand{\C}{\mathbb C}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Q}{\mathbb Q}
+
+\newcommand{\eps}{\epsilon}
+\newcommand{\e}{\epsilon}
+\newcommand{\de}{\delta}
+\newcommand{\De}{\Delta}
+\newcommand{\la}{\lambda}
+\newcommand{\g}{\gamma}
+\newcommand{\G}{\Gamma}
+\newcommand{\pt}{\partial}
+\newcommand{\al}{\alpha}
+\newcommand{\be}{\beta}
+\newcommand{\om}{\omega}
+\newcommand{\Om}{\Omega}
+\newcommand{\el}{\ell}
+\renewcommand{\th}{\theta}
+\newcommand{\Th}{\Theta}
+\newcommand{\m}{\mathcal}
+\newcommand{\ol}{\overline}
+
+\newcommand{\Ra}{\Rightarrow}
+
+\newcommand{\lf}{\lfloor}
+\newcommand{\rf}{\rfloor}
+\newcommand{\lc}{\lceil}
+\newcommand{\rc}{\rceil}
+
+\newcommand{\E}{\mathbb E}
+\newcommand{\Var}{\textup{Var}}
+\newcommand{\Cov}{\textup{Cov}}
+\newcommand{\1}{\mathbbm 1}
+\newcommand{\poly}{\textup{poly}}
+\newcommand{\polylog}{\textup{polylog}}
+\newcommand{\pl}{\textup{polylog}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\vol}{\textbf{\textup{vol}}}
+
+\newcommand{\rank}{\textup{rank}}
+\newcommand{\spn}{\textup{span}}
+\newcommand{\Tr}{\textup{Tr}}
+
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
+\newcommand{\lb}{\left[}
+\newcommand{\rb}{\right]}
+\newcommand{\lmt}{\left[\begin{matrix}}
+\newcommand{\rmt}{\end{matrix}\right]}
+
+
+\newtheorem{theorem}{Theorem}[section]
+
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{subclaim}[theorem]{Subclaim}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{assumption}[theorem]{Assumption}
+
+\newcommand{\BT}{\begin{theorem}}
+\newcommand{\ET}{\end{theorem}}
+\newcommand{\BL}{\begin{lemma}}
+\newcommand{\EL}{\end{lemma}}
+\newcommand{\BD}{\begin{definition}}
+\newcommand{\ED}{\end{definition}}
+\newcommand{\BC}{\begin{corollary}}
+\newcommand{\EC}{\end{corollary}}
+\newcommand{\BO}{\begin{observation}}
+\newcommand{\EO}{\end{observation}}
+\newcommand{\BCL}{\begin{claim}}
+\newcommand{\ECL}{\end{claim}}
+\newcommand{\BSCL}{\begin{subclaim}}
+\newcommand{\ESCL}{\end{subclaim}}
+\newcommand{\BF}{\begin{fact}}
+\newcommand{\EF}{\end{fact}}
+\newcommand{\BA}{\begin{assumption}}
+\newcommand{\EA}{\end{assumption}}
+\newcommand{\BP}{\begin{proof}}
+\newcommand{\EP}{\end{proof}}
+\newcommand{\BSP}{\begin{subproof}}
+\newcommand{\ESP}{\end{subproof}}
+\newcommand{\BPS}{\begin{proof}[Proof (Sketch)]}
+\newcommand{\EPS}{\end{proof}}
+\Crefname{observation}{Observation}{Observations}
+\Crefname{claim}{Claim}{Claims}
+\Crefname{subclaim}{Subclaim}{Subclaims}
+\Crefname{fact}{Fact}{Facts}
+\Crefname{assumption}{Assumption}{Assumptions}
+
+\newenvironment{subproof}[1][\proofname]{%
+  \renewcommand{\qedsymbol}{$\diamond$}%
+  \begin{proof}[#1]%
+}{%
+  \end{proof}%
+}
+
+\newcommand{\eat}[1]{}
+\newcommand{\alert}{\textcolor{red}}
+\newcommand{\para}{\paragraph}
+%\newcommand{\defn}{\textbf}
+
+\newcommand{\tO}{\tilde{O}}
+
+\newcommand{\thml}[1]{\label{thm:#1}}
+\newcommand{\thm}[1]{\Cref{thm:#1}}
+\newcommand{\leml}[1]{\label{lem:#1}}
+\newcommand{\lem}[1]{\Cref{lem:#1}}
+\newcommand{\defnl}[1]{\label{def:#1}}
+\newcommand{\defn}[1]{\Cref{def:#1}}
+\newcommand{\clml}[1]{\label{clm:#1}}
+\newcommand{\clm}[1]{\Cref{clm:#1}}
+\newcommand{\corl}[1]{\label{cor:#1}}
+\newcommand{\cor}[1]{\Cref{cor:#1}}
+\newcommand{\obsl}[1]{\label{obs:#1}}
+\newcommand{\obs}[1]{\Cref{obs:#1}}
+\newcommand{\eqnl}[1]{\label{eq:#1}}
+\newcommand{\eqn}[1]{(\ref{eq:#1})}
+\newcommand{\linel}[1]{\label{line:#1}}
+\renewcommand{\line}[1]{line~\ref{line:#1}}
+\newcommand{\secl}[1]{\label{sec:#1}}
+\renewcommand{\sec}[1]{\Cref{sec:#1}}
+%%%%% END Jason's macros %%%%%
+
+
+\makeatletter
+\newcounter{algocounter}
+\@ifpackageloaded{hyperref}%
+  {\newcommand{\mylabel}[2]% #1=name, #2 = contents
+    {\refstepcounter{algocounter}\protected@write\@auxout{}{\string\newlabel{#1}{{\textcolor{black}{\textup{#2}}}{\thepage}%
+      {\@currentlabelname}{\@currentHref}{}}}}}%
+\makeatother
+
+
+%\renewcommand{\emph}[1]{\textbf{\textup{#1}}}
+\newcommand{\mincut}{\textsf{\textup{mincut}}}
+\newcommand{\Rsmall}{R_\textup{small}}
+\newcommand{\sma}{{\textup{small}}}
+\newcommand{\lar}{{\textup{large}}}
+
+\newcommand{\ssc}{{\sc SSMC}\xspace}
+\newcommand{\apc}{{\sc APMC}\xspace}
+\newcommand{\ct}{{\sc CT}\xspace}
+
+\title{Approximate Gomory-Hu Tree is Faster than $n-1$ Maxflows}
+\author{{Jason Li\\Carnegie Mellon University} \and {Debmalya Panigrahi\\Duke University}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    The Gomory-Hu tree or cut tree (Gomory and Hu, 1961) is a classic data structure for reporting $s-t$ mincuts (and by duality, the values of $s-t$ maxflows) for all pairs of vertices $s$ and $t$ in an undirected graph. In this paper, we give an algorithm for computing a $(1+\e)$-approximate Gomory-Hu tree using $\polylog(n)$ maxflow computations. This is the first algorithm to break the longstanding barrier of $O(n)$ maxflow computations for this problem. Specifically, we obtain the following runtime bounds:
+    \begin{itemize}
+        \item We obtain a randomized (Monte Carlo) algorithm for undirected, weighted graphs that runs in $\tO(m + n^{3/2})$ time and returns a $(1+\e)$-approximate Gomory-Hu tree algorithm whp. Previously, the best running time known was $\tO(n^{5/2})$, which is obtained by running Gomory and Hu's original algorithm on a cut sparsifier of the graph.
+        \item We obtain a randomized (Monte Carlo) algorithm for undirected, unweighted graphs that runs in $m^{4/3+o(1)}$ time and returns a $(1+\e)$-approximate Gomory-Hu tree algorithm whp. This improves on the first result for sparse graphs, namely $m = o(n^{9/8})$. Previously, the best running time known for unweighted graphs was $\tO(mn)$ for an exact Gomory-Hu tree (Bhalgat {\em et al.}, STOC 2007); no better result was known if approximations are allowed.
+        \item As a consequence of our Gomory-Hu tree algorithms, we also solve the $(1+\e)$-approximate all pairs mincut (\apc) and single source mincut (\ssc) problems in the same time bounds. This improves on the recent algorithm for these problems in $\tO(n^2)$ time (Abboud~{\em et al.}, FOCS 2020).
+    \end{itemize}
+\end{abstract}
+
+\pagenumbering{gobble}
+
+\clearpage
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section{Introduction}
+\label{sec:introduction}
+\input{introduction}
+
+\section{Preliminaries}
+\input{prelim}
+
+\section{$(1+\e)$-approximate SSMC}
+\input{ssmc}
+
+\section{Approximate Gomory-Hu Steiner Tree}
+\input{approx}
+
+\bibliography{refs}
+\appendix
+
+\section{Rooted minimal Gomory-Hu Steiner tree}
+\input{minimal}
+
+\end{document}

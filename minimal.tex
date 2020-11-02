@@ -1,0 +1,57 @@
+This section proves \thm{rooted}, restated below.
+\Rooted*
+
+Consider a Gomory-Hu Steiner tree $T$ on $U$ with the following special property. Root the tree $T$ at $s$. For each vertex $v\in U$, let $U_v\s U$ denote the vertices in the subtree rooted at $v$. Then, the multiset $M(T,f)=\{ |f\inv(U_v)| : v\in U\}$, once sorted from largest to smallest, is lexicographically minimal among all valid Gomory-Hu trees on $U$ rooted at $s$. Assuming this special condition, we claim that $T$ must be a minimal Gomory-Hu Steiner tree rooted at $s$.
+
+\alert{$s$ is overloaded. Please use a different notation to avoid overloading.}
+
+Suppose not, and let $s,t\in U$ be vertices violating $(*)$ in Definition~\ref{defn:minimalGH}, chosen so that the depth of $t$ in the rooted tree $T$ is the maximum possible among all such violating pairs. Consider the minimal $(s,t)$-mincut and let $S$ be the side containing $s$, so that $S\subsetneq f\inv(U_u)$.
+
+\alert{DP: A figure will help showing the relative positions of $s, t, u, v$ and the sets $U_u, S$, etc. will help here.}
+
+\BCL\clml{Us}
+For any $s'\in U_u\sm \{u\}$, we must have either $f\inv(U_{s'})\s S$ or $f\inv(U_{s'})\cap S=\emptyset$.
+\ECL
+\BP
+Suppose the statement fails for some $s'\in U_u\sm u$. Let $t'\in U_u$ be the parent of $s'$.
+
+Suppose first that $s'\in S$. Since $\pt(S\cup f\inv(U_{s'}))$ is an $(s,t)$-cut and $\pt(S\cap f\inv(U_{s'}))$ is an $(s',t')$-cut, by the submodularity of cuts,
+\BAL
+\mincut_G(s,t)+\mincut_G(s',t')&=w(\pt S)+w(\pt f\inv(U_{s'})) 
+\\&\ge w(\pt(S\cup f\inv(U_{s'}))) + w(\pt(S\cap f\inv(U_{s'}))) 
+\\&\ge \mincut_G(s,t) + \mincut_G(s',t').
+\EAL
+So, in particular, $\pt(S\cap f\inv(U_{s'})) \subsetneq f\inv(U_{s'})$ is an $(s',t')$-mincut, and the pair $(s',t')$ also violates $(*)$. Since $t'$ is a descendant of $t$, this contradicts our initial choice of $t$ whose depth is maximum possible. 
+
+Suppose next that $s'\notin S$. Since $\pt(S\sm f\inv(U_{s'}))$ is an $(s,t)$-cut \alert{DP: Why? Can't you have $s\in U_{s'}\cap S$?} and $\pt(f\inv(U_{s'})\sm S)$ is an $(s',t')$-cut, by the submodularity of cuts,
+\BAL
+\mincut_G(s,t)+\mincut_G(s',t')&=w(\pt S)+w(\pt f\inv(U_{s'})) 
+\\&\ge w(\pt(S\sm f\inv(U_{s'}))) + w(\pt(f\inv(U_{s'})\sm S)) 
+\\&\ge \mincut_G(s,t) + \mincut_G(s',t').
+\EAL
+So in particular, $\pt(f\inv(U_{s'})\sm S)\subsetneq f\inv(U_{s'})$ is an $(s',t')$-mincut, and we obtain the same contradiction. 
+\EP
+
+\BCL\clml{inS}
+For any $s'\in U_u$, we must have $s'\in S$.
+\ECL
+\BP
+By construction, every edge in $T$ on the path $P$ from $s$ to $u$ has weight greater than $\mincut_G(s,t)$. If $s'\notin S$ for some vertex $s'$ on the path $P$, then $S$ is a $(s,s')$-cut, so there must be an edge with weight at most $w(\pt S)=\mincut_G(s,t)$ on the path from $s$ to $s'$, a contradiction. Suppose now that some vertex $s'\in U_u$ not on the path $P$ satisfies $s'\notin S$. We can choose $s'$ whose depth in the rooted tree $T$ is minimum possible. Let $t'$ be the parent of $s'$, so that $t'\in S$. Since $S$ is an $(s',t')$-cut, we must have 
+\[ w(\pt f\inv(U_{s'}))=\mincut(s',t')\le w(\pt S) = \mincut(s,t) ,\]
+so $w_T(s',t')\le w_T(s,t)$. 
+We modify the tree $T$ into $T'$ as follows. Remove the edge $(s',t')$, and add the edge $(s',t)$ of the same weight $w(\pt f\inv(U_{s'}))$. We claim that $(T',f)$ is still a Gomory-Hu Steiner tree, which can be checked on a case-by-base basis, most of which are trivial and therefore omitted. The only nontrivial case is when the minimum weight edge is $(u,t)$, because the only vertex whose subtree has a different set of vertices between $T$ and $T'$ is $u$, whose subtree in $T$ is $U_u\sm U_{s'}$. \alert{Presumably, this is a typo and you actually wanted to write $T'$ instead of $T$. But, even so, why is the statement true? Doesn't $t'$ for instance that a different set if descendants between the two trees?} By \clm{Us}, $f\inv(U_{s'})\cap S=\emptyset$, and by the submodularity of cuts,
+\BAL
+\mincut_G(s,t)+\mincut_G(s',t')&=w(\pt f\inv(U_u))+w(\pt f\inv(U_{s'})) 
+\\&\ge w(\pt(f\inv(U_u)\sm f\inv(U_{s'}))) + w(\pt(f\inv(U_{s'})\sm f\inv(U_u))) 
+\\&\ge \mincut_G(s,t) + \mincut_G(s',t').
+\EAL
+\alert{Isn't $U_{s'}\subset U_u$? How can we uncross in that case?}
+So, $\pt (f\inv(U_u)\sm f\inv(U_s)) = \pt f\inv(U_u\sm U_s)$ is an $(s,t)$-mincut.
+
+Therefore, $(T',f)$ is a Gomory-Hu Steiner tree.
+Furthermore, the multiset $M(T',f)$, once sorted from largest to smallest, is lexicographically smaller. This contradicts the choice of $(T,f)$.
+\EP
+
+Combining \Cref{clm:Us,clm:inS}, we conclude that $u\in S$ and for all $s'\in U_u\sm u$, we must have $f\inv(U_{s'})\s S$. Since $S\subsetneq f\inv(U_u)$ by assumption, the only remaining possibility is $S\cap f\inv(u) \subsetneq f\inv(u)$. We modify $f$ into $f'$ as follows: we keep $f'(v)=f(v)$ for all $v\in V\sm(f\inv(u)\sm S)$, but we modify $f'(v)=t$ for all $v\in f\inv(u)\sm S$ (while $f(v)=u$). \alert{DP: $v$ has a specific meaning as the parent of $u$; perhaps use a different letter here?} Then, $f\inv(U_u)=S$, and it is easy to verify that $(T,f')$ is a Gomory-Hu Steiner tree whose multiset $M(T,f')$, once sorted, is lexicographically smaller. This contradicts the choice of $(T,f)$. \alert{Why is $(T, f')$ a Gomory-Hu Steiner tree? This seems to change the identity of all $U_x$ where $x$ is between $u$ and $t$ in $T$.}
+
+Thus, the assumption $S\subsetneq f\inv(U_u)$ is false to begin with, concluding the proof of \thm{rooted}.

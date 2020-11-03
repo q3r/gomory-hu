@@ -1,6 +1,22 @@
 This section proves \thm{rooted}, restated below.
 \Rooted*
 
+Let $\e>0$ be a small enough weight, and let $G'$ be the graph $G$ with an additional edge $(r,v)$ of weight $\e$ added for each $v\in V\sm\{r\}$. (If the edge $(r,v)$ already exists in $G$, then increase its weight by $\e$ instead.) If $\e>0$ is small enough, then for all $t\in V\sm\{r\}$ and $S\s V$, if $\pt_{G'}S$ is an $(r,t)$-mincut in $G'$, then $\pt_GS$ is an $(r,t)$-mincut in $G$.
+
+Let $(T',f)$ be a Gomory-Hu Steiner tree for $G'$. We claim that it is essentially a minimal Gomory-Hu Steiner tree for $G$, except that its edge weights need to be recomputed as mincuts in $G$ and not $G'$. More formally, let $T$ be the tree $T'$ with the following edge re-weighting: for each edge $(u,v)$ in $T$, take a connected component $U'$ of $T-(u,v)$ and reset the edge weight of $(u,v)$ to be $w(\pt_Gf\inv(U'))$ and not $w(\pt_{G'}f\inv(U'))$. We now claim that $(T,f)$ is a minimal Steiner Gomory-Hu tree for $G$.
+
+We first show that $(T,f)$ is a Gomory-Hu Steiner tree for $G$. Fix $s,t\in U$, let $(u,v)$ be the minimum-weight edge on the $s-t$ path in $T'$, and let $U'$ be the vertices of the connected component of $T'-(u,v)$ containing $s$. Since $(T',f)$ is a Gomory-Hu Steiner tree for $G'$, we have that $\pt_{G'}f\inv(U')$ is an $(s,t)$-mincut in $G'$. If $\e>0$ is small enough, then by our argument from before, $\pt_Gf\inv(U')$ is also an $(s,t)$-mincut in $G$. By our edge re-weighting of $T$, the edge $(u,v)$ has the correct weight. Moreover, $(u,v)$ is the minimum-weight edge on the $s-t$ path in $T$, since a smaller weight edge would contradict the fact that $\pt_Gf\inv(U')$ is an $(s,t)$-mincut.
+
+We now show the additional property $(*)$ that makes $(T,f)$ a minimal Gomory-Hu Steiner tree. Fix $t\in U\sm\{r\}$, and let $(u,v)$ and $U'$ be defined as in $(*)$, i.e., $(u,v)$ is the minimum-weight edge $(u,v)$ on the $r-t$ path that is closest to $t$, and $U'$ is the vertices of the connected component of $T-(u,v)$ containing $r$. Since $(T,f)$ is a Gomory-Hu Steiner tree for $G$, we have that $\pt_Gf\inv(U')$ is an $(r,t)$-mincut of value $w_T(u,v)$. Suppose for contradiction that $\pt_Gf\inv(U')$ is not a \emph{minimal} $(r,t)$-mincut. Then, there exists $S\subsetneq f\inv(U')$ such that $\pt S$ is also an $(r,t)$-mincut. By construction of $G'$, $w(\pt_{G'}S)=w(\pt_GS)+|S|\e$ and $w(\pt_{G'}f\inv(U')) = w(\pt_Gf\inv(U'))+|f\inv(U')|\e$. We have $w(\pt_GS)=w(\pt_Gf\inv(U'))$ and $|S|<|f\inv(U')|$, so $w(\pt_{G'}S)<w(\pt_{G'}f\inv(U'))$. In other words, $f\inv(U')$ is not an $(r,t)$-mincut in $G'$, contradicting the fact that $(T',f)$ is a Gomory-Hu Steiner tree for $G'$. Therefore, property $(*)$ is satisfied, concluding the proof.
+
+
+
+
+
+
+% THIS PROOF IS MORALLY CORRECT BUT IT'S BUGGY, IGNORE AND PROVE SIMPLER VARIANT (SLIGHTLY WEAKER BUT ENOUGH FOR OUR PURPOSES)
+\iffalse
+
 Consider a Gomory-Hu Steiner tree $T$ on $U$ with the following special property. Root the tree $T$ at $s$. For each vertex $v\in U$, let $U_v\s U$ denote the vertices in the subtree rooted at $v$. Then, the multiset $M(T,f)=\{ |f\inv(U_v)| : v\in U\}$, once sorted from largest to smallest, is lexicographically minimal among all valid Gomory-Hu trees on $U$ rooted at $s$. Assuming this special condition, we claim that $T$ must be a minimal Gomory-Hu Steiner tree rooted at $s$.
 
 \alert{$s$ is overloaded. Please use a different notation to avoid overloading.}
@@ -55,3 +71,6 @@ Furthermore, the multiset $M(T',f)$, once sorted from largest to smallest, is le
 Combining \Cref{clm:Us,clm:inS}, we conclude that $u\in S$ and for all $s'\in U_u\sm u$, we must have $f\inv(U_{s'})\s S$. Since $S\subsetneq f\inv(U_u)$ by assumption, the only remaining possibility is $S\cap f\inv(u) \subsetneq f\inv(u)$. We modify $f$ into $f'$ as follows: we keep $f'(v)=f(v)$ for all $v\in V\sm(f\inv(u)\sm S)$, but we modify $f'(v)=t$ for all $v\in f\inv(u)\sm S$ (while $f(v)=u$). \alert{DP: $v$ has a specific meaning as the parent of $u$; perhaps use a different letter here?} Then, $f\inv(U_u)=S$, and it is easy to verify that $(T,f')$ is a Gomory-Hu Steiner tree whose multiset $M(T,f')$, once sorted, is lexicographically smaller. This contradicts the choice of $(T,f)$. \alert{Why is $(T, f')$ a Gomory-Hu Steiner tree? This seems to change the identity of all $U_x$ where $x$ is between $u$ and $t$ in $T$.}
 
 Thus, the assumption $S\subsetneq f\inv(U_u)$ is false to begin with, concluding the proof of \thm{rooted}.
+
+\fi
+

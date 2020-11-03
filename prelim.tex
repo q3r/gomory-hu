@@ -1,4 +1,4 @@
-\alert{DP: We need to merge in these prelims into the previous section, perhaps into techniques?}
+\alert{DP: We need to merge in these prelims into the previous section, perhaps into techniques?} \textcolor{blue}{JL: sure, feel free to reorganize definitions and prelims}
 
 \BD[Minimum isolating cuts]
 Consider a weighted, undirected graph $G=(V,E)$ and a subset $R\s V$ ($|R|\ge2$). The \emph{minimum isolating cuts} for $R$ is a collection of sets $\{S_v:v\in R\}$ such that for each vertex $v\in R$, the set $S_v$ satisfies $S_v\cap R=\{v\}$ and has the minimum value of $w(\pt S'_v)$ over all sets $S'_v$ satisfying $S'_v\cap R=\{v\}$.
@@ -7,7 +7,7 @@ Consider a weighted, undirected graph $G=(V,E)$ and a subset $R\s V$ ($|R|\ge2$)
 %\alert{DP: In the above definition, should we also mention that sets $S_v$ must be disjoint? At the moment, this is in the next lemma. Would putting it in the definition might make life a bit easier in terms of just having to refer to the definition when invoking this property?}
 
 \BL
-Fix a subset $R\s V$ ($|R|\ge2$). There is an algorithm that computes the minimum isolating cuts $\{S_v:v\in R\}$ for $R$ using $O(\log|R|)$ calls to $s$--$t$ max-flow on weighted graphs of $O(n)$ vertices and $O(m)$ edges, and takes $\tO(m)$ deterministic time outside of the max-flow calls. If the original graph $G$ is unweighted, then the inputs to the max-flow calls are also unweighted. Moreover, the sets $\{S_v:v\in R\}$ are disjoint.
+Fix a subset $R\s V$ ($|R|\ge2$). There is an algorithm that computes the minimum isolating cuts $\{S_v:v\in R\}$ for $R$ using $O(\log|R|)$ calls to $s-t$ max-flow on weighted graphs of $O(n)$ vertices and $O(m)$ edges, and takes $\tO(m)$ deterministic time outside of the max-flow calls. If the original graph $G$ is unweighted, then the inputs to the max-flow calls are also unweighted. Moreover, the sets $\{S_v:v\in R\}$ are disjoint.
 \EL
 
 %\alert{DP: In the above lemma, should we use $\lceil \lg |R|\rceil$ or $O(\log |R|)$? It depends on whether the constant is important to preserve.}
@@ -20,7 +20,7 @@ In the \emph{single-source min-cut} (SSMC) problem, the input is an undirected g
 \BD[Gomory-Hu Steiner tree]
 Given a graph $G=(V,E)$ and a set of terminals $U\s V$, the Gomory-Hu Steiner tree is a weighted tree $T$ on the vertices $U$, together with a function $f:V\to U$, such that
  \BI
- \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s$--$t$ path in $T$. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
+ \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s-t$ path in $T$. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
 Then, the set $f\inv(U')\s V$ is an $(s,t)$-mincut, and its value is $w_T(u,v)$.
  \EI
 \ED
@@ -28,7 +28,7 @@ Then, the set $f\inv(U')\s V$ is an $(s,t)$-mincut, and its value is $w_T(u,v)$.
 \BD[Approximate Gomory-Hu Steiner tree]
 Given a graph $G=(V,E)$ and a set of terminals $U\s V$, the $(1+\e)$-approximate Gomory-Hu Steiner tree is a weighted tree $T$ on the vertices $U$, together with a function $f:V\to U$, such that
  \BI
- \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s$--$t$ path in $T$. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
+ \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s-t$ path in $T$. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
 Then, the set $f\inv(U')\s V$ is a $(1+\e)$-approximate $(s,t)$-mincut, and its value is $w_T(u,v)$.
  \EI
 \ED
@@ -36,15 +36,16 @@ Then, the set $f\inv(U')\s V$ is a $(1+\e)$-approximate $(s,t)$-mincut, and its 
 \BD[Rooted minimal Gomory-Hu Steiner tree]\label{defn:minimalGH}
 Given a graph $G=(V,E)$ and a set of terminals $U\s V$, a rooted minimal Gomory-Hu Steiner tree is a Gomory-Hu Steiner tree on $U$, rooted at some vertex $r\in U$, with the following additional property:
  \BI
- \im[$(*)$] For all $s,t\in U$ where $s$ is a descendant of $t$ in the rooted tree $T$, consider the minimum-weight edge $(u,v)$ on the unique $s$--$t$ path in $T$; if there are multiple minimum weight edges, let $(u, v)$ denote the one that is {\em closest to $s$}. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
-Then, $\pt_Gf\inv(U')\s V$ is a \emph{minimal} $(s,t)$-mincut, and its value is $w_T(u,v)$.
+% MORE GENERAL BUT HARDER TO PROVE, SO WE SKIPPED -> \im[$(*)$] For all $s,t\in U$ where $s$ is a descendant of $t$ in the rooted tree $T$, consider the minimum-weight edge $(u,v)$ on the unique $s-t$ path in $T$; if there are multiple minimum weight edges, let $(u, v)$ denote the one that is {\em closest to $s$}. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
+ \im[$(*)$] For all $t\in U\sm\{r\}$, consider the minimum-weight edge $(u,v)$ on the unique $r-t$ path in $T$; if there are multiple minimum weight edges, let $(u, v)$ denote the one that is {\em closest to $t$}. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $r$.
+Then, $\pt_Gf\inv(U')\s V$ is a \emph{minimal} $(r,t)$-mincut, and its value is $w_T(u,v)$.
  \EI
 \ED
 
 The following theorem, proved in the appendix, establishes the existence of a rooted minimal Gomory-Hu Steiner tree rooted at any given vertex.
 
 \begin{restatable}{theorem}{Rooted}\thml{rooted}
-For any graph $G=(V,E)$, terminals $U\s V$, and root $s\in U$, there exists a rooted minimal Gomory-Hu Steiner tree rooted at $s$.
+For any graph $G=(V,E)$, terminals $U\s V$, and root $r\in U$, there exists a rooted minimal Gomory-Hu Steiner tree rooted at $r$.
 \end{restatable}
 
 \eat{

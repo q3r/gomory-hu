@@ -5,14 +5,15 @@
 \State Initialize $R^0\gets U$ and $D\gets\emptyset$
 \For{$i$ from $0$ to $\lf\lg|U|\rf$}
  \State Compute minimum isolating cuts $\{S^i_v:v\in R^i\}$ on inputs $G$ and $R^i$ \linel{Sv}
- \State For each $v\in R^i\sm \{s\}$ where $w(\pt S^i_v)\le W$, add all vertices in $S^i_v\cap U$ to $D$
+ \State Let $D^i$ be the union of $S^i_v\cap U$ over all $v\in R^i\sm \{s\}$ satisfying $w(\pt S^i_v)\le W$
  \State $R^{i+1}\gets$ subsample of $R^i$ where each vertex in $R^i\sm \{s\}$ is sampled independently with probability $1/2$, and $s$ is sampled with probability $1$
 \EndFor
-\State\Return $D$
+%\State $D\gets D^0\cup D^1\cup \cds\cup D^{\lf\lg|U|\rf}$
+\State\Return $D^0\cup D^1\cup \cds\cup D^{\lf\lg|U|\rf}$
 \end{algorithmic}
 \end{algorithm}
 
-Let $D$ be the output of the algorithm, and let $D^*$ be all vertices $v\in U\sm \{s\}$ for which the $(s,v)$-mincut has weight at most $W$. 
+Let $D=D^0\cup D^1\cup \cds\cup D^{\lf\lg|U|\rf}$ be the union of the sets output by the algorithm, and let $D^*$ be all vertices $v\in U\sm \{s\}$ for which the $(s,v)$-mincut has weight at most $W$. 
 
 \BL\leml{step}
 $D\s D^*$ and $\E[|D|] = \Om(|D^*|/\log|U|)$. 
@@ -27,9 +28,9 @@ It remains to prove that $\E[|D|]\ge\Om(|D^*|/\log|U|)$. Consider a rooted minim
 
 For each vertex $v\in D^*$, consider the subtree rooted at $v$, define $U_v$ to be the vertices in the subtree, and define $n_v$ as the number of vertices in the subtree. We say that a vertex $v\in D^*$ is \emph{active} if $v\in R^i$ for $i=\lf\lg n_{r(v)}\rf$. In addition, if $U_{r(v)}\cap R^i=\{v\}$, then we say that $v$ \emph{hits} all of the vertices in $U_{r(v)}$ (including itself); see Figure~\ref{fig:hits}. In particular, in order for $v$ to hit any other vertex, it must be active. For completeness, we say that any vertex in $U\sm D^*$ is not active and does not hit any vertex.
 
-\alert{The above definitions are fine, but would be easier to read with (a) some intuition behind when you say that a vertex is active and process of hitting other vertices, and (b) a figure illustrating the notation.} 
+%\alert{The above definitions are fine, but would be easier to read with (a) some intuition behind when you say that a vertex is active and process of hitting other vertices, and (b) a figure illustrating the notation.} 
 
-\textcolor{blue}{Jason: added a figure.}
+%\textcolor{blue}{Jason: added a figure.}
 
 \begin{figure}\centering
 \includegraphics[scale=1]{hits.pdf}
@@ -66,7 +67,7 @@ Finally, we show why properties (a) to (c) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)
 \begin{algorithmic}[1]
 \State Initialize $U\gets V$ and $D_{\textup{total}}\gets\emptyset$
 \For{$O(\log^2n)$ iterations}
- \State $D\gets \ref{step}(G,s,U, W)$
+ \State Let $D$ be the union of the sets output by $\ref{step}(G,s,U, W)$
  \State Update $D_{\textup{total}}\gets D_{\textup{total}}\cup D$ and $U\gets U\sm D$
 \EndFor
 \State\Return $D_{\textup{total}}$
@@ -88,9 +89,9 @@ In other words, \ref{thr} is an algorithm that fulfills \thm{thr}, restated belo
 \caption{\textsc{ApproxSSMC}$(G=(V,E),s,\e)$}
 \begin{algorithmic}[1]
  \State Initialize bounds: $ w_{\min} \gets$ minimum weight of an edge in $G$, and $ w_{\max}\gets$ maximum weight of an edge %\Comment{Every $(s,v)$-mincut has weight in $[ w_{\min}, w_{\max}]$}
- \For{all integers $i\ge0$ s.t.\ $(1+\e)^i w_{\min} \in [ w_{\min},(1+\e) n w_{\max}]$}
- \State $ W_i\gets (1+\e)^i w_{\min}$
- \State $D_i\gets \ref{thr}(G,s, W)$
+ \For{all integers $j\ge0$ s.t.\ $(1+\e)^j w_{\min} \in [ w_{\min},(1+\e) n w_{\max}]$}
+ \State $ W_j\gets (1+\e)^j w_{\min}$
+ \State $D_j\gets \ref{thr}(G,s, W)$
 \EndFor
 \State For each vertex $v\in V$, take the largest $D_i$ containing $v$, and set $\tilde\la(v)\gets  W_i$
 \State\Return $\tilde\la:V\to \R$
@@ -101,7 +102,7 @@ In other words, \ref{thr} is an algorithm that fulfills \thm{thr}, restated belo
 W.h.p., the output $\tilde\la$ of \textsc{ApproxSSMC} satisfies $\mincut(s,v) \le \tilde\la(v) \le (1+\e)\mincut(s,v)$.
 \EL
 \BP
-For all $v\in V\sm\{s\}$, we have $w_{\min}\le\mincut(s,v)\le w(\pt(\{s\}))\le nw_{\max}$, so there is an integer $i$ with $ W_i\in[\mincut(s,v),(1+\e)\mincut(s,v))$. The lemma follows from \cor{threshold} applied to this $i$.
+For all $v\in V\sm\{s\}$, we have $w_{\min}\le\mincut(s,v)\le w(\pt(\{s\}))\le nw_{\max}$, so there is an integer $j$ with $ W_j\in[\mincut(s,v),(1+\e)\mincut(s,v))$. The lemma follows from \cor{threshold} applied to this $j$.
 %Follows from \cor{threshold} and the fact that for all $v\in V$, there is an integer $i$ with $ W_i\in[\mincut(s,v),(1+\e)\mincut(s,v))$. 
 \EP
 

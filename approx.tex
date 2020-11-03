@@ -1,10 +1,22 @@
 \subsection{Unweighted Graphs}
 
-Let $\e>0$ be a fixed parameter throughout the recursive algorithm.
+Let $\e>0$ be a fixed parameter throughout the recursive algorithm. We present our approximate Steiner Gomory-Hu tree algorithm in \ref{approxGH} below.
+See Figure~\ref{fig:recursion} for a visual guide to the algorithm.
 
-\alert{DP: Should we add a description of the algorithm in text?}
+At a high level, the algorithm applies divide-and-conquer by cutting the graph along sets $S^i_v$ computed by \ref{step}, applying recursion to each piece, and stitching the recursive Gomory-Hu trees together in the same way as the standard recursive Gomory-Hu tree construction. To avoid complications, we only select sets $S^i_v$ from a \emph{single} level $i\in\{0,1,2\lds,\lf\lg|U|\rf\}$, which are guaranteed to be vertex-disjoint. Furthermore, instead of selecting all sets $\{S^i_v:v\in R^i\}$, we only select those for which $|S^i_v\cap U|\le|U|/2$; this allows us to bound the recursion depth. By choosing the source $s$ at \emph{random}, we guarantee that in expectation, we do not exclude too many sets $S^i_v$. The chosen sets partition the graph into disjoint sets of vertices (including the set of vertices outside of any chosen set $S^i_v$). We split the graph along this partition a similar way to the standard Gomory-Hu tree construction: for each set in the partition, contract all other vertices into a single vertex and recursively compute the Steiner Gomory-Hu tree of the contracted graph. This gives us a collection of Gomory-Hu Steiner trees, which we then stitch together into a single Gomory-Hu Steiner tree in the standard way.
+
+\alert{DP: Should we add a description of the algorithm in text?} \textcolor{blue}{JL: wrote a description.}
 
 \alert{DP: To simplify notation, how about limiting the CutThresholdStep subroutine to a single invocation of the isolating cut lemma, i.e., a single sampling rate? The loop that runs over different sampling rates can be brought outside in CutThreshold. Here, we can again repeat this loop, thereby giving a clearer description of the notation indexed by $j$.}
+\textcolor{blue}{JL: I decided against it, because \ref{approxGH} actually needs the sets $S^i_v$ in order to filter out the sets with $|S^i_v\cap U|>|U|/2$. So it might be better to just white-box call \ref{step}, extracting out the intermediate variables $S^i_v$, instead of making \ref{step} return them as well.}
+
+
+
+\begin{figure}\centering
+\includegraphics[scale=.8]{recursion.pdf}
+\caption{Recursive construction of $G_\lar$ and $G_v$ for $v\in R^i_\sma$. Here, $R^i_\sma=\{v_1,v_2,v_3\}$, denoted by red vertices on the top left. The dotted blue curves on the right mark the boundaries of the regions $f_{v_i}\inv(u):u\in U_{v_i}$ and $f_{v_\lar}\inv(u):u\in U_\lar$. The light green edges on the bottom left are the edges $(f_{v_i}(x_{v_i}),f_\lar(y_{v_i}))$ added on \line{combine-T} of \ref{combine}.}\label{fig:recursion}
+\end{figure}
+
 
 \begin{algorithm}[H]
 \mylabel{approxGH}{\textsc{ApproxSteinerGHTree}}\caption{\ref{approxGH}$(G=(V,E),U)$} 
@@ -31,21 +43,38 @@ Let $\e>0$ be a fixed parameter throughout the recursive algorithm.
 \State $(T_\lar,f_\lar)\gets\ref{approxGH}(G_\lar,U_\lar)$
 
 \
-\State Construct $T$ by starting with the disjoint union $T_\lar\cup\bigcup_{v\in R^i_\sma}T_v$ and, for each $v\in R^i_\sma$, adding an edge between $f_v(x_v)\in U_v$ and $f_\lar(y_v)\in U_\lar$ of weight $w(\pt_GS^i_v)$ 
+\State Combine $(T_\lar,f_\lar)$ and $\{(T_v,f_v):v\in R^i_\sma\}$ into $(T,f)$ according to \ref{combine}%$((T_\lar,f_\lar),\{(T_v,f_v):v\in R^i_\sma)\}$
+%\State Construct $T$ by starting with the disjoint union $T_\lar\cup\bigcup_{v\in R^i_\sma}T_v$ and, for each $v\in R^i_\sma$, adding an edge between $f_v(x_v)\in U_v$ and $f_\lar(y_v)\in U_\lar$ of weight $w(\pt_GS^i_v)$ 
 
-\Comment{Combine Steiner Gomory-Hu trees together} \linel{combine-T}
-\State Construct $f:V\to U$ by $f(v')=f_\lar(v')$ if $v'\in U_\lar$ and $f(v')=f_v(v')$ if $v'\in U_v$ for some $v\in R^i_\sma$\linel{combine-f}
+%\Comment{Combine Steiner Gomory-Hu trees together} \linel{combine-T}
+%\State Construct $f:V\to U$ by $f(v')=f_\lar(v')$ if $v'\in U_\lar$ and $f(v')=f_v(v')$ if $v'\in U_v$ for some $v\in R^i_\sma$\linel{combine-f}
 \State\Return $(T,f)$
 
 \end{algorithmic}
 \end{algorithm}
 
-\alert{DP: I think a figure will help in explaining how the recursion proceeds, both in terms of what subproblems are generated and how the reconstruction happens.}
+
+\begin{algorithm}[H]
+\mylabel{combine}{\textsc{Combine}}\caption{\ref{combine}$((T_\lar,f_\lar),\{(T_v,f_v): v\in R^i_\sma\} )$} 
+\begin{algorithmic}[1]
+\State Construct $T$ by starting with the disjoint union $T_\lar\cup\bigcup_{v\in R^i_\sma}T_v$ and, for each $v\in R^i_\sma$, adding an edge between $f_v(x_v)\in U_v$ and $f_\lar(y_v)\in U_\lar$ of weight $w(\pt_GS^i_v)$\linel{combine-T}
+\State Construct $f:V\to U$ by $f(v')=f_\lar(v')$ if $v'\in U_\lar$ and $f(v')=f_v(v')$ if $v'\in U_v$ for some $v\in R^i_\sma$\linel{combine-f}
+\State\Return $(T,f)$
+\end{algorithmic}
+\end{algorithm}
+
+%\alert{DP: I think a figure will help in explaining how the recursion proceeds, both in terms of what subproblems are generated and how the reconstruction happens.}
 
 \subsection{Approximation}
 
+Since the approximation factors can potentially add up down the recursion tree, we need to bound the depth of the recursive algorithm. Here, there are two types of recursion: the recursive calls $(G_v,U_v)$, and the single call $(G_\lar,U_\lar)$.  Taking a branch down $(G_v,U_v)$ is easy: since $|U_v|\le|U|/2$, the algorithm can travel down such a branch at most $\lg|U|$ times. The difficult part is in bounding the number of branches down $(G_\lar,U_\lar)$. It turns out that after $\pl(n)$ consecutive branches down $(G_\lar,U_\lar)$, the Steiner mincut increases by factor $(1+\e)$, w.h.p.; we elaborate on this insight in \sec{running}, which concerns the running time. Since the Steiner mincut can never decrease down any recursive branch, it can increase by factor $(1+\e)$ at most $\e\inv\pl(n)\log\De$ times. Thus, we have a bound of $\e\inv\pl(n)\log\De$ on the recursion depth, w.h.p.
+
+This depth bound alone is not enough for the following reason: if the approximation factor increase by $(1+\e)$ along each recursive branch, then the total approximation becomes $(1+\e)^{\e\inv\pl(n)\log\De}$, which is no good because the $(1+\e)$ and $\e\inv$ cancel each other. Here, our key insight is that actually, the approximation factor does not distort \emph{at all} down $(G_\lar,U_\lar)$. It may increase by factor $(1+\e)$ down any $(G_v,U_v)$, but this can only happen $\lg|U|$ times, giving us an approximation factor of $(1+\e)^{\lg|U|}$, which is fine because we can always retroactively replace $\e$ with $\Th(\e/\lg|U|)$ to obtain the desired $(1+\e)$.
+
+The lemma below formalizes our insight that approximation factors are preserved down the branch $(G_\lar,U_\lar)$.
+
 \BL\leml{large}
-For any distinct vertices $p,q\in U_\lar$, $\mincut_{G_\lar}(p,q) = \mincut_G(p,q)$.
+For any distinct vertices $p,q\in U_\lar$, we have $\mincut_{G_\lar}(p,q) = \mincut_G(p,q)$.
 \EL
 \BP
 Since $G_\lar$ is a contraction of $G$, we have $\mincut_{G_\lar}(p,q) \ge \mincut_G(p,q)$. To show the reverse inequality, fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. We show that for each $v\in  R^i_\sma$, either $S^i_v\s S$ or $S^i_v\s V\sm S$. Assuming this, the cut $\pt S$ stays intact when the sets $S^i_v$ are contracted to form $G_\lar$, so $\mincut_{G_\lar}(p,q) \le w(\pt S) = \mincut_G(p,q)$.
@@ -57,8 +86,10 @@ In particular, $S^i_v\cap S$ must be a minimum $(v,R^i\sm v)$-cut. Since $S^i_v$
 Suppose now that $v\notin S$. In this case, we can swap $p$ and $q$, and swap $S$ and $V\sm S$, and repeat the above argument to get $S^i_v\s V\sm S$.
 \EP
 
+Similarly, the lemma below says that approximation factors distort by at most $(1+\e)$ down a $(G_v,U_v)$ branch.
+
 \BL\leml{small}
-For any $v\in  R^i_\sma$ and any distinct vertices $p,q\in U_v$, $\mincut_G(p,q)\le\mincut_{G_v}(p,q)\le(1+\e)\mincut_G(p,q)$.
+For any $v\in  R^i_\sma$ and any distinct vertices $p,q\in U_v$, we have $\mincut_G(p,q)\le\mincut_{G_v}(p,q)\le(1+\e)\mincut_G(p,q)$.
 \EL
 \BP
 The lower bound $\mincut_G(p,q)\le\mincut_{G_v}(p,q)$ holds because $G_v$ is a contraction of $G$, so we focus on the upper bound.
@@ -68,6 +99,8 @@ The set $S^i_v\cap S$ stays intact under the contraction from $G$ to $G_v$, so $
 \[ \mincut_{G_v}(u,v)\le w(\pt_{G_v}(S^i_v\cap S))=w(\pt_G(S^i_v\cap S)) \le w(\pt_GS)+\e\la \le \mincut_G(u,v) + \e\,\mincut_G(u,v) ,\]
 as promised.
 \EP
+
+Finally, the lemma below determines our final approximation factor.
 
 \BL\leml{approx}
 \ref{approxGH}$(G=(V,E),U)$ outputs a $(1+\e)^{\lg|U|}$-approximate Gomory-Hu Steiner tree.
@@ -81,10 +114,10 @@ By induction, the recursive output $(T_\lar,f_\lar)$ is a Gomory-Hu Steiner tree
 There are two remaining cases: $s\in U_v$ and $t\in U_{v'}$ for distinct $v,v'\in R^i_\sma$, and $s\in U_v$ and $t\in U_\lar$; we treat both cases simultaneously. Since $G$ has Steiner mincut $\la$, each of the contracted graphs $G_\lar$ and $G_v$ has Steiner mincut at least $\la$. By induction, every edge in $T_v$ and $T_\lar$ or $T_{v'}$ (depending on case) has weight at least $(1+\e)^{-\lg|U|}\la$. By construction, the $s$--$t$ path in $T$ has at least one edge of the form $(f_v(x_v),f_\lar(y_v))$, added on \line{combine-T}; this edge has weight $w(\pt_GS^i_v)\le(1+\e)\la$. Therefore, the minimum-weight edge on the $s$--$t$ path in $T$ has weight at least $(1+\e)^{-\lg|U|}\la$ and at most $(1+\e)\la$; in particular, it is a $(1+\e)^{\lg|U|}$-approximation of $\mincut_G(s,t)$. If the edge is of the form $(f_v(x_v),f_\lar(y_v))$, then by construction, the relevant set $f\inv(U')$ is exactly $S^i_v$, which is a $(1+\e)$-approximate $(s,t)$-mincut in $G$. If the edge is in $T_\lar$ or $T_v$ or $T_{v'}$, then we can apply the same arguments used previously. %\alert{(sketch) Can only go to $G_v$ at most $\lg|U|$ times, picks up $(1+\e)$ factor each time}
 \EP
 
-\subsection{Running Time Bound}
+\subsection{Running Time Bound}\secl{running}
 
-In order for a recursive algorithm to be efficient, it must make substantial progress on each of its recursive calls. Here, there are two types: the recursive calls $(G_v,U_v,\e)$, and the single call $(G_\lar,U_\lar,\e)$. For each recursive call $(G_v,U_v,\e)$, we have $|U_v|\le|U|/2$ by construction, so we can set our measure of progress to be $|U|$, the number of terminals, which halves upon each recursive call.
-However, progress on $(G_\lar,U_\lar,\e)$ is unclear; in particular, $|U_\lar|$ can be very close to $|U|$. For $G_\lar$, we define the following alternative measure of progress. Let $P(G,U,W)$ be the set of unordered pairs of distinct vertices whose mincut is at most $W$:
+In order for a recursive algorithm to be efficient, it must make substantial progress on each of its recursive calls, which can then be used to bound its depth. For each recursive call $(G_v,U_v,\e)$, we have $|U_v|\le|U|/2$ by construction, so we can set our measure of progress to be $|U|$, the number of terminals, which halves upon each recursive call.
+However, progress on $(G_\lar,U_\lar,\e)$ is unclear; in particular, it is possible for $|U_\lar|$ to be very close to $|U|$ with probability $1$. For $G_\lar$, we define the following alternative measure of progress. Let $P(G,U,W)$ be the set of unordered pairs of distinct vertices whose mincut is at most $W$:
 \[ P(G,U,W) = \bigg\{ \{u,v\}\in\bn U2:\mincut_G(u,v)\le W \bigg\} .\]
 In particular, we will consider its size $|P(G,U,W)|$, and show the following expected reduction:
 
@@ -93,7 +126,7 @@ For any $W\le(1+\e)\la$, over the random selection of $s$ and the randomness in 
 \[ \E[|P(G_\lar,U_\lar,W)|] \le \lp1-\Om\lp\f1{\log^2n}\rp\rp|P(G,U,W)| .\]
 \end{restatable}
 
-Before we prove \lem{P}, we show how it implies progress on the recursive call for $G_\lar$:
+Before we prove \lem{P}, we show how it implies progress on the recursive call for $G_\lar$.
 \BC\corl{mincut-increase}
 Let $\la_0$ be the global Steiner mincut of $G$.
 W.h.p., after $\Om(\log^3n)$ recursive calls along $G_\lar$ (replacing $G\gets G_\lar$ each time), the global Steiner mincut of $G$ is at least $(1+\e)\la_0$ (where $\la_0$ is still the global Steiner mincut of the initial graph).
@@ -185,7 +218,7 @@ We now formalize our arguments. We begin with the specification routine due to B
 % \EE
 %\ET
 \BT\thml{sparsify}
-Given a weighted, undirected graph $G$, and parameters $\e,\de>0$, there is a randomized algorithm that with probability at least $1-\de$ outputs a $(1+\e)$-approximate sparsifier of $G$ with $O(n\log(n/\de))$ edges. \alert{DP: You omitted the dependence on $\e$ in the size. Should we keep it?}
+Given a weighted, undirected graph $G$, and parameters $\e,\de>0$, there is a randomized algorithm that with probability at least $1-\de$ outputs a $(1+\e)$-approximate sparsifier of $G$ with $O(n\e^{-2}\log(n/\de))$ edges. %\alert{DP: You omitted the dependence on $\e$ in the size. Should we keep it?}
 %and let $k'_e:e\in E$ be values satisfying the two conditions in \thm{str}. Let $H$ be a weighted, undirected graph obtained by independently sampling each edge $e\in E$ with probability $p_e=\Th(\f{\log n}{\e^2k'_e})$ and (if sampled) weighting the sampled edge by $w_e/p_e$. Then w.h.p., $H$ is a $(1+\e)$-approximate sparsifier of $G$ with $O(n\logn)$ edges.
 \ET
 
@@ -202,10 +235,11 @@ Then w.h.p., the algorithm outputs a $(1+\e)^{O(\log(n\De))}$-approximate Gomory
 \BP
 We first argue about the approximation factor. Along any branch of the recursion tree, there is at most one sparsification step of type~(1), at most $O(\logn)$ sparsification steps of type~(2), and at most $O(\log(n\De))$ sparsification steps of type~(3). Each sparsification distorts the pairwise mincuts by a $(1+\e)$ factor, so the total distortion is $(1+\e)^{O(\log(n\De))}$.
 
-Next, we consider the running time. The recursion tree can be broken into chains of recursive $G_\lar$ calls, so that each chain begins with either the original instance or some intermediate $G_v$ call, which is sparsified by either~(1)~or~(2). Fix a chain, and let $n'$ be the number of vertices at the start of the chain, so that the number of edges is $O(n'\log n)$. Within each chain, the number of vertices can only decrease down the chain. After each sparsification, many sparsifications of type~(2), and between two consecutive sparsifications, the number of edges can only decrease down the chain since the graph can only contract. It follows that each instance in the chain has at most $n'$ vertices and $O(n'\logn)$ edges. \alert{DP: You are omitting $\e$ here in the size. Should we keep it?} By \lem{depth}, each chain has length $O(\e\inv\log^3n\log(n\De))$, so the total number of vertices and edges in the chain is $\tO(n'\e\inv\log\De)$. Imagine charging these vertices and edges to the $n'$ vertices at the root of the chain.
+Next, we consider the running time. The recursion tree can be broken into chains of recursive $G_\lar$ calls, so that each chain begins with either the original instance or some intermediate $G_v$ call, which is sparsified by either~(1)~or~(2). Fix a chain, and let $n'$ be the number of vertices at the start of the chain, so that the number of edges is $O(n'\log n)$. Within each chain, the number of vertices can only decrease down the chain. After each sparsification, many sparsifications of type~(2), and between two consecutive sparsifications, the number of edges can only decrease down the chain since the graph can only contract. It follows that each instance in the chain has at most $n'$ vertices and $O(n'\e^{-2}\logn)$ edges. %\alert{DP: You are omitting $\e$ here in the size. Should we keep it?} 
+By \lem{depth}, each chain has length $O(\e\inv\log^3n\log(n\De))$, so the total number of vertices and edges in the chain is $\tO(n'\e^{-3}\log\De)$. Imagine charging these vertices and edges to the $n'$ vertices at the root of the chain.
 In other words, to bound the total number of edges in the recursion tree, it suffices to bound the total number of vertices in the original instance and in intermediate $G_v$ calls. 
 
-In the recursion tree, there are $n$ original vertices and at most $2(|U|-1)$ new vertices, since each branch creates $2$ new vertices and there are at most $|U|-1$ branches. Each vertex joins $O(\logn)$ many $G_v$ calls, since every time a vertex joins one, the number of terminals drops by half; note that a vertex is never duplicated in the recursion tree. It follows that there are $O(n\logn)$ many vertices in intermediate $G_v$ calls, along with the $n$ vertices in the original instance. Hence, from our charging scheme, we conclude that there are a total of $\tO(n\e\inv\log\De)$ vertices and edges in the recursion tree. In particular, the instances to the max-flow calls have $\tO(n\e\inv\log\De)$ vertices and edges in total.
+In the recursion tree, there are $n$ original vertices and at most $2(|U|-1)$ new vertices, since each branch creates $2$ new vertices and there are at most $|U|-1$ branches. Each vertex joins $O(\logn)$ many $G_v$ calls, since every time a vertex joins one, the number of terminals drops by half; note that a vertex is never duplicated in the recursion tree. It follows that there are $O(n\logn)$ many vertices in intermediate $G_v$ calls, along with the $n$ vertices in the original instance. Hence, from our charging scheme, we conclude that there are a total of $\tO(n\e^{-3}\log\De)$ vertices and edges in the recursion tree. In particular, the instances to the max-flow calls have $\tO(n\e^{-3}\log\De)$ vertices and edges in total.
 \EP
 
 Resetting $\e\gets\Th(\e/\log(n\De))$, we have thus proved \thm{approx-w}, restated below.

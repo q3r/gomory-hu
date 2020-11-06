@@ -1,3 +1,45 @@
+\subsection{Preliminaries}
+We have already defined the \ssc problem, but for our analysis, we need some more definitions. In particular, we first define a Gomory-Hu Steiner tree and its approximation version.
+
+\BD[Gomory-Hu Steiner tree]
+Given a graph $G=(V,E)$ and a set of terminals $U\s V$, the Gomory-Hu Steiner tree is a weighted tree $T$ on the vertices $U$, together with a function $f:V\to U$, such that
+ \BI
+ \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s-t$ path in $T$. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
+Then, the set $f\inv(U')\s V$ is an $(s,t)$-mincut, and its value is $w_T(u,v)$.
+ \EI
+\ED
+
+\BD[Approximate Gomory-Hu Steiner tree]
+Given a graph $G=(V,E)$ and a set of terminals $U\s V$, the $(1+\e)$-approximate Gomory-Hu Steiner tree is a weighted tree $T$ on the vertices $U$, together with a function $f:V\to U$, such that
+ \BI
+ \im For all $s,t\in U$, consider the minimum-weight edge $(u,v)$ on the unique $s-t$ path in $T$. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
+Then, the set $f\inv(U')\s V$ is a $(1+\e)$-approximate $(s,t)$-mincut, and its value is $w_T(u,v)$.
+ \EI
+\ED
+
+It would also be useful in our analysis to use the notion of a {\em minimal} Gomory-Hu tree. We define this next.
+
+\BD[Rooted minimal Gomory-Hu Steiner tree]\label{defn:minimalGH}
+Given a graph $G=(V,E)$ and a set of terminals $U\s V$, a rooted minimal Gomory-Hu Steiner tree is a Gomory-Hu Steiner tree on $U$, rooted at some vertex $r\in U$, with the following additional property:
+ \BI
+% MORE GENERAL BUT HARDER TO PROVE, SO WE SKIPPED -> \im[$(*)$] For all $s,t\in U$ where $s$ is a descendant of $t$ in the rooted tree $T$, consider the minimum-weight edge $(u,v)$ on the unique $s-t$ path in $T$; if there are multiple minimum weight edges, let $(u, v)$ denote the one that is {\em closest to $s$}. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $s$.
+ \im[$(*)$] For all $t\in U\sm\{r\}$, consider the minimum-weight edge $(u,v)$ on the unique $r-t$ path in $T$; if there are multiple minimum weight edges, let $(u, v)$ denote the one that is {\em closest to $t$}. Let $U'$ be the vertices of the connected component of $T-(u,v)$ containing $r$.
+Then, $\pt_Gf\inv(U')\s V$ is a \emph{minimal} $(r,t)$-mincut, and its value is $w_T(u,v)$.
+ \EI
+\ED
+
+The following theorem, proved in the appendix, establishes the existence of a rooted minimal Gomory-Hu Steiner tree rooted at any given vertex.
+
+\begin{restatable}{theorem}{Rooted}\thml{rooted}
+For any graph $G=(V,E)$, terminals $U\s V$, and root $r\in U$, there exists a rooted minimal Gomory-Hu Steiner tree rooted at $r$.
+\end{restatable}
+
+
+\subsection{Algorithms for the \ct and \ssc Problems}
+
+As described earlier, the main tool in our \ssc algorithm is an algorithm for the Cut Threshold (\ct) problem. We first describe a single step of the \ref{thr} algorithm (we call this \ref{step}):
+
+%\alert{This section starts abruptly. Let us add a text description of what we are going to in this section, and a short outline of the algorithm.} 
 
 \begin{algorithm}
 \mylabel{step}{\textsc{CutThresholdStep}}\caption{\ref{step}$(G=(V,E),s,U,W)$} 
@@ -62,6 +104,8 @@ Finally, we show why properties (a) to (c) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)
 %Combining this with $\E[|D|]\ge\Om(|D^*|/\log|U|)$ from \lem{step} proves the claim. 
 %\EP
 
+We now use iterate Algorithm~\ref{step} to obtain the \ref{thr} algorithm:
+
 \begin{algorithm}
 \mylabel{thr}{\textsc{CutThreshold}}\caption{\ref{thr}$(G=(V,E),s, W)$}
 \begin{algorithmic}[1]
@@ -84,6 +128,8 @@ By \lem{step}, $|U\cap D^*|$ decreases by $\Om(|D^*|/\log n)$ in expectation. Af
 \EP
 In other words, \ref{thr} is an algorithm that fulfills \thm{thr}, restated below.
 \Thr*
+
+Finally, we use the \ref{thr} algorithm to design our \ssc algorithm:
 
 \begin{algorithm}
 \caption{\textsc{ApproxSSMC}$(G=(V,E),s,\e)$}

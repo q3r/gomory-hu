@@ -210,12 +210,14 @@
 \date{\today}
 \maketitle
 
+\section{Reduction}
+
 \BD[SSMC Verification]
 The input to SSMC Verification is a graph $G=(V,E)$, a source $s\in V$, and values $\tilde\la_v:v\in V\sm\{s\}$ such that $\tilde\la_v\ge\mincut(s,v)$. The task is to determine, for each vertex $v\in V\sm\{s\}$, whether or not $\tilde\la_v=\mincut(s,v)$.
 \ED
 
-\BT
-There is an algorithm that makes calls to SSMC Verification on graphs with a total of $O(n\log^3n)$ vertices and $O(m\log^3n)$ edges, and runs for max-flow time outside of these calls.
+\BT\thml{reduction}
+There is an algorithm that makes calls to SSMC Verification on graphs with a total of $\tO(n)$ vertices and $\tO(m)$ edges, and runs for max-flow time outside of these calls.
 \ET
 
 
@@ -340,9 +342,10 @@ W.h.p., the algorithm \ref{ghtree} has maximum recursion depth $O(\log^3n)$.
 By construction, each recursive instance $(G_v,U_v)$ has $|U_v|\le|U|/2$. By \cor{step} and \lem{random-s}, over the randomness of $s$ and \ref{step}, we have
 \[ \E[D^i]\ge \Om(\E[|D^*|]/\log^2|U|) \ge \Om((|U|-1)/\log^2|U|) ,\]
 so the recursive instance $(G_\lar,U_\lar)$ satisfies $\E[|U_\lar|]\le(1-1/\log^2|U|)\cd(|U|-1)$. Therefore, each recursive branch either has at most half the vertices in $U$, or has at most a $(1-1/\log^2|U|)$ fraction in expectation. It follows that w.h.p., all branches terminate by $O(\log^3n)$ recursive calls.
+\EP
 
 Since the graph is unweighted, the instances across a given recursion level have a total of $O(n)$ vertices and $O(m)$ edges. \alert{I don't see immediately how to make it work for weighted graphs. But I didn't think about it too much.} W.h.p., the recursion depth is $O(\log^3n)$, so all the recursive instances together have $O(n\log^3n)$ vertices and $O(m\log^3n)$ edges.
-\EP
+This concludes \thm{reduction}.
 
 \end{document}
 

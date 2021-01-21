@@ -6,6 +6,7 @@
 \usepackage{hyperref,cleveref}
 \usepackage{algorithm,algorithmicx}
 \usepackage[noend]{algpseudocode}
+\usepackage{ulem}
 \bibliographystyle{alpha}
 
 %%%%% BEGIN Jason's macros %%%%%
@@ -205,16 +206,16 @@
 \newcommand{\apc}{{\sc APMC}\xspace}
 \newcommand{\ct}{{\sc CT}\xspace}
 
-\title{Approximate Gomory-Hu Tree is Faster than $n-1$ Maxflows}
+\title{Approximate Gomory-Hu Tree Is Faster than $n-1$ Maxflows}
 \author{{Jason Li\\Carnegie Mellon University} \and {Debmalya Panigrahi\\Duke University}}
-\date{\today}
+\date{}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-    The Gomory-Hu tree or cut tree (Gomory and Hu, 1961) is a classic data structure for reporting $s-t$ mincuts (and by duality, the values of $s-t$ maxflows) for all pairs of vertices $s$ and $t$ in an undirected graph. Gomory and Hu showed that it can be computed using $n-1$ maxflow computations. Surprisingly, this remains the best algorithm for Gomory-Hu trees more than 50 years later, {\em even for approximate mincuts}. In this paper, we break this longstanding barrier and give an algorithm for computing a $(1+\e)$-approximate Gomory-Hu tree using $\polylog(n)$ maxflow computations. Specifically, we obtain the following runtime bounds:
+    The Gomory-Hu tree or cut tree (Gomory and Hu, 1961) is a classic data structure for reporting $s-t$ mincuts (and by duality, the values of $s-t$ maxflows) for all pairs of vertices $s$ and $t$ in an undirected graph. Gomory and Hu showed that it can be computed using $n-1$ exact maxflow computations. Surprisingly, this remains the best algorithm for Gomory-Hu trees more than 50 years later, {\em even for approximate mincuts}. In this paper, we break this longstanding barrier and give an algorithm for computing a $(1+\e)$-approximate Gomory-Hu tree using $\polylog(n)$ maxflow computations. Specifically, we obtain the following runtime bounds:
     \begin{itemize}
         \item We obtain a randomized (Monte Carlo) algorithm for undirected, weighted graphs that runs in $\tO(m + n^{3/2})$ time and returns a $(1+\e)$-approximate Gomory-Hu tree algorithm whp. Previously, the best running time known was $\tO(n^{5/2})$, which is obtained by running Gomory and Hu's original algorithm on a cut sparsifier of the graph.
         \item We obtain a randomized (Monte Carlo) algorithm for undirected, unweighted graphs that runs in $m^{4/3+o(1)}$ time and returns a $(1+\e)$-approximate Gomory-Hu tree algorithm whp. This improves on our first result for sparse graphs, namely $m = o(n^{9/8})$. Previously, the best running time known for unweighted graphs was $\tO(mn)$ for an exact Gomory-Hu tree (Bhalgat {\em et al.}, STOC 2007); no better result was known if approximations are allowed.

@@ -92,7 +92,7 @@ For any $v\in  R^i_\sma$ and any distinct vertices $p,q\in U_v$, we have $\mincu
 \EL
 \BP
 The lower bound $\mincut_G(p,q)\le\mincut_{G_v}(p,q)$ holds because $G_v$ is a contraction of $G$, so we focus on the upper bound.
-Fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. Since $S^i_v\cup S$ is a $(p,q)$-cut, it is in particular a Steiner cut for terminals $U$, so $w(S^i_v\cup S)\ge\la$. Also, $w(S^i_v)\le(1+\e)\la$ by the choice of the threshold $(1+\e)\la$ (\line{thr}). Together with the submodularity of cuts, we obtain
+Fix any $(p,q)$-mincut in $G$, and let $S$ be the side of the mincut not containing $s$ (recall that $s\in U$ and $s\notin S^i_v$). Since $S^i_v\cup S$ is a $(p, s)$-cut (it is also a $(q, s)$-cut), it is in particular a Steiner cut for terminals $U$, so $w(S^i_v\cup S)\ge\la$. Also, $w(S^i_v)\le(1+\e)\la$ by the choice of the threshold $(1+\e)\la$ (\line{thr}). Together with the submodularity of cuts, we obtain
 \[ (1+\e)\la+w(\pt_GS) \ge w(\pt_GS^i_v) + w(\pt_GS) \ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)) \ge \la + w(\pt_G(S^i_v\cap S)) .\]
 The set $S^i_v\cap S$ stays intact under the contraction from $G$ to $G_v$, so $w(\pt_{G_v}(S^i_v\cap S))=w(\pt_G(S^i_v\cap S))$. Therefore,
 \[ \mincut_{G_v}(u,v)\le w(\pt_{G_v}(S^i_v\cap S))=w(\pt_G(S^i_v\cap S)) \le w(\pt_GS)+\e\la \le \mincut_G(u,v) + \e\,\mincut_G(u,v) ,\]

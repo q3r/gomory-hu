@@ -12,12 +12,12 @@ At a high level, the algorithm applies divide-and-conquer by cutting the graph a
 
 
 \begin{figure}\centering
-\includegraphics[scale=.8]{recursion.pdf}
+\includegraphics[scale=.4]{recursion.pdf}
 \caption{Recursive construction of $G_\lar$ and $G_v$ for $v\in R^i_\sma$. Here, $R^i_\sma=\{v_1,v_2,v_3\}$, denoted by red vertices on the top left. The dotted blue curves on the right mark the boundaries of the regions $f_{v_i}\inv(u):u\in U_{v_i}$ and $f_{v_\lar}\inv(u):u\in U_\lar$. The light green edges on the bottom left are the edges $(f_{v_i}(x_{v_i}),f_\lar(y_{v_i}))$ added on \line{combine-T} of \ref{combine}.}\label{fig:recursion}
 \end{figure}
 
 
-\begin{algorithm}[H]
+\begin{algorithm}
 \mylabel{approxGH}{\textsc{ApproxSteinerGHTree}}\caption{\ref{approxGH}$(G=(V,E),U)$} 
 \begin{algorithmic}[1]
 \State $\la\gets $ global Steiner mincut of $G$ with terminals $U$ %\Comment{Sparsify if necessary}
@@ -72,10 +72,10 @@ This depth bound alone is not enough for the following reason: if the approximat
 The lemma below formalizes our insight that approximation factors are preserved down the branch $(G_\lar,U_\lar)$.
 
 \BL\leml{large}
-For any distinct vertices $p,q\in U_\lar$, we have $\mincut_{G_\lar}(p,q) = \mincut_G(p,q)$.
+For any distinct vertices $p,q\in U_\lar$, we have\linebreak $\mincut_{G_\lar}(p,q) = \mincut_G(p,q)$.
 \EL
 \BP
-Since $G_\lar$ is a contraction of $G$, we have $\mincut_{G_\lar}(p,q) \ge \mincut_G(p,q)$. To show the reverse inequality, fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. We show that for each $v\in  R^i$, either $S^i_v\s S$ or $S^i_v\s V\sm S$. Assuming this, the cut $\pt S$ stays intact when the sets $S^i_v$ are contracted to form $G_\lar$, so $\mincut_{G_\lar}(p,q) \le w(\pt S) = \mincut_G(p,q)$.
+Since $G_\lar$ is a contraction of $G$, we have\linebreak $\mincut_{G_\lar}(p,q) \ge \mincut_G(p,q)$. To show the reverse inequality, fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. We show that for each $v\in  R^i$, either $S^i_v\s S$ or $S^i_v\s V\sm S$. Assuming this, the cut $\pt S$ stays intact when the sets $S^i_v$ are contracted to form $G_\lar$, so $\mincut_{G_\lar}(p,q) \le w(\pt S) = \mincut_G(p,q)$.
 
 Consider any $v\in R^i$, and suppose first that $v\in S$. Then, $S^i_v\cap S$ is still a $(v,R^i\sm v)$-cut, and $S^i_v\cup S$ is still a $(p,q)$-cut. By the submodularity of cuts,
 \[ w(\pt_GS^i_v) + w(\pt_GS) \ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)). \]
@@ -92,9 +92,9 @@ For any $v\in  R^i$ and any distinct vertices $p,q\in U_v$, we have $\mincut_G(p
 \BP
 The lower bound $\mincut_G(p,q)\le\mincut_{G_v}(p,q)$ holds because $G_v$ is a contraction of $G$, so we focus on the upper bound.
 Fix any $(p,q)$-mincut in $G$, and let $S$ be the side of the mincut not containing $s$ (recall that $s\in U$ and $s\notin S^i_v$). Since $S^i_v\cup S$ is a $(p, s)$-cut (it is also a $(q, s)$-cut), it is in particular a Steiner cut for terminals $U$, so $w(S^i_v\cup S)\ge\la$. Also, $w(S^i_v)\le(1+\e)\la$ by the choice of the threshold $(1+\e)\la$ (\line{thr}). Together with the submodularity of cuts, we obtain
-\[ (1+\e)\la+w(\pt_GS) \ge w(\pt_GS^i_v) + w(\pt_GS) \ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)) \ge \la + w(\pt_G(S^i_v\cap S)) .\]
+\BAL (1+\e)\la+w(\pt_GS) &\ge w(\pt_GS^i_v) + w(\pt_GS) \\&\ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)) \\&\ge \la + w(\pt_G(S^i_v\cap S)) .\EAL
 The set $S^i_v\cap S$ stays intact under the contraction from $G$ to $G_v$, so $w(\pt_{G_v}(S^i_v\cap S))=w(\pt_G(S^i_v\cap S))$. Therefore,
-\[ \mincut_{G_v}(u,v)\le w(\pt_{G_v}(S^i_v\cap S))=w(\pt_G(S^i_v\cap S)) \le w(\pt_GS)+\e\la \le \mincut_G(u,v) + \e\,\mincut_G(u,v) ,\]
+\BAL \mincut_{G_v}(u,v)&\le w(\pt_{G_v}(S^i_v\cap S))\\&=w(\pt_G(S^i_v\cap S)) \\&\le w(\pt_GS)+\e\la \\&\le \mincut_G(u,v) + \e\,\mincut_G(u,v) ,\EAL
 as promised.
 \EP
 
@@ -107,7 +107,7 @@ Finally, the lemma below determines our final approximation factor.
 We apply induction on $|U|$. 
 Since $|U_v|\le|U|/2$ for all $v\in R^i$, by induction, the recursive outputs $(T_v,f_v)$ are Gomory-Hu Steiner trees with approximation $(1+\e)^{\lg|U_v|}\le(1+\e)^{\lg|U|-1}$.  By definition, this means that for all $s,t\in U_v$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_v$, letting $U'_v\s U_v$ be the vertices of the connected component of $T_v-(u,u')$ containing $s$, we have that $f\inv_v(U'_v)$ is a $(1+\e)^{\lg|U|-1}$-approximate $(s,t)$-mincut in $G_v$ with value is $w_T(u,u')$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By construction of $(T,f)$ (lines~\ref{line:combine-T}~and~\ref{line:combine-f}), the set $f\inv(U')$ is simply $f\inv_v(U'_v)$ with the vertex $x_v$ replaced by $V\sm S^i_v$ in the case that $x_v\in f\inv(U')$. Since $G_v$ is simply $G$ with all vertices $V\sm S^i_v$ contracted to $x_v$, we conclude that $w_{G_v}(\pt f\inv_v(U'_v)) = w_G(\pt f\inv(U'))$. By \lem{small}, the values $\mincut_G(s,t)$ and $\mincut_{G_v}(s,t)$ are within factor $(1+\e)$ of each other, so $w_G(\pt f\inv(U'))$ approximates the $(s,t)$-mincut in $G$ to a factor $(1+\e)\cd(1+\e)^{\lg|U|-1} = (1+\e)^{\lg|U|}$. In other words, the Gomory-Hu Steiner tree condition for $(T,f)$ is satisfied for all $s,t\in U_v$ for some $v\in R^i$.
 
-By induction, the recursive output $(T_\lar,f_\lar)$ is a Gomory-Hu Steiner tree with approximation $(1+\e)^{\lg|U_\lar|}\le(1+\e)^{\lg|U|}$. Again, consider $s,t\in U_\lar$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_\lar$, and let $U'_\lar\s U_\lar$ be the vertices of the connected component of $T_\lar-(u,u')$ containing $s$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By a similar argument, we have $w_{G_\lar}(\pt f\inv_\lar(U'_\lar)) = w_G(\pt f\inv(U'))$. By \lem{large}, we also have $\mincut_G(s,t)=\mincut_{G_\lar}(s,t)$, so $w_G(\pt f\inv(U'))$ is a $(1+\e)^{\lg|U|}$-approximate $(s,t)$-mincut in $G$, fulfilling the Gomory-Hu Steiner tree condition for $(T,f)$ in the case $s,t\in U_\lar$.
+By induction, the recursive output $(T_\lar,f_\lar)$ is a Gomory-Hu Steiner tree with approximation $(1+\e)^{\lg|U_\lar|}\le(1+\e)^{\lg|U|}$. Again, consider $s,t\in U_\lar$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_\lar$, and let $U'_\lar\s U_\lar$ be the vertices of the connected component of $T_\lar-(u,u')$ containing $s$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By a similar argument, we have $w_{G_\lar}(\pt f\inv_\lar(U'_\lar)) = w_G(\pt f\inv(U'))$. By \lem{large}, we also have\linebreak $\mincut_G(s,t)=\mincut_{G_\lar}(s,t)$, so $w_G(\pt f\inv(U'))$ is a $(1+\e)^{\lg|U|}$-approximate $(s,t)$-mincut in $G$, fulfilling the Gomory-Hu Steiner tree condition for $(T,f)$ in the case $s,t\in U_\lar$.
 
 There are two remaining cases: $s\in U_v$ and $t\in U_{v'}$ for distinct $v,v'\in R^i$, and $s\in U_v$ and $t\in U_\lar$; we treat both cases simultaneously. Since $G$ has Steiner mincut $\la$, each of the contracted graphs $G_\lar$ and $G_v$ has Steiner mincut at least $\la$. By induction, every edge in $T_v$ and $T_\lar$ or $T_{v'}$ (depending on case) has weight at least $(1+\e)^{-\lg|U|}\la$. By construction, the $s$--$t$ path in $T$ has at least one edge of the form $(f_v(x_v),f_\lar(y_v))$, added on \line{combine-T}; this edge has weight $w(\pt_GS^i_v)\le(1+\e)\la$. Therefore, the minimum-weight edge on the $s$--$t$ path in $T$ has weight at least $(1+\e)^{-\lg|U|}\la$ and at most $(1+\e)\la$; in particular, it is a $(1+\e)^{\lg|U|}$-approximation of $\mincut_G(s,t)$. If the edge is of the form $(f_v(x_v),f_\lar(y_v))$, then by construction, the relevant set $f\inv(U')$ is exactly $S^i_v$, which is a $(1+\e)$-approximate $(s,t)$-mincut in $G$. If the edge is in $T_\lar$ or $T_v$ or $T_{v'}$, then we can apply the same arguments used previously. %\alert{(sketch) Can only go to $G_v$ at most $\lg|U|$ times, picks up $(1+\e)$ factor each time}
 \EP
@@ -131,7 +131,7 @@ W.h.p., after $\Om(\log^3n)$ recursive calls along $G_\lar$ (replacing $G\gets G
 \EC
 \BP
 Let $W=(1+\e)\la_0$.
-Initially, we trivially have $|P(G,U,W)|\le\bn{|U|}2$. The global Steiner mincut can only increase in the recursive calls, since $G_\lar$ is always a contraction of $G$, so we always have $W\le(1+\e)\la$ for the current global Steiner mincut $\la$. By \lem{P}, the value $|P(G,U,W)|$ drops by factor $1-\Om(\f1{\log^2n})$ in expectation on each recursive call, so after $\Om(\log^3n)$ calls, we have
+Initially, we trivially have\linebreak $|P(G,U,W)|\le\bn{|U|}2$. The global Steiner mincut can only increase in the recursive calls, since $G_\lar$ is always a contraction of $G$, so we always have $W\le(1+\e)\la$ for the current global Steiner mincut $\la$. By \lem{P}, the value $|P(G,U,W)|$ drops by factor $1-\Om(\f1{\log^2n})$ in expectation on each recursive call, so after $\Om(\log^3n)$ calls, we have
 \[ \E[|P(G,U,W)|]\le\bn{|U|}2\cd\lp1-\Om\lp\f1{\log^2n}\rp\rp^{\Om(\log^3n)}\le\f1{\poly(n)} .\]
 In other words, w.h.p., we have $|P(G,U,W)|=0$ at the end, or equivalently, the Steiner mincut of $G$ is at least $(1+\e)\la$.
 \EP
@@ -152,7 +152,7 @@ We state the next theorem for \emph{unweighted} graphs only. For weighted graphs
 For an \emph{unweighted} graph $G=(V,E)$, and terminals $U\s V$, $\ref{approxGH}(G,V,\e)$ takes time $\tO(m\e\inv)$ plus calls to max-flow on instances with a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges.% many calls to max-flow on $O(n)$-vertex, $O(m)$-edge graphs.
 \EL
 \BP
-For a given recursion level, consider the instances $\{ (G_i,U_i,W_i)\}$ across that level. By construction, the terminals $U_i$ partition $U$. Moreover, the total number of vertices over all $G_i$ is at most $n+2(|U|-1)=O(n)$ since each branch creates $2$ new vertices and there are at most $|U|-1$ branches. The total number of new edges created is at most the sum of weights of the edges in the final $(1+\e)$-approximate Gomory-Hu Steiner tree. For an unweighted graph, this is $O(m)$ by the following well-known argument. Root the Gomory-Hu Steiner tree $T$ at any vertex $r\in U$; for any $v\in U\sm r$ with parent $u$, the cut $\pt\{v\}$ in $G$ is a $(u,v)$-cut of value $\deg(v)$, so $w_T(u,v)\le\deg(v)$. Overall, the sum of the edge weights in $T$ is at most $\sum_{v\in U}\deg(v)\le2m$.
+For a given recursion level, consider the instances\linebreak $\{ (G_i,U_i,W_i)\}$ across that level. By construction, the terminals $U_i$ partition $U$. Moreover, the total number of vertices over all $G_i$ is at most $n+2(|U|-1)=O(n)$ since each branch creates $2$ new vertices and there are at most $|U|-1$ branches. The total number of new edges created is at most the sum of weights of the edges in the final $(1+\e)$-approximate Gomory-Hu Steiner tree. For an unweighted graph, this is $O(m)$ by the following well-known argument. Root the Gomory-Hu Steiner tree $T$ at any vertex $r\in U$; for any $v\in U\sm r$ with parent $u$, the cut $\pt\{v\}$ in $G$ is a $(u,v)$-cut of value $\deg(v)$, so $w_T(u,v)\le\deg(v)$. Overall, the sum of the edge weights in $T$ is at most $\sum_{v\in U}\deg(v)\le2m$.
 
 Therefore, there are $O(n)$ vertices and $O(m)$ edges in each recursion level. By \lem{depth}, there are $O(\e\inv\log^4n)$ levels (since $\De=1$ for an unweighted graph), for a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges. In particular, the instances to the max-flow calls have $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges in total.
 \EP
@@ -180,19 +180,19 @@ Property~(b) follows from the fact that $u\in D^*$ whenever $s\notin S(u,v)$, wh
 Property~(c) follows because any vertex $v\in U\sm S(u,v)$ satisfies $(u,v)\in P_{\text{ordered}}(G,U,W)$, of which there are at least $|U|/2$. Property~(d) follows from \lem{step} applied on  $\ref{step}(G,U,W,|U|/2)$, and then observing that even though we actually call $\ref{step}(G,U,(1+\e)\la,|U|/2)$, the set $D$ can only get larger if the weight parameter is increased from $W$ to $(1+\e)\la$.
 
 With properties (a) to (d) in hand, we now finish the proof of \lem{P}. Consider the iteration $i$ maximizing the size of $D^i := \bigcup_{v\in R^i} (S^i_v\cap U)$ (\line{max}), so that $|D^i|\ge|D|/(\lf\lg|U|\rf+1)$. For any vertex $u\in D^i$, all pairs $(u,v)\in P_{\text{ordered}}(G,U,W)$ (over all $v\in U$) disappear from $P_{\text{ordered}}(G,U,W)$, which is at least $|U|/2$ many by (c). In other words, 
-\[ |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| \ge \f{|U|}2|D^i| \ge\Om\lp\f{|D|}{\log|U|}\rp   .\]
+\BAL |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| &\ge \f{|U|}2|D^i| \\&\ge\Om\lp\f{|D|}{\log|U|}\rp   .\EAL
 Taking expectations and applying (d), 
-\[ \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \ge\Om\lp\f{\E[|D|]}{\log|U|}\rp    \ge \Om\lp\f{|U|\cd|D^*|}{\log^2|U|}\rp  .\]
+\BAL \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] &\ge\Om\lp\f{\E[|D|]}{\log|U|}\rp    \\&\ge \Om\lp\f{|U|\cd|D^*|}{\log^2|U|}\rp  .\EAL
 Moreover,
 \[ |U|\cd|D^*| \ge \E\big[\big| \{(u,v): u\in D^*\} \big|\big] \ge \f12|P_{\text{ordered}}(G,U,W)|,  \]
 where the second inequality follows by (b). Putting everything together, we obtain
-\[ \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \ge \Om\lp\f{|P_{\text{ordered}}(G,U,W)|}{\log|R|}\rp   .\]
+\BAL &\E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \\&\ge \Om\lp\f{|P_{\text{ordered}}(G,U,W)|}{\log|R|}\rp   .\EAL
 Finally, applying (a) gives
 \BG \E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|] \ge \Om\lp\f{|P(G,U,W)|}{\log|R|}\rp .\nonumber%\eqnl{P}
 \EG
 Finally, we have $P(G_\lar,U_\lar,W) \s P(G,U,W)$ since the $(u,v)$-mincut for $u,v\in U_\lar$ can only increase in $G_\lar$ due to $G_\lar$ being a contraction of $G$ (in fact it says the same by \lem{large}). Therefore,
-\[ |P(G,U,W)| - |P(G_\lar,U_\lar,W)| = |P(G,U,W) \sm P(G_\lar,U_\lar,W)| ,\]
-and combining with the bound on $\E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|]$ concludes the proof.
+\BAL &|P(G,U,W)| - |P(G_\lar,U_\lar,W)| \\&= |P(G,U,W) \sm P(G_\lar,U_\lar,W)| ,\EAL
+and combining with the bound on \linebreak $\E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|]$ concludes the proof.
 \EP
 
 \subsection{Weighted graphs}

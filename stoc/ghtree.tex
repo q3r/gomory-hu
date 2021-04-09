@@ -1,13 +1,15 @@
 %
-\documentclass[11pt]{article}
+% \documentclass[11pt]{article}
+\documentclass[sigconf,screen]{acmart}
+
 \usepackage{amsmath,amssymb,bbm,amsthm}
-\usepackage{fullpage}
+%\usepackage{fullpage}
 \usepackage{thm-restate,color,xcolor,xspace,graphicx}
 \usepackage{hyperref,cleveref}
 \usepackage{algorithm,algorithmicx}
 \usepackage[noend]{algpseudocode}
 \usepackage{ulem}
-\bibliographystyle{alpha}
+%\bibliographystyle{alpha}
 
 %%%%% BEGIN Jason's macros %%%%%
 %\newcommand{\f}{\displaystyle\frac}
@@ -60,7 +62,7 @@
 \newcommand{\R}{\mathbb R}
 \newcommand{\Z}{\mathbb Z}
 \newcommand{\F}{\mathbb F}
-\newcommand{\C}{\mathbb C}
+%\newcommand{\C}{\mathbb C}
 \newcommand{\N}{\mathbb N}
 \newcommand{\Q}{\mathbb Q}
 
@@ -70,7 +72,7 @@
 \newcommand{\De}{\Delta}
 \newcommand{\la}{\lambda}
 \newcommand{\g}{\gamma}
-\newcommand{\G}{\Gamma}
+%\newcommand{\G}{\Gamma}
 \newcommand{\pt}{\partial}
 \newcommand{\al}{\alpha}
 \newcommand{\be}{\beta}
@@ -206,13 +208,47 @@
 \newcommand{\apc}{{\sc APMC}\xspace}
 \newcommand{\ct}{{\sc CT}\xspace}
 
-\title{Approximate Gomory-Hu Tree Is Faster than $n-1$ Maxflows}
-\author{{Jason Li\\Carnegie Mellon University} \and {Debmalya Panigrahi\\Duke University}}
-\date{}
+               \title{Approximate Gomory-Hu Tree Is Faster than $n-1$ Maxflows}
+
+               \titlenote{JL's research supported in part by NSF awards CCF-1907820, CCF-1955785, and CCF-2006953.}
+
+
+\author{Jason Li}
+% \authornotemark[1]
+\email{jmli@cs.cmu.edu}
+\affiliation{%
+  \institution{Carnegie Mellon University}
+  \streetaddress{TODO}
+  \city{Pittsburgh}
+  \state{PA}
+  \country{USA}
+  \postcode{XXXX}
+}
+\author{Debmalya Panigrahi}%\titlenote{Research supported by NSF Grant 1841954}}
+% \authornotemark[1]
+\email{debmalya@cs.duke.edu}
+\affiliation{%
+  \institution{Duke University}
+  \streetaddress{TODO}
+  \city{Durham}
+  \state{NC}
+  \country{USA}
+  \postcode{XXXX}
+}
+
+               \copyrightyear{2021}
+\acmYear{2021}
+\setcopyright{acmlicensed}
+\acmConference[STOC '21]{Proceedings of the 53rd
+Annual ACM SIGACT Symposium on Theory of Computing}{June 21--25,
+2021}{Virtual, Italy}
+\acmBooktitle{Proceedings of the 53rd Annual ACM SIGACT Symposium on
+Theory of Computing (STOC '21), June 21--25, 2021, Virtual, Italy}
+\acmPrice{15.00}
+\acmDOI{10.1145/3406325.3451103}
+\acmISBN{978-1-4503-8053-9/21/06}
 
 \begin{document}
-
-\maketitle
 
 \begin{abstract}
     The Gomory-Hu tree or cut tree (Gomory and Hu, 1961) is a classic data structure for reporting $s-t$ mincuts (and by duality, the values of $s-t$ maxflows) for all pairs of vertices $s$ and $t$ in an undirected graph. Gomory and Hu showed that it can be computed using $n-1$ exact maxflow computations. Surprisingly, this remains the best algorithm for Gomory-Hu trees more than 50 years later, {\em even for approximate mincuts}. In this paper, we break this longstanding barrier and give an algorithm for computing a $(1+\e)$-approximate Gomory-Hu tree using $\polylog(n)$ maxflow computations. Specifically, we obtain the following runtime bounds:
@@ -223,12 +259,9 @@
     \end{itemize}
 \end{abstract}
 
-\pagenumbering{gobble}
 
-\clearpage
+\maketitle
 
-\pagenumbering{arabic}
-\setcounter{page}{1}
 
 \section{Introduction}
 \label{sec:introduction}

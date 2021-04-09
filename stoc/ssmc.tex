@@ -37,17 +37,17 @@ For any graph $G=(V,E)$, terminals $U\s V$, and root $r\in U$, there exists a ro
 
 \subsection{Algorithms for the \ct and \ssc Problems}
 
-As described earlier, the main tool in our \ssc algorithm is an algorithm for the Cut Threshold (\ct) problem. We first describe a single step of the \ref{thr} algorithm (we call this \ref{step}):
+As described earlier, the main tool in our \ssc algorithm is an algorithm for the Cut Threshold (\ct) problem. We first describe a single step of the \ref{thr} algorithm (we call this \ref{step}). 
 
 %\alert{This section starts abruptly. Let us add a text description of what we are going to in this section, and a short outline of the algorithm.} 
 
 \begin{algorithm}
-\mylabel{step}{\textsc{CutThresholdStep}}\caption{\ref{step}$(G=(V,E),s,U,W)$} 
+\mylabel{step}{\textsc{CutThresholdStep}}\caption{\ref{step}$(G=(V,E),s,U,W,z)$} 
 \begin{algorithmic}[1]
 \State Initialize $R^0\gets U$ and $D\gets\emptyset$
 \For{$i$ from $0$ to $\lf\lg|U|\rf$}
  \State Compute minimum isolating cuts $\{S^i_v:v\in R^i\}$ on inputs $G$ and $R^i$ \linel{Sv}
- \State Let $D^i$ be the union of $S^i_v\cap U$ over all $v\in R^i\sm \{s\}$ satisfying $w(\pt S^i_v)\le W$
+ \State Let $D^i$ be the union of $S^i_v\cap U$ over all $v\in R^i\sm \{s\}$ satisfying $w(\pt S^i_v)\le W$ and $|S^i_v\cap U|\le z$\linel{D}
  \State $R^{i+1}\gets$ subsample of $R^i$ where each vertex in $R^i\sm \{s\}$ is sampled independently with probability $1/2$, and $s$ is sampled with probability $1$
 \EndFor
 %\State $D\gets D^0\cup D^1\cup \cds\cup D^{\lf\lg|U|\rf}$
@@ -55,21 +55,23 @@ As described earlier, the main tool in our \ssc algorithm is an algorithm for th
 \end{algorithmic}
 \end{algorithm}
 
-Let $D=D^0\cup D^1\cup \cds\cup D^{\lf\lg|U|\rf}$ be the union of the sets output by the algorithm. We first introduce the following lemma which will work for all $D^*$ that is downward-closed in the tree $T$ rooted at $s$. We will later set $D^*$ as all vertices $v\in U\sm \{s\}$ for which the $(s,v)$-mincut has weight at most $W$. 
+We remark that throughout this section, we will always set $z=\infty$, so the constraint $|S^i_v\cap U|\le z$ in \line{D} can be ignored. However, the variable $z$ will play a role in the next section on computing a Gomory-Hu tree.
+
+Let $D=D^0\cup D^1\cup \cds\cup D^{\lf\lg|U|\rf}$ be the union of the sets output by the algorithm. Let $D^*$ be all vertices $v\in U\sm s$ for which there exists an $(s,v)$-cut of weight at most $W$ whose side containing $v$ has at most $z$ vertices in $U$.  
 
 \BL\leml{step}
-For any downward-closed set $D^*$
-$D\s D^*$ and $\E[|D|] = \Om(|D^*|/\log|U|)$. 
+$D\s D^*$ and $\E[|D|] = \Omega(|D^*|/\log|U|)$.
 \EL
 \BP
-We first prove that $D\s D^*$. Each vertex $u\in D$ belongs to some $S^i_v$ satisfying $w(\pt S^i_v)\le W$. %and $S^i_v\cap U=\{v\}$ for some $v\in U\sm s$. 
-In particular, $\pt S^i_v$ is an $(s,u)$-cut with weight at most $ W$. It follows that the $(s,u)$-mincut also has weight at most $ W$, and therefore, $u\in D$.
+We first prove that $D\s D^*$. Each vertex $u\in D$ belongs to some $S^i_v$ satisfying $w(\pt S^i_v)\le W$ and $|S^i_v\cap U|\le z$. %and $S^i_v\cap U=\{v\}$ for some $v\in U\sm s$. 
+In particular, $\pt S^i_v$ is an $(s,u)$-cut with weight at most $ W$ whose side $S^i_v$ containing $u$ has at most $z$ vertices in $U$, so $u\in D^*$.
 
-It remains to prove that $\E[|D|]\ge\Om(|D^*|/\log|U|)$. Consider a rooted minimal Steiner Gomory-Hu tree $T$ of $G$ on terminals $U$ rooted at $s$, which exists by \thm{rooted}. By definition of the Steiner Gomory-Hu tree, a vertex $v\in U$ is in $D^*$ iff its path to the root $s$ in $T$ has at least one edge of weight at most $ W$. For each vertex $v\in U\sm \{s\}$, let $r(v)$ be defined as the child vertex of the lowest weight edge on the path from $v$ to $s$ in $T$. If there are multiple lowest weight edges, choose the one with the maximum depth. %\alert{The lowest weight edge is unique because there is only one $(v,s)$-mincut.}
+It remains to prove that $\E[|D|]\ge\Om(|D^*|/\log|U|)$. 
+Consider a rooted minimal Steiner Gomory-Hu tree $T$ of $G$ on terminals $U$ rooted at $s$, which exists by \thm{rooted}. For each vertex $v\in U\sm \{s\}$, let $r(v)$ be defined as the child vertex of the lowest weight edge on the path from $v$ to $s$ in $T$. If there are multiple lowest weight edges, choose the one with the maximum depth. %\alert{The lowest weight edge is unique because there is only one $(v,s)$-mincut.}
 
 %\alert{DP: 1. Need to define rooted minimal Steiner Gomory-Hu tree which is used in the para above. 3. Should we talk about breaking ties among multiple lowest weight edges or add a perturbation at the outset and claim that mincuts are unique? This last fact needs a proof since there could be exponential number of $s-t$ mincuts, so just adding an inverse polynomial perturabtion does not immediately imply uniqueness. But, perhaps use the (classic) isolation lemma?} \textcolor{blue}{I had assumed all $s-t$ mincuts unique in a previous write-up. I do think the new version is better since we also obtain better bounds for unweighted graphs which we can't use isolation lemma for. But maybe a note to the reader that assuming all min-cuts are unique could help with a first reading}
 
-For each vertex $v\in D^*$, consider the subtree rooted at $v$, define $U_v$ to be the vertices in the subtree, and define $n_v$ as the number of vertices in the subtree. We say that a vertex $v\in D^*$ is \emph{active} if $v\in R^i$ for $i=\lf\lg n_{r(v)}\rf$. In addition, if $U_{r(v)}\cap R^i=\{v\}$, then we say that $v$ \emph{hits} all of the vertices in $U_{r(v)}$ (including itself); see Figure~\ref{fig:hits}. In particular, in order for $v$ to hit any other vertex, it must be active. For completeness, we say that any vertex in $U\sm D^*$ is not active and does not hit any vertex.
+For each vertex $v\in D^*$, consider the subtree rooted at $v$, define $U_v\s D^*$ to be the vertices in the subtree, and define $n_v$ as the number of vertices in the subtree. We say that a vertex $v\in D^*$ is \emph{active} if $v\in R^i$ for $i=\lf\lg n_{r(v)}\rf$. In addition, if $U_{r(v)}\cap R^i=\{v\}$, then we say that $v$ \emph{hits} all of the vertices in $U_{r(v)}$ (including itself); see Figure~\ref{fig:hits}. In particular, in order for $v$ to hit any other vertex, it must be active. For completeness, we say that any vertex in $U\sm D^*$ is not active and does not hit any vertex.
 
 %\alert{The above definitions are fine, but would be easier to read with (a) some intuition behind when you say that a vertex is active and process of hitting other vertices, and (b) a figure illustrating the notation.} 
 
@@ -87,13 +89,13 @@ To prove that $\E[|D|] \ge \Om(|D^*|/\log|U|)$, we will show that
  \im[(c)] with probability at least $1-\f c{2|U|^2}$ (for the constant $c>0$ in~(b)), each vertex $u$ is hit by at most $O(\log|U|)$ vertices $v\in D^*$. %\alert{DP: There's some play on constants here between the constant hidden in $O(.)$ and the constant in the denominator? Should we make this more explicit?}
  \EE
 
-For (a), consider the path from $u$ to the root $s$ in $T$, and take any vertex $v\in D^*$ on the path that is active (possibly $u$ itself). Such a vertex must exist since $u$ is hit by some vertex. By definition, for $i=\lf\lg n_{r(v)}\rf$, we have $U_{r(v)}\cap R^i=\{v\}$, so $\pt U_{r(v)}$ is a $(v,R^i\sm \{v\})$-cut.  By the definition of $r(v)$, we have that $\pt U_{r(v)}$ is a $(v,s)$-mincut. On the other hand, we have that $\pt f\inv(S^i_v)$ is a $(v,R^i\sm v)$-mincut, so in particular, it is a $(v,s)$-cut. It follows that $\pt f\inv(U_{r(v)})$ and $\pt f\inv(S^i_v)$ are both $(v,s)$-mincuts and $(v,R^i\sm v)$-mincuts. Since $T$ is a minimal Gomory-Hu Steiner tree, we must have $f\inv(U_{r(v)}) \s S^i_v$. Since $u\in U_{r(v)}\s f\inv(U_{r(v)})\s S^i_v$, it is added to $D$ on \line{Sv}. 
+For (a), consider the path from $u$ to the root $s$ in $T$, and take any vertex $v\in D^*$ on the path that is active (possibly $u$ itself). Such a vertex must exist since $u$ is hit by some vertex. By definition, for $i=\lfloor\lg n_{r(v)}\rfloor$, we have $U_{r(v)}\cap R^i=\{v\}$, so $\partial U_{r(v)}$ is a $(v,R^i\setminus \{v\})$-cut.  By the definition of $r(v)$, we have that $\partial U_{r(v)}$ is a $(v,s)$-mincut. On the other hand, we have that $\partial f^{-1}(S^i_v)$ is a $(v,R^i\setminus\{v\})$-mincut, so in particular, it is a $(v,s)$-cut. It follows that $\partial f^{-1}(U_{r(v)})$ and $\partial f^{-1}(S^i_v)$ are both $(v,s)$-mincuts and $(v,R^i\setminus v)$-mincuts, and $w(\partial S^i_v)=\mincut(s,v)\le W$. Since $T$ is a minimal Gomory-Hu Steiner tree, we must have $f^{-1}(U_{r(v)}) \subseteq S^i_v$. Since $S^i_v$ is the minimal $(v,R^i\setminus\{v\})$-mincut, it is also the minimal $(v,s)$-mincut, so $S^i_v\subseteq f^{-1}(U_{r(v)}) $. It follows that $f^{-1}(U_{r(v)})=S^i_v$. Since $f^{-1}(U_{r(v)})$ is the minimal $(v,s)$-mincut and $v\in D^*$, we must have $|f^{-1}(U_{r(v)})\cap U|\le z$, so in particular, $|S^i_v\cap U|=|f^{-1}(U_{r(v)})\cap U|\le z$. Therefore, the vertex $v$ satisfies all the conditions of line~\ref{line:D}. Moreover, since $u\in U_{r(v)}\subseteq f^{-1}(U_{r(v)})= S^i_v$, vertex $u$ is added to $D$ in the set $S^i_v\cap U$. 
 
 For (b), for $i=\lf\lg n_{r(v)}\rf$, we have $v\in R^i$ with probability exactly $1/2^i = \Th(1/n_{r(v)})$, and with probability $\Om(1)$, no other vertex in $U_{r(v)}$ joins $R^i$. Therefore, $v$ is active with probability $\Om(1/n_{r(v)})$. Conditioned on $v$ being active, it hits exactly $n_{r(v)}$ many vertices. It follows that $v$ hits $\Om(1)$ vertices in expectation.
 
 For (c), the number of vertices $v$ that hit vertex $u$ is at most the number of active vertices $v$ for which $r(v)$ is on the path from $u$ to $s$ in $T$. Label these vertices $u=v_1,v_2,\lds,v_\el=s$, ordered by increasing distance from $u$ to $r(v_i)$ in $T$. Each vertex $v_j\in D^*$ is active with probability $\Th(1/n_{r(v_j)})$, which is at most $\Th(1/j)$ since $v_1,\lds,v_j \in U_{r(v_j)}$. Each vertex $v_j\notin D^*$ is never active. Therefore, the expected number of active vertices on the path from $u$ to $s$ is at most $\sum_{j=1}^\el\Th(1/j)=\Th(\ln\el)\le \Th(\ln|U|)$. A standard Chernoff bound shows that with probability at least $1-\f c{2|U|^3}$ for any constant $c>0$, the number of active vertices on the path is indeed $O(\ln|U|)$, where the $O(\cd)$ hides the dependency on $c$. Taking a union bound over all $u\in U$, the probability that this is true for all vertices is at least $1-\f c{2|U|^2}$.
 
-Finally, we show why properties (a) to (c) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)$. In the event that property~(c) fails, the total number of pairs $(u,v)$ for which $v$ hits $u$ can be trivially upper bounded by $|U|^2$. Since this occurs with probability at most $\f c{2|U|^2}$, the total contribution to the expectation $c|D^*|$ in property~(b) is at most $c/2$. Therefore, the contribution to the expectation in the event that property~(c) succeeds is at least $c|D^*|-c/2\ge (c/2)|D^*|$. In this case, since each vertex is hit at most $O(\log|U|)$ times, there are at least $\Om(|D^*|/\log|U|)$ vertices hit in expectation.
+Finally, we show why properties (a) to (c) imply $\E[|D|] \ge \Om(|D^*|/\log|U|)$. In the event that property~(c) fails, the total number of pairs $(u,v)$ for which $v$ hits $u$ can be trivially upper bounded by $|U|^2$. Since this occurs with probability at most $\f c{2|U|^2}$, the total contribution to the expectation $c|D^*|$ in property~(b) is at most $c/2$. Therefore, the contribution to the expectation in the event that property~(c) succeeds is at least $c|D^*|-c/2\ge (c/2)|D^*|$. In this case, since each vertex is hit at most $O(\log|U|)$ times, there are at least $\Om(|D^*|/\log|U|)$ vertices hit in expectation, all of which are included in $D$ by property~(a).
 \EP
 
 %The following corollary will be useful in the next section:
@@ -112,7 +114,7 @@ We now use iterate Algorithm~\ref{step} to obtain the \ref{thr} algorithm:
 \begin{algorithmic}[1]
 \State Initialize $U\gets V$ and $D_{\textup{total}}\gets\emptyset$
 \For{$O(\log^2n)$ iterations}
- \State Let $D$ be the union of the sets output by $\ref{step}(G,s,U, W)$
+ \State Let $D$ be the union of the sets output by $\ref{step}(G,s,U, W,\infty)$
  \State Update $D_{\textup{total}}\gets D_{\textup{total}}\cup D$ and $U\gets U\sm D$
 \EndFor
 \State\Return $D_{\textup{total}}$

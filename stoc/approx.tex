@@ -27,26 +27,25 @@ At a high level, the algorithm applies divide-and-conquer by cutting the graph a
 %\EndIf
 
 \State $s\gets$ uniformly random vertex in $U$
-\State Call $\ref{step}(G,s,U,(1+\e)\la)$, and let $R^j$ and $S^j_v:v\in R^j$ ($0\le j\le\lg|U|$) be the intermediate variables in the algorithm\linel{thr}
-\State For each $j\in\{0,1,\lds,\lf\lg|U|\rf\}$, let $R^j_\sma\gets \{ v\in R^j : |S^j_v\cap U|\le|U|/2 \}$  
-\State Let $i\in\{0,1,\lds,\lf\lg|U|\rf\}$ be the iteration maximizing $\big|\bigcup_{v\in R^i_\sma} (S^i_v\cap U)\big|$ \linel{i}
+\State Call $\ref{step}(G,s,U,(1+\e)\la,|U|/2)$, and let $R^j$ and $S^j_v:v\in R^j$ ($0\le j\le\lg|U|$) be the intermediate variables in the algorithm\linel{thr}
+\State Let $i\in\{0,1,\lds,\lf\lg|U|\rf\}$ be the iteration maximizing $\big|\bigcup_{v\in R^i} (S^i_v\cap U)\big|$ \linel{i}
 
 \ \linel{max}
-\For{each $v\in  R^i_\sma$} \Comment{Construct recursive graphs and apply recursion}
+\For{each $v\in  R^i$} \Comment{Construct recursive graphs and apply recursion}
  \State Let $G_v$ be the graph $G$ with vertices $V\sm S^i_v$ contracted to a single vertex $x_v$ \Comment{$S^i_v$ are disjoint}
  \State Let $U_v\gets S^i_v\cap U$
  \State $(T_v,f_v)\gets\ref{approxGH}(G_v,U_v)$
 \EndFor
-\State Let $G_\lar$ be the graph $G$ with (disjoint) vertex sets $S^i_v$ contracted to single vertices $y_v$ for all $v\in R^i_\sma$
-\State Let $U_\lar\gets U\sm\bigcup_{v\in R^i_\sma}(S^i_v\cap U)$
+\State Let $G_\lar$ be the graph $G$ with (disjoint) vertex sets $S^i_v$ contracted to single vertices $y_v$ for all $v\in R^i$
+\State Let $U_\lar\gets U\sm\bigcup_{v\in R^i}(S^i_v\cap U)$
 \State $(T_\lar,f_\lar)\gets\ref{approxGH}(G_\lar,U_\lar)$
 
 \
-\State Combine $(T_\lar,f_\lar)$ and $\{(T_v,f_v):v\in R^i_\sma\}$ into $(T,f)$ according to \ref{combine}%$((T_\lar,f_\lar),\{(T_v,f_v):v\in R^i_\sma)\}$
-%\State Construct $T$ by starting with the disjoint union $T_\lar\cup\bigcup_{v\in R^i_\sma}T_v$ and, for each $v\in R^i_\sma$, adding an edge between $f_v(x_v)\in U_v$ and $f_\lar(y_v)\in U_\lar$ of weight $w(\pt_GS^i_v)$ 
+\State Combine $(T_\lar,f_\lar)$ and $\{(T_v,f_v):v\in R^i\}$ into $(T,f)$ according to \ref{combine}%$((T_\lar,f_\lar),\{(T_v,f_v):v\in R^i)\}$
+%\State Construct $T$ by starting with the disjoint union $T_\lar\cup\bigcup_{v\in R^i}T_v$ and, for each $v\in R^i$, adding an edge between $f_v(x_v)\in U_v$ and $f_\lar(y_v)\in U_\lar$ of weight $w(\pt_GS^i_v)$ 
 
 %\Comment{Combine Steiner Gomory-Hu trees together} \linel{combine-T}
-%\State Construct $f:V\to U$ by $f(v')=f_\lar(v')$ if $v'\in U_\lar$ and $f(v')=f_v(v')$ if $v'\in U_v$ for some $v\in R^i_\sma$\linel{combine-f}
+%\State Construct $f:V\to U$ by $f(v')=f_\lar(v')$ if $v'\in U_\lar$ and $f(v')=f_v(v')$ if $v'\in U_v$ for some $v\in R^i$\linel{combine-f}
 \State\Return $(T,f)$
 
 \end{algorithmic}
@@ -54,10 +53,10 @@ At a high level, the algorithm applies divide-and-conquer by cutting the graph a
 
 
 \begin{algorithm}[H]
-\mylabel{combine}{\textsc{Combine}}\caption{\ref{combine}$((T_\lar,f_\lar),\{(T_v,f_v): v\in R^i_\sma\} )$} 
+\mylabel{combine}{\textsc{Combine}}\caption{\ref{combine}$((T_\lar,f_\lar),\{(T_v,f_v): v\in R^i\} )$} 
 \begin{algorithmic}[1]
-\State Construct $T$ by starting with the disjoint union $T_\lar\cup\bigcup_{v\in R^i_\sma}T_v$ and, for each $v\in R^i_\sma$, adding an edge between $f_v(x_v)\in U_v$ and $f_\lar(y_v)\in U_\lar$ of weight $w(\pt_GS^i_v)$\linel{combine-T}
-\State Construct $f:V\to U$ by $f(v')=f_\lar(v')$ if $v'\in U_\lar$ and $f(v')=f_v(v')$ if $v'\in U_v$ for some $v\in R^i_\sma$\linel{combine-f}
+\State Construct $T$ by starting with the disjoint union $T_\lar\cup\bigcup_{v\in R^i}T_v$ and, for each $v\in R^i$, adding an edge between $f_v(x_v)\in U_v$ and $f_\lar(y_v)\in U_\lar$ of weight $w(\pt_GS^i_v)$\linel{combine-T}
+\State Construct $f:V\to U$ by $f(v')=f_\lar(v')$ if $v'\in U_\lar$ and $f(v')=f_v(v')$ if $v'\in U_v$ for some $v\in R^i$\linel{combine-f}
 \State\Return $(T,f)$
 \end{algorithmic}
 \end{algorithm}
@@ -76,9 +75,9 @@ The lemma below formalizes our insight that approximation factors are preserved 
 For any distinct vertices $p,q\in U_\lar$, we have $\mincut_{G_\lar}(p,q) = \mincut_G(p,q)$.
 \EL
 \BP
-Since $G_\lar$ is a contraction of $G$, we have $\mincut_{G_\lar}(p,q) \ge \mincut_G(p,q)$. To show the reverse inequality, fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. We show that for each $v\in  R^i_\sma$, either $S^i_v\s S$ or $S^i_v\s V\sm S$. Assuming this, the cut $\pt S$ stays intact when the sets $S^i_v$ are contracted to form $G_\lar$, so $\mincut_{G_\lar}(p,q) \le w(\pt S) = \mincut_G(p,q)$.
+Since $G_\lar$ is a contraction of $G$, we have $\mincut_{G_\lar}(p,q) \ge \mincut_G(p,q)$. To show the reverse inequality, fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. We show that for each $v\in  R^i$, either $S^i_v\s S$ or $S^i_v\s V\sm S$. Assuming this, the cut $\pt S$ stays intact when the sets $S^i_v$ are contracted to form $G_\lar$, so $\mincut_{G_\lar}(p,q) \le w(\pt S) = \mincut_G(p,q)$.
 
-Consider any $v\in R^i_\sma$, and suppose first that $v\in S$. Then, $S^i_v\cap S$ is still a $(v,R^i\sm v)$-cut, and $S^i_v\cup S$ is still a $(p,q)$-cut. By the submodularity of cuts,
+Consider any $v\in R^i$, and suppose first that $v\in S$. Then, $S^i_v\cap S$ is still a $(v,R^i\sm v)$-cut, and $S^i_v\cup S$ is still a $(p,q)$-cut. By the submodularity of cuts,
 \[ w(\pt_GS^i_v) + w(\pt_GS) \ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)). \]
 In particular, $S^i_v\cap S$ must be a minimum $(v,R^i\sm v)$-cut. Since $S^i_v$ is the minimal $(v,R^i\sm v)$-mincut, it follows that $S^i_v\cap S = S^i_v$, or equivalently, $S^i_v\s S$.
 
@@ -88,7 +87,7 @@ Suppose now that $v\notin S$. In this case, we can swap $p$ and $q$, and swap $S
 Similarly, the lemma below says that approximation factors distort by at most $(1+\e)$ down a $(G_v,U_v)$ branch.
 
 \BL\leml{small}
-For any $v\in  R^i_\sma$ and any distinct vertices $p,q\in U_v$, we have $\mincut_G(p,q)\le\mincut_{G_v}(p,q)\le(1+\e)\mincut_G(p,q)$.
+For any $v\in  R^i$ and any distinct vertices $p,q\in U_v$, we have $\mincut_G(p,q)\le\mincut_{G_v}(p,q)\le(1+\e)\mincut_G(p,q)$.
 \EL
 \BP
 The lower bound $\mincut_G(p,q)\le\mincut_{G_v}(p,q)$ holds because $G_v$ is a contraction of $G$, so we focus on the upper bound.
@@ -106,11 +105,11 @@ Finally, the lemma below determines our final approximation factor.
 \EL
 \BP
 We apply induction on $|U|$. 
-Since $|U_v|\le|U|/2$ for all $v\in R^i_\sma$, by induction, the recursive outputs $(T_v,f_v)$ are Gomory-Hu Steiner trees with approximation $(1+\e)^{\lg|U_v|}\le(1+\e)^{\lg|U|-1}$.  By definition, this means that for all $s,t\in U_v$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_v$, letting $U'_v\s U_v$ be the vertices of the connected component of $T_v-(u,u')$ containing $s$, we have that $f\inv_v(U'_v)$ is a $(1+\e)^{\lg|U|-1}$-approximate $(s,t)$-mincut in $G_v$ with value is $w_T(u,u')$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By construction of $(T,f)$ (lines~\ref{line:combine-T}~and~\ref{line:combine-f}), the set $f\inv(U')$ is simply $f\inv_v(U'_v)$ with the vertex $x_v$ replaced by $V\sm S^i_v$ in the case that $x_v\in f\inv(U')$. Since $G_v$ is simply $G$ with all vertices $V\sm S^i_v$ contracted to $x_v$, we conclude that $w_{G_v}(\pt f\inv_v(U'_v)) = w_G(\pt f\inv(U'))$. By \lem{small}, the values $\mincut_G(s,t)$ and $\mincut_{G_v}(s,t)$ are within factor $(1+\e)$ of each other, so $w_G(\pt f\inv(U'))$ approximates the $(s,t)$-mincut in $G$ to a factor $(1+\e)\cd(1+\e)^{\lg|U|-1} = (1+\e)^{\lg|U|}$. In other words, the Gomory-Hu Steiner tree condition for $(T,f)$ is satisfied for all $s,t\in U_v$ for some $v\in R^i_\sma$.
+Since $|U_v|\le|U|/2$ for all $v\in R^i$, by induction, the recursive outputs $(T_v,f_v)$ are Gomory-Hu Steiner trees with approximation $(1+\e)^{\lg|U_v|}\le(1+\e)^{\lg|U|-1}$.  By definition, this means that for all $s,t\in U_v$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_v$, letting $U'_v\s U_v$ be the vertices of the connected component of $T_v-(u,u')$ containing $s$, we have that $f\inv_v(U'_v)$ is a $(1+\e)^{\lg|U|-1}$-approximate $(s,t)$-mincut in $G_v$ with value is $w_T(u,u')$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By construction of $(T,f)$ (lines~\ref{line:combine-T}~and~\ref{line:combine-f}), the set $f\inv(U')$ is simply $f\inv_v(U'_v)$ with the vertex $x_v$ replaced by $V\sm S^i_v$ in the case that $x_v\in f\inv(U')$. Since $G_v$ is simply $G$ with all vertices $V\sm S^i_v$ contracted to $x_v$, we conclude that $w_{G_v}(\pt f\inv_v(U'_v)) = w_G(\pt f\inv(U'))$. By \lem{small}, the values $\mincut_G(s,t)$ and $\mincut_{G_v}(s,t)$ are within factor $(1+\e)$ of each other, so $w_G(\pt f\inv(U'))$ approximates the $(s,t)$-mincut in $G$ to a factor $(1+\e)\cd(1+\e)^{\lg|U|-1} = (1+\e)^{\lg|U|}$. In other words, the Gomory-Hu Steiner tree condition for $(T,f)$ is satisfied for all $s,t\in U_v$ for some $v\in R^i$.
 
 By induction, the recursive output $(T_\lar,f_\lar)$ is a Gomory-Hu Steiner tree with approximation $(1+\e)^{\lg|U_\lar|}\le(1+\e)^{\lg|U|}$. Again, consider $s,t\in U_\lar$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_\lar$, and let $U'_\lar\s U_\lar$ be the vertices of the connected component of $T_\lar-(u,u')$ containing $s$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By a similar argument, we have $w_{G_\lar}(\pt f\inv_\lar(U'_\lar)) = w_G(\pt f\inv(U'))$. By \lem{large}, we also have $\mincut_G(s,t)=\mincut_{G_\lar}(s,t)$, so $w_G(\pt f\inv(U'))$ is a $(1+\e)^{\lg|U|}$-approximate $(s,t)$-mincut in $G$, fulfilling the Gomory-Hu Steiner tree condition for $(T,f)$ in the case $s,t\in U_\lar$.
 
-There are two remaining cases: $s\in U_v$ and $t\in U_{v'}$ for distinct $v,v'\in R^i_\sma$, and $s\in U_v$ and $t\in U_\lar$; we treat both cases simultaneously. Since $G$ has Steiner mincut $\la$, each of the contracted graphs $G_\lar$ and $G_v$ has Steiner mincut at least $\la$. By induction, every edge in $T_v$ and $T_\lar$ or $T_{v'}$ (depending on case) has weight at least $(1+\e)^{-\lg|U|}\la$. By construction, the $s$--$t$ path in $T$ has at least one edge of the form $(f_v(x_v),f_\lar(y_v))$, added on \line{combine-T}; this edge has weight $w(\pt_GS^i_v)\le(1+\e)\la$. Therefore, the minimum-weight edge on the $s$--$t$ path in $T$ has weight at least $(1+\e)^{-\lg|U|}\la$ and at most $(1+\e)\la$; in particular, it is a $(1+\e)^{\lg|U|}$-approximation of $\mincut_G(s,t)$. If the edge is of the form $(f_v(x_v),f_\lar(y_v))$, then by construction, the relevant set $f\inv(U')$ is exactly $S^i_v$, which is a $(1+\e)$-approximate $(s,t)$-mincut in $G$. If the edge is in $T_\lar$ or $T_v$ or $T_{v'}$, then we can apply the same arguments used previously. %\alert{(sketch) Can only go to $G_v$ at most $\lg|U|$ times, picks up $(1+\e)$ factor each time}
+There are two remaining cases: $s\in U_v$ and $t\in U_{v'}$ for distinct $v,v'\in R^i$, and $s\in U_v$ and $t\in U_\lar$; we treat both cases simultaneously. Since $G$ has Steiner mincut $\la$, each of the contracted graphs $G_\lar$ and $G_v$ has Steiner mincut at least $\la$. By induction, every edge in $T_v$ and $T_\lar$ or $T_{v'}$ (depending on case) has weight at least $(1+\e)^{-\lg|U|}\la$. By construction, the $s$--$t$ path in $T$ has at least one edge of the form $(f_v(x_v),f_\lar(y_v))$, added on \line{combine-T}; this edge has weight $w(\pt_GS^i_v)\le(1+\e)\la$. Therefore, the minimum-weight edge on the $s$--$t$ path in $T$ has weight at least $(1+\e)^{-\lg|U|}\la$ and at most $(1+\e)\la$; in particular, it is a $(1+\e)^{\lg|U|}$-approximation of $\mincut_G(s,t)$. If the edge is of the form $(f_v(x_v),f_\lar(y_v))$, then by construction, the relevant set $f\inv(U')$ is exactly $S^i_v$, which is a $(1+\e)$-approximate $(s,t)$-mincut in $G$. If the edge is in $T_\lar$ or $T_v$ or $T_{v'}$, then we can apply the same arguments used previously. %\alert{(sketch) Can only go to $G_v$ at most $\lg|U|$ times, picks up $(1+\e)$ factor each time}
 \EP
 
 \subsection{Running Time Bound}\secl{running}
@@ -164,28 +163,28 @@ Combining \Cref{lem:approx,lem:runtime} and resetting $\e\gets\Th(\e/\logn)$, we
 Finally, we prove \lem{P}, restated below.
 \LemD*
 \BP
-Let $D^*$ be all vertices $v\in U\sm s$ for which the $(v,s)$-mincut has weight at most $ W$, and let $D^*_\sma\s D^*$ be all vertices $v\in U\sm s$ for which there exists an $(v,s)$-cut of weight at most $W$ whose side containing $v$ has at most $|U|/2$ vertices in $U$. Define $D_\sma = \bigcup_{j=0}^{\lf\lg|U|\rf}\bigcup_{v\in R^i_\sma} (S^i_v\cap U)$.
+Let $D^*$ be all vertices $v\in U\sm s$ for which there exists an $(s,v)$-cut of weight at most $W$ whose side containing $v$ has at most $|U|/2$ vertices in $U$. Define $D = \bigcup_{j=0}^{\lf\lg|U|\rf}\bigcup_{v\in R^i} (S^i_v\cap U)$.
 Let $P_{\text{ordered}}(G,U,W)$ be the set of ordered pairs $(u,v):u,v\in V$ for which there exists an $(u,v)$-mincut of weight at most $W$ with at most $|U|/2$ vertices in $U$ on the side $S(u,v)\s V$ containing $u$. %Observe that $|P_{\text{ordered}}(G,U,W)| \ge |P(G,U,W)|$, since for each pair $(u,v)$.
 %For each ordered pair $(u,v)$ for which $\{u,v\}\in P(G,U,W)$, For each unordered pair $\{u,v\}\in P(G,U,W)$, consider the $(u,v)$-mincut of weight at most $W$. Let $S(\{u,v\})\s V$ be the side of the mincut with the smaller number of vertices in $U$, with a tie broken arbitrarily, and let $f(\{u,v\})\in\{u,v\}$ be whichever vertex ($u$ or $v$) is in $S(\{u,v\})$.
 We now state and prove the following four properties:
 
 \BE
 \im[(a)] For all $u,v\in U$, $\{u,v\}\in P(G,U,W)$ if and only if either $(u,v)\in P_{\text{ordered}}(G,U,W)$ or $(v,u)\in P_{\text{ordered}}(G,U,W)$ (or both).
-\im[(b)] For each pair $(u,v)\in P_{\text{ordered}}(G,U,W)$, we have $u\in D^*_\sma$ with probability at least $1/2$,
-\im[(c)] For each $u\in D^*_\sma$, there are at least $|U|/2$ vertices $v\in U$ for which $(u,v)\in P_{\text{ordered}}(G,U,W)$.
-\im[(d)] Over the randomness in \ref{step}$(G,U,(1+\e)\la)$, $\E[|D_\sma|]\ge\Om(|D^*_\sma|/\log|R|)$.
+\im[(b)] For each pair $(u,v)\in P_{\text{ordered}}(G,U,W)$, we have $u\in D^*$ with probability at least $1/2$,
+\im[(c)] For each $u\in D^*$, there are at least $|U|/2$ vertices $v\in U$ for which $(u,v)\in P_{\text{ordered}}(G,U,W)$.
+\im[(d)] Over the randomness in \ref{step}$(G,U,(1+\e)\la)$, $\E[|D|]\ge\Om(|D^*|/\log|R|)$.
 \EE
 
 Property (a) follows by definition.
-Property~(b) follows from the fact that $u\in D^*_\sma$ whenever $s\notin S(u,v)$, which happens with probability at least $1/2$. 
-Property~(c) follows because any vertex $v\in U\sm S(u,v)$ satisfies $(u,v)\in P_{\text{ordered}}(G,U,W)$, of which there are at least $|U|/2$. Property~(d) can be proved for $\ref{step}(G,U,W)$ identically to the proof of \lem{step}, substituting $D^*$ for $D^*_\sma$. The only property we need is that $D^*_\sma$ is downward-closed, in the sense that for any vertex $v\in D^*_\sma$, all vertices in the subtree rooted at $v$ are also in $D^*_\sma$. Property~(d) actually concerns $\ref{step}(G,U,(1+\e)\la)$, but observe that the set $D_\sma$ can only increase if the weight parameter is increased from $W$ to $(1+\e)\la$.
+Property~(b) follows from the fact that $u\in D^*$ whenever $s\notin S(u,v)$, which happens with probability at least $1/2$. 
+Property~(c) follows because any vertex $v\in U\sm S(u,v)$ satisfies $(u,v)\in P_{\text{ordered}}(G,U,W)$, of which there are at least $|U|/2$. Property~(d) follows from \lem{step} applied on  $\ref{step}(G,U,W,|U|/2)$, and then observing that even though we actually call $\ref{step}(G,U,(1+\e)\la,|U|/2)$, the set $D$ can only get larger if the weight parameter is increased from $W$ to $(1+\e)\la$.
 
-With properties (a) to (d) in hand, we now finish the proof of \lem{P}. Consider the iteration $i$ maximizing the size of $D^i_\sma := \bigcup_{v\in R^i_\sma} (S^i_v\cap U)$ (\line{max}), so that $|D^i_\sma|\ge|D_\sma|/(\lf\lg|U|\rf+1)$. For any vertex $u\in D^i_\sma$, all pairs $(u,v)\in P_{\text{ordered}}(G,U,W)$ (over all $v\in U$) disappear from $P_{\text{ordered}}(G_\sma,U_\sma,W)$, which is at least $|U|/2$ many by (c). In other words, 
-\[ |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| \ge \f{|U|}2|D^i_\sma| \ge\Om\lp\f{|D_\sma|}{\log|U|}\rp   .\]
+With properties (a) to (d) in hand, we now finish the proof of \lem{P}. Consider the iteration $i$ maximizing the size of $D^i := \bigcup_{v\in R^i} (S^i_v\cap U)$ (\line{max}), so that $|D^i|\ge|D|/(\lf\lg|U|\rf+1)$. For any vertex $u\in D^i$, all pairs $(u,v)\in P_{\text{ordered}}(G,U,W)$ (over all $v\in U$) disappear from $P_{\text{ordered}}(G,U,W)$, which is at least $|U|/2$ many by (c). In other words, 
+\[ |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| \ge \f{|U|}2|D^i| \ge\Om\lp\f{|D|}{\log|U|}\rp   .\]
 Taking expectations and applying (d), 
-\[ \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \ge\Om\lp\f{\E[|D_\sma|]}{\log|U|}\rp    \ge \Om\lp\f{|U|\cd|D^*_\sma|}{\log^2|U|}\rp  .\]
+\[ \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \ge\Om\lp\f{\E[|D|]}{\log|U|}\rp    \ge \Om\lp\f{|U|\cd|D^*|}{\log^2|U|}\rp  .\]
 Moreover,
-\[ |U|\cd|D^*_\sma| \ge \E\big[\big| \{(u,v): u\in D^*_\sma\} \big|\big] \ge \f12|P_{\text{ordered}}(G,U,W)|,  \]
+\[ |U|\cd|D^*| \ge \E\big[\big| \{(u,v): u\in D^*\} \big|\big] \ge \f12|P_{\text{ordered}}(G,U,W)|,  \]
 where the second inequality follows by (b). Putting everything together, we obtain
 \[ \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \ge \Om\lp\f{|P_{\text{ordered}}(G,U,W)|}{\log|R|}\rp   .\]
 Finally, applying (a) gives

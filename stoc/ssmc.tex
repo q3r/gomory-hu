@@ -55,9 +55,10 @@ As described earlier, the main tool in our \ssc algorithm is an algorithm for th
 \end{algorithmic}
 \end{algorithm}
 
-Let $D=D^0\cup D^1\cup \cds\cup D^{\lf\lg|U|\rf}$ be the union of the sets output by the algorithm, and let $D^*$ be all vertices $v\in U\sm \{s\}$ for which the $(s,v)$-mincut has weight at most $W$. 
+Let $D=D^0\cup D^1\cup \cds\cup D^{\lf\lg|U|\rf}$ be the union of the sets output by the algorithm. We first introduce the following lemma which will work for all $D^*$ that is downward-closed in the tree $T$ rooted at $s$. We will later set $D^*$ as all vertices $v\in U\sm \{s\}$ for which the $(s,v)$-mincut has weight at most $W$. 
 
 \BL\leml{step}
+For any downward-closed set $D^*$
 $D\s D^*$ and $\E[|D|] = \Om(|D^*|/\log|U|)$. 
 \EL
 \BP

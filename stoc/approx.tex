@@ -94,7 +94,7 @@ The lower bound $\mincut_G(p,q)\le\mincut_{G_v}(p,q)$ holds because $G_v$ is a c
 Fix any $(p,q)$-mincut in $G$, and let $S$ be the side of the mincut not containing $s$ (recall that $s\in U$ and $s\notin S^i_v$). Since $S^i_v\cup S$ is a $(p, s)$-cut (it is also a $(q, s)$-cut), it is in particular a Steiner cut for terminals $U$, so $w(S^i_v\cup S)\ge\la$. Also, $w(S^i_v)\le(1+\e)\la$ by the choice of the threshold $(1+\e)\la$ (\line{thr}). Together with the submodularity of cuts, we obtain
 \BAL (1+\e)\la+w(\pt_GS) &\ge w(\pt_GS^i_v) + w(\pt_GS) \\&\ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)) \\&\ge \la + w(\pt_G(S^i_v\cap S)) .\EAL
 The set $S^i_v\cap S$ stays intact under the contraction from $G$ to $G_v$, so $w(\pt_{G_v}(S^i_v\cap S))=w(\pt_G(S^i_v\cap S))$. Therefore,
-\BAL \mincut_{G_v}(u,v)&\le w(\pt_{G_v}(S^i_v\cap S))\\&=w(\pt_G(S^i_v\cap S)) \\&\le w(\pt_GS)+\e\la \\&\le \mincut_G(u,v) + \e\,\mincut_G(u,v) ,\EAL
+\BAL \mincut_{G_v}(p,q)&\le w(\pt_{G_v}(S^i_v\cap S))\\&=w(\pt_G(S^i_v\cap S)) \\&\le w(\pt_GS)+\e\la \\&\le \mincut_G(p,q) + \e\,\mincut_G(p,q) ,\EAL
 as promised.
 \EP
 
@@ -172,7 +172,7 @@ We now state and prove the following four properties:
 \im[(a)] For all $u,v\in U$, $\{u,v\}\in P(G,U,W)$ if and only if either $(u,v)\in P_{\text{ordered}}(G,U,W)$ or $(v,u)\in P_{\text{ordered}}(G,U,W)$ (or both).
 \im[(b)] For each pair $(u,v)\in P_{\text{ordered}}(G,U,W)$, we have $u\in D^*$ with probability at least $1/2$,
 \im[(c)] For each $u\in D^*$, there are at least $|U|/2$ vertices $v\in U$ for which $(u,v)\in P_{\text{ordered}}(G,U,W)$.
-\im[(d)] Over the randomness in \ref{step}$(G,U,(1+\e)\la)$, $\E[|D|]\ge\Om(|D^*|/\log|R|)$.
+\im[(d)] Over the randomness in \ref{step}$(G,U,(1+\e)\la)$, $\E[|D|]\ge\Om(|D^*|/\log|U|)$.
 \EE
 
 Property (a) follows by definition.
@@ -180,15 +180,15 @@ Property~(b) follows from the fact that $u\in D^*$ whenever $s\notin S(u,v)$, wh
 Property~(c) follows because any vertex $v\in U\sm S(u,v)$ satisfies $(u,v)\in P_{\text{ordered}}(G,U,W)$, of which there are at least $|U|/2$. Property~(d) follows from \lem{step} applied on  $\ref{step}(G,U,W,|U|/2)$, and then observing that even though we actually call $\ref{step}(G,U,(1+\e)\la,|U|/2)$, the set $D$ can only get larger if the weight parameter is increased from $W$ to $(1+\e)\la$.
 
 With properties (a) to (d) in hand, we now finish the proof of \lem{P}. Consider the iteration $i$ maximizing the size of $D^i := \bigcup_{v\in R^i} (S^i_v\cap U)$ (\line{max}), so that $|D^i|\ge|D|/(\lf\lg|U|\rf+1)$. For any vertex $u\in D^i$, all pairs $(u,v)\in P_{\text{ordered}}(G,U,W)$ (over all $v\in U$) disappear from $P_{\text{ordered}}(G,U,W)$, which is at least $|U|/2$ many by (c). In other words, 
-\BAL |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| &\ge \f{|U|}2|D^i| \\&\ge\Om\lp\f{|D|}{\log|U|}\rp   .\EAL
+\BAL |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| &\ge \f{|U|}2|D^i| \\&\ge\Om\lp\f{|U|\cd |D|}{\log|U|}\rp   .\EAL
 Taking expectations and applying (d), 
-\BAL \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] &\ge\Om\lp\f{\E[|D|]}{\log|U|}\rp    \\&\ge \Om\lp\f{|U|\cd|D^*|}{\log^2|U|}\rp  .\EAL
+\BAL \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] &\ge\Om\lp\f{|U|\cd\E[|D|]}{\log|U|}\rp    \\&\ge \Om\lp\f{|U|\cd|D^*|}{\log^2|U|}\rp  .\EAL
 Moreover,
 \[ |U|\cd|D^*| \ge \E\big[\big| \{(u,v): u\in D^*\} \big|\big] \ge \f12|P_{\text{ordered}}(G,U,W)|,  \]
 where the second inequality follows by (b). Putting everything together, we obtain
-\BAL &\E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \\&\ge \Om\lp\f{|P_{\text{ordered}}(G,U,W)|}{\log|R|}\rp   .\EAL
+\BAL &\E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \\&\ge \Om\lp\f{|P_{\text{ordered}}(G,U,W)|}{\log|U|}\rp   .\EAL
 Finally, applying (a) gives
-\BG \E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|] \ge \Om\lp\f{|P(G,U,W)|}{\log|R|}\rp .\nonumber%\eqnl{P}
+\BG \E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|] \ge \Om\lp\f{|P(G,U,W)|}{\log|U|}\rp .\nonumber%\eqnl{P}
 \EG
 Finally, we have $P(G_\lar,U_\lar,W) \s P(G,U,W)$ since the $(u,v)$-mincut for $u,v\in U_\lar$ can only increase in $G_\lar$ due to $G_\lar$ being a contraction of $G$ (in fact it says the same by \lem{large}). Therefore,
 \BAL &|P(G,U,W)| - |P(G_\lar,U_\lar,W)| \\&= |P(G,U,W) \sm P(G_\lar,U_\lar,W)| ,\EAL

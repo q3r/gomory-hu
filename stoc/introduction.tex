@@ -29,7 +29,7 @@ We now state our main theorem that obtains a $(1+\e)$-approximate GH tree for we
 \end{restatable}
 For unweighted graphs, we obtain the following result, which gives a better running time for sparse graphs (if $m = o(n^{9/8})$):
 \begin{restatable}{theorem}{ApproxU}\thml{approx-u}
-Let $G$ be an unweighted, undirected graph. There is a randomized algorithm that w.h.p., outputs a $(1+\e)$-approximate Gomory-Hu Steiner tree and runs in $\tO(m)$ time plus calls to exact max-flow on unweighted instances with a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges. Using the $m^{4/3+o(1)}$-time max-flow algorithm for unweighted graphs of Liu and Sidford~\cite{liu2020faster}, the algorithm runs in $m^{4/3+o(1)}\e\inv$ time.
+Let $G$ be an unweighted, undirected graph. There is a randomized algorithm that w.h.p., outputs a $(1+\e)$-approximate Gomory-Hu tree and runs in $\tO(m)$ time plus calls to exact max-flow on unweighted instances with a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges. Using the $m^{4/3+o(1)}$-time max-flow algorithm for unweighted graphs of Liu and Sidford~\cite{liu2020faster}, the algorithm runs in $m^{4/3+o(1)}\e\inv$ time.
 \end{restatable}
 
 To the best of our knowledge, this is the first algorithm for (approximate) GH tree that goes beyond $n-1$ maxflow calls in general weighted graphs. Our reduction to exact maxflow instances is ``black box'', i.e., any maxflow algorithm can be used; as a consequence, if one were to assume that eventually maxflow would be solved in $\tO(m)$-time, as is often conjectured, then these theorems would automatically yield an $\tO(m)$-time algorithm for a $(1+\e)$-approximate GH tree.
@@ -68,10 +68,11 @@ Finally, note that a (approximate) GH tree also solves the (approximate) \apc pr
 
 \subsection{Our Techniques}
 
-To sketch our main ideas, let us first think of the \ct problem (\thm{thr}). Note that this theorem is already sufficient to obtain the improved the running times for the \ssc and \apc problems, although obtaining a $(1+\e)$-approximate GH tree needs additional ideas. To solve the \ct problem, our main tool is the {\em isolating cuts lemma}, introduced by the authors recently for solving the deterministic mincut problem~\cite{LiP20}. We first describe this tool.
+To sketch our main ideas, let us first think of the \ct problem (\thm{thr}). Note that this theorem is already sufficient to obtain the improved the running times for the \ssc and \apc problems, although obtaining a $(1+\e)$-approximate GH tree needs additional ideas. To solve the \ct problem, our main tool is the {\em isolating cuts lemma}, introduced by the authors recently for solving the deterministic mincut problem~\cite{LiP20}. We first describe this tool.\footnote{
+We remark that the \emph{minimal} condition was not present in \cite{LiP20}, but the algorithm to find minimum isolating cuts from \cite{LiP20} can be trivially modified to output the minimal $(v,R\sm v)$-mincuts, so we omit the algorithm and direct interested readers to \cite{LiP20}.}
 %
 \BD[Minimum isolating cuts]
-Consider a weighted, undirected graph $G=(V,E)$ and a subset $R\s V$ ($|R|\ge2$). The \emph{minimum isolating cuts} for $R$ is a collection of sets $\{S_v:v\in R\}$ such that for each vertex $v\in R$, the set $S_v$ satisfies $S_v\cap R=\{v\}$ and has the minimum value of $w(\pt S'_v)$ over all sets $S'_v$ satisfying $S'_v\cap R=\{v\}$.
+Consider a weighted, undirected graph $G=(V,E)$ and a subset $R\s V$ ($|R|\ge2$). The \emph{minimum isolating cuts} for $R$ is a collection of sets $\{S_v:v\in R\}$ such that for each vertex $v\in R$, the set $S_v$ is the side containing $v$ of the minimal $(v,R\sm v)$-mincut, i.e., for any set $S$ satisfying $v\in S$ and $S\cap(R\sm v)=\emptyset$, we have $w(\pt S)\le w(\pt S_v)$, and moreover, if $w(\pt S)=w(\pt S_v)$ then $S_v\s S$.
 \ED
 %
 %\alert{DP: In the above definition, should we also mention that sets $S_v$ must be disjoint? At the moment, this is in the next lemma. Would putting it in the definition might make life a bit easier in terms of just having to refer to the definition when invoking this property?}

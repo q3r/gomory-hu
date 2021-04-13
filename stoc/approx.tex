@@ -180,9 +180,9 @@ Property~(b) follows from the fact that $u\in D^*$ whenever $s\notin S(u,v)$, wh
 Property~(c) follows because any vertex $v\in U\sm S(u,v)$ satisfies $(u,v)\in P_{\text{ordered}}(G,U,W)$, of which there are at least $|U|/2$. Property~(d) follows from \lem{step} applied on  $\ref{step}(G,U,W,|U|/2)$, and then observing that even though we actually call $\ref{step}(G,U,(1+\e)\la,|U|/2)$, the set $D$ can only get larger if the weight parameter is increased from $W$ to $(1+\e)\la$.
 
 With properties (a) to (d) in hand, we now finish the proof of \lem{P}. Consider the iteration $i$ maximizing the size of $D^i := \bigcup_{v\in R^i} (S^i_v\cap U)$ (\line{max}), so that $|D^i|\ge|D|/(\lf\lg|U|\rf+1)$. For any vertex $u\in D^i$, all pairs $(u,v)\in P_{\text{ordered}}(G,U,W)$ (over all $v\in U$) disappear from $P_{\text{ordered}}(G,U,W)$, which is at least $|U|/2$ many by (c). In other words, 
-\BAL |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| &\ge \f{|U|}2|D^i| \\&\ge\Om\lp\f{|U|\cd |D|}{\log|U|}\rp   .\EAL
+\BAL & |P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)| \\&\ge \f{|U|}2|D^i| \\&\ge\Om\lp\f{|U|\cd |D|}{\log|U|}\rp   .\EAL
 Taking expectations and applying (d), 
-\BAL \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] &\ge\Om\lp\f{|U|\cd\E[|D|]}{\log|U|}\rp    \\&\ge \Om\lp\f{|U|\cd|D^*|}{\log^2|U|}\rp  .\EAL
+\BAL & \E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \\&\ge\Om\lp\f{|U|\cd\E[|D|]}{\log|U|}\rp    \\&\ge \Om\lp\f{|U|\cd|D^*|}{\log^2|U|}\rp  .\EAL
 Moreover,
 \[ |U|\cd|D^*| \ge \E\big[\big| \{(u,v): u\in D^*\} \big|\big] \ge \f12|P_{\text{ordered}}(G,U,W)|,  \]
 where the second inequality follows by (b). Putting everything together, we obtain

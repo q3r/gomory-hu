@@ -2,15 +2,21 @@
 % \documentclass[11pt]{article}
 \documentclass[sigconf,screen]{acmart}
 
-\usepackage{amsmath,amssymb,bbm,amsthm}
+%\usepackage{amsmath,amssymb,bbm,amsthm}
 %\usepackage{fullpage}
 \usepackage{thm-restate,color,xcolor,xspace,graphicx}
 \usepackage{hyperref,cleveref}
 \usepackage{algorithm,algorithmicx}
 \usepackage[noend]{algpseudocode}
-\usepackage{ulem}
+%\usepackage{ulem}
 %\bibliographystyle{alpha}
 \usepackage{balance}
+
+%%
+%% \BibTeX command to typeset BibTeX logo in the docs
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    \normalfont B\kern-0.5em{\scshape i\kern-0.25em b}\kern-0.8em\TeX}}}
 
 %%%%% BEGIN Jason's macros %%%%%
 %\newcommand{\f}{\displaystyle\frac}
@@ -209,9 +215,9 @@
 \newcommand{\apc}{{\sc APMC}\xspace}
 \newcommand{\ct}{{\sc CT}\xspace}
 
-               \title{Approximate Gomory-Hu Tree Is Faster than $n-1$ Maxflows}
+               \title{Approximate Gomory-Hu Tree Is Faster than $n-1$ Max-Flows}
 
-               \titlenote{JL's research supported in part by NSF awards CCF-1907820, CCF-1955785, and CCF-2006953.}
+               \titlenote{JL's research is supported in part by NSF awards CCF-1907820, CCF-1955785, and CCF-2006953. DP's research is supported in part by NSF awards CCF-1750140 and CCF-1955703.}
 
 
 \author{Jason Li}
@@ -223,7 +229,7 @@
   \city{Pittsburgh}
   \state{PA}
   \country{USA}
-  \postcode{XXXX}
+%  \postcode{XXXX}
 }
 \author{Debmalya Panigrahi}%\titlenote{Research supported by NSF Grant 1841954}}
 % \authornotemark[1]
@@ -234,20 +240,10 @@
   \city{Durham}
   \state{NC}
   \country{USA}
-  \postcode{XXXX}
+%  \postcode{XXXX}
 }
 
-               \copyrightyear{2021}
-\acmYear{2021}
-\setcopyright{acmlicensed}
-\acmConference[STOC '21]{Proceedings of the 53rd
-Annual ACM SIGACT Symposium on Theory of Computing}{June 21--25,
-2021}{Virtual, Italy}
-\acmBooktitle{Proceedings of the 53rd Annual ACM SIGACT Symposium on
-Theory of Computing (STOC '21), June 21--25, 2021, Virtual, Italy}
-\acmPrice{15.00}
-\acmDOI{10.1145/3406325.3451103}
-\acmISBN{978-1-4503-8053-9/21/06}
+\setcopyright{rightsretained}
 
 \begin{document}
 
@@ -260,6 +256,45 @@ Theory of Computing (STOC '21), June 21--25, 2021, Virtual, Italy}
     \end{itemize}
 \end{abstract}
 
+%%% The following is specific to STOC '21 and the paper
+%%% 'Approximate Gomory-Hu Tree Is Faster Than $n-1$ Max-flows'
+%%% by Jason Li and Debmalya Panigrahi.
+%%%
+%\setcopyright{rightsretained}
+\acmPrice{}
+\acmDOI{10.1145/3406325.3451112}
+\acmYear{2021}
+\copyrightyear{2021}
+\acmSubmissionID{stoc21main-p417-p}
+\acmISBN{978-1-4503-8053-9/21/06}
+\acmConference[STOC '21]{Proceedings of the 53rd Annual ACM SIGACT Symposium on Theory of Computing}{June 21--25, 2021}{Virtual, Italy}
+\acmBooktitle{Proceedings of the 53rd Annual ACM SIGACT Symposium on Theory of Computing (STOC '21), June 21--25, 2021, Virtual, Italy}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10003752.10003809.10003635.10003644</concept_id>
+<concept_desc>Theory of computation~Network flows</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10003809.10003635</concept_id>
+<concept_desc>Theory of computation~Graph algorithms analysis</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Theory of computation~Network flows}
+\ccsdesc[500]{Theory of computation~Graph algorithms analysis}
+
+
+
+
+%%
+%% Keywords. The author(s) should pick words that accurately describe
+%% the work being presented. Separate the keywords with commas. 
+\keywords{graph algorithm, Gomory-Hu tree, graph connectivity}
 
 \maketitle
 
@@ -271,17 +306,23 @@ Theory of Computing (STOC '21), June 21--25, 2021, Virtual, Italy}
 %\section{Preliminaries}
 %\input{prelim}
 
-\section{$(1+\e)$-approximate SSMC}
+\section{$(1+\e)$-approximate Single Source Min-Cut Algorithm}
 \input{ssmc}
 
 \section{Approximate Gomory-Hu Steiner Tree}
 \input{approx}
 
-\bibliography{refs,dp-refs}
-\appendix
-
 \balance
-\section{Rooted minimal Gomory-Hu Steiner tree}
-\input{minimal}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{refs,dp-refs}
+
+
+
+%\appendix
+
+%\balance
+%\section{Rooted minimal Gomory-Hu Steiner tree}
+%\input{minimal}
 
 \end{document}

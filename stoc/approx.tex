@@ -1,9 +1,9 @@
 \subsection{Unweighted Graphs}
 
-Let $\e>0$ be a fixed parameter throughout the recursive algorithm. We present our approximate Steiner Gomory-Hu tree algorithm in \ref{approxGH} below.
+Let $\e>0$ be a fixed parameter throughout the recursive algorithm. We present our approximate Gomory-Hu Steiner tree algorithm in \ref{approxGH} below.
 See Figure~\ref{fig:recursion} for a visual guide to the algorithm.
 
-At a high level, the algorithm applies divide-and-conquer by cutting the graph along sets $S^i_v$ computed by \ref{step}, applying recursion to each piece, and stitching the recursive Gomory-Hu trees together in the same way as the standard recursive Gomory-Hu tree construction. To avoid complications, we only select sets $S^i_v$ from a \emph{single} level $i\in\{0,1,2\lds,\lf\lg|U|\rf\}$, which are guaranteed to be vertex-disjoint. Furthermore, instead of selecting all sets $\{S^i_v:v\in R^i\}$, we only select those for which $|S^i_v\cap U|\le|U|/2$; this allows us to bound the recursion depth. By choosing the source $s\in U$ at \emph{random}, we guarantee that in expectation, we do not exclude too many sets $S^i_v$. The chosen sets partition the graph into disjoint sets of vertices (including the set of vertices outside of any chosen set $S^i_v$). We split the graph along this partition a similar way to the standard Gomory-Hu tree construction: for each set in the partition, contract all other vertices into a single vertex and recursively compute the Steiner Gomory-Hu tree of the contracted graph. This gives us a collection of Gomory-Hu Steiner trees, which we then stitch together into a single Gomory-Hu Steiner tree in the standard way.
+At a high level, the algorithm applies divide-and-conquer by cutting the graph along sets $S^i_v$ computed by \ref{step}, applying recursion to each piece, and stitching the recursive Gomory-Hu trees together in the same way as the standard recursive Gomory-Hu tree construction. To avoid complications, we only select sets $S^i_v$ from a \emph{single} level $i\in\{0,1,2\lds,\lf\lg|U|\rf\}$, which are guaranteed to be vertex-disjoint. Furthermore, instead of selecting all sets $\{S^i_v:v\in R^i\}$, we only select those for which $|S^i_v\cap U|\le|U|/2$; this allows us to bound the recursion depth. By choosing the source $s\in U$ at \emph{random}, we guarantee that in expectation, we do not exclude too many sets $S^i_v$. The chosen sets partition the graph into disjoint sets of vertices (including the set of vertices outside of any chosen set $S^i_v$). We split the graph along this partition a similar way to the standard Gomory-Hu tree construction: for each set in the partition, contract all other vertices into a single vertex and recursively compute the Gomory-Hu Steiner tree of the contracted graph. This gives us a collection of Gomory-Hu Steiner trees, which we then stitch together into a single Gomory-Hu Steiner tree in the standard way.
 
 %\alert{DP: Should we add a description of the algorithm in text?} \textcolor{blue}{JL: wrote a description.}
 
@@ -12,7 +12,7 @@ At a high level, the algorithm applies divide-and-conquer by cutting the graph a
 
 
 \begin{figure}\centering
-\includegraphics[scale=.4]{recursion.pdf}
+\includegraphics[scale=.5]{recursion.pdf}
 \caption{Recursive construction of $G_\lar$ and $G_v$ for $v\in R^i_\sma$. Here, $R^i_\sma=\{v_1,v_2,v_3\}$, denoted by red vertices on the top left. The dotted blue curves on the right mark the boundaries of the regions $f_{v_i}\inv(u):u\in U_{v_i}$ and $f_{v_\lar}\inv(u):u\in U_\lar$. The light green edges on the bottom left are the edges $(f_{v_i}(x_{v_i}),f_\lar(y_{v_i}))$ added on \line{combine-T} of \ref{combine}.}\label{fig:recursion}
 \end{figure}
 
@@ -44,7 +44,7 @@ At a high level, the algorithm applies divide-and-conquer by cutting the graph a
 \State Combine $(T_\lar,f_\lar)$ and $\{(T_v,f_v):v\in R^i\}$ into $(T,f)$ according to \ref{combine}%$((T_\lar,f_\lar),\{(T_v,f_v):v\in R^i)\}$
 %\State Construct $T$ by starting with the disjoint union $T_\lar\cup\bigcup_{v\in R^i}T_v$ and, for each $v\in R^i$, adding an edge between $f_v(x_v)\in U_v$ and $f_\lar(y_v)\in U_\lar$ of weight $w(\pt_GS^i_v)$ 
 
-%\Comment{Combine Steiner Gomory-Hu trees together} \linel{combine-T}
+%\Comment{Combine Gomory-Hu Steiner trees together} \linel{combine-T}
 %\State Construct $f:V\to U$ by $f(v')=f_\lar(v')$ if $v'\in U_\lar$ and $f(v')=f_v(v')$ if $v'\in U_v$ for some $v\in R^i$\linel{combine-f}
 \State\Return $(T,f)$
 
@@ -72,10 +72,10 @@ This depth bound alone is not enough for the following reason: if the approximat
 The lemma below formalizes our insight that approximation factors are preserved down the branch $(G_\lar,U_\lar)$.
 
 \BL\leml{large}
-For any distinct vertices $p,q\in U_\lar$, we have\linebreak $\mincut_{G_\lar}(p,q) = \mincut_G(p,q)$.
+For any distinct vertices $p,q\in U_\lar$, we have $\mincut_{G_\lar}(p,q) = \mincut_G(p,q)$.
 \EL
 \BP
-Since $G_\lar$ is a contraction of $G$, we have\linebreak $\mincut_{G_\lar}(p,q) \ge \mincut_G(p,q)$. To show the reverse inequality, fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. We show that for each $v\in  R^i$, either $S^i_v\s S$ or $S^i_v\s V\sm S$. Assuming this, the cut $\pt S$ stays intact when the sets $S^i_v$ are contracted to form $G_\lar$, so $\mincut_{G_\lar}(p,q) \le w(\pt S) = \mincut_G(p,q)$.
+Since $G_\lar$ is a contraction of $G$, we have $\mincut_{G_\lar}(p,q) \ge \mincut_G(p,q)$. To show the reverse inequality, fix any $(p,q)$-mincut in $G$, and let $S$ be one side of the mincut. We show that for each $v\in  R^i$, either $S^i_v\s S$ or $S^i_v\s V\sm S$. Assuming this, the cut $\pt S$ stays intact when the sets $S^i_v$ are contracted to form $G_\lar$, so $\mincut_{G_\lar}(p,q) \le w(\pt S) = \mincut_G(p,q)$.
 
 Consider any $v\in R^i$, and suppose first that $v\in S$. Then, $S^i_v\cap S$ is still a $(v,R^i\sm v)$-cut, and $S^i_v\cup S$ is still a $(p,q)$-cut. By the submodularity of cuts,
 \[ w(\pt_GS^i_v) + w(\pt_GS) \ge w(\pt_G(S^i_v\cup S)) + w(\pt_G(S^i_v\cap S)). \]
@@ -105,11 +105,11 @@ Finally, the lemma below determines our final approximation factor.
 \EL
 \BP
 We apply induction on $|U|$. 
-Since $|U_v|\le|U|/2$ for all $v\in R^i$, by induction, the recursive outputs $(T_v,f_v)$ are Gomory-Hu Steiner trees with approximation $(1+\e)^{\lg|U_v|}\le(1+\e)^{\lg|U|-1}$.  By definition, this means that for all $s,t\in U_v$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_v$, letting $U'_v\s U_v$ be the vertices of the connected component of $T_v-(u,u')$ containing $s$, we have that $f\inv_v(U'_v)$ is a $(1+\e)^{\lg|U|-1}$-approximate $(s,t)$-mincut in $G_v$ with value is $w_T(u,u')$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By construction of $(T,f)$ (lines~\ref{line:combine-T}~and~\ref{line:combine-f}), the set $f\inv(U')$ is simply $f\inv_v(U'_v)$ with the vertex $x_v$ replaced by $V\sm S^i_v$ in the case that $x_v\in f\inv(U')$. Since $G_v$ is simply $G$ with all vertices $V\sm S^i_v$ contracted to $x_v$, we conclude that $w_{G_v}(\pt f\inv_v(U'_v)) = w_G(\pt f\inv(U'))$. By \lem{small}, the values $\mincut_G(s,t)$ and $\mincut_{G_v}(s,t)$ are within factor $(1+\e)$ of each other, so $w_G(\pt f\inv(U'))$ approximates the $(s,t)$-mincut in $G$ to a factor $(1+\e)\cd(1+\e)^{\lg|U|-1} = (1+\e)^{\lg|U|}$. In other words, the Gomory-Hu Steiner tree condition for $(T,f)$ is satisfied for all $s,t\in U_v$ for some $v\in R^i$.
+Since $|U_v|\le|U|/2$ for all $v\in R^i$, by induction, the recursive outputs $(T_v,f_v)$ are Gomory-Hu Steiner trees with approximation $(1+\e)^{\lg|U_v|}\le(1+\e)^{\lg|U|-1}$.  By definition, this means that for all $s,t\in U_v$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_v$, letting $U'_v\s U_v$ be the vertices of the connected component of $T_v-(u,u')$ containing $s$, we have that $f\inv_v(U'_v)$ is a $(1+\e)^{\lg|U|-1}$-approximate $(s,t)$-mincut in $G_v$ with value $w_T(u,u')$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By construction of $(T,f)$ (lines~\ref{line:combine-T}~and~\ref{line:combine-f}), the set $f\inv(U')$ is simply $f\inv_v(U'_v)$ with the vertex $x_v$ replaced by $V\sm S^i_v$ in the case that $x_v\in f\inv(U')$. Since $G_v$ is simply $G$ with all vertices $V\sm S^i_v$ contracted to $x_v$, we conclude that $w_{G_v}(\pt f\inv_v(U'_v)) = w_G(\pt f\inv(U'))$. By \lem{small}, the values $\mincut_G(s,t)$ and $\mincut_{G_v}(s,t)$ are within factor $(1+\e)$ of each other, so $w_G(\pt f\inv(U'))$ approximates the $(s,t)$-mincut in $G$ to a factor $(1+\e)\cd(1+\e)^{\lg|U|-1} = (1+\e)^{\lg|U|}$. In other words, the Gomory-Hu Steiner tree condition for $(T,f)$ is satisfied for all $s,t\in U_v$ for some $v\in R^i$.
 
-By induction, the recursive output $(T_\lar,f_\lar)$ is a Gomory-Hu Steiner tree with approximation $(1+\e)^{\lg|U_\lar|}\le(1+\e)^{\lg|U|}$. Again, consider $s,t\in U_\lar$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_\lar$, and let $U'_\lar\s U_\lar$ be the vertices of the connected component of $T_\lar-(u,u')$ containing $s$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By a similar argument, we have $w_{G_\lar}(\pt f\inv_\lar(U'_\lar)) = w_G(\pt f\inv(U'))$. By \lem{large}, we also have\linebreak $\mincut_G(s,t)=\mincut_{G_\lar}(s,t)$, so $w_G(\pt f\inv(U'))$ is a $(1+\e)^{\lg|U|}$-approximate $(s,t)$-mincut in $G$, fulfilling the Gomory-Hu Steiner tree condition for $(T,f)$ in the case $s,t\in U_\lar$.
+By induction, the recursive output $(T_\lar,f_\lar)$ is a Gomory-Hu Steiner tree with approximation $(1+\e)^{\lg|U_\lar|}\le(1+\e)^{\lg|U|}$. Again, consider $s,t\in U_\lar$ and the minimum-weight edge $(u,u')$ on the $s$--$t$ path in $T_\lar$, and let $U'_\lar\s U_\lar$ be the vertices of the connected component of $T_\lar-(u,u')$ containing $s$. Define $U'\s U$ as the vertices of the connected component of $T-(u,u')$ containing $s$. By a similar argument, we have $w_{G_\lar}(\pt f\inv_\lar(U'_\lar)) = w_G(\pt f\inv(U'))$. By \lem{large}, we also have $\mincut_G(s,t)=\mincut_{G_\lar}(s,t)$, so $w_G(\pt f\inv(U'))$ is a $(1+\e)^{\lg|U|}$-approximate $(s,t)$-mincut in $G$, fulfilling the Gomory-Hu Steiner tree condition for $(T,f)$ in the case $s,t\in U_\lar$.
 
-There are two remaining cases: $s\in U_v$ and $t\in U_{v'}$ for distinct $v,v'\in R^i$, and $s\in U_v$ and $t\in U_\lar$; we treat both cases simultaneously. Since $G$ has Steiner mincut $\la$, each of the contracted graphs $G_\lar$ and $G_v$ has Steiner mincut at least $\la$. By induction, every edge in $T_v$ and $T_\lar$ or $T_{v'}$ (depending on case) has weight at least $(1+\e)^{-\lg|U|}\la$. By construction, the $s$--$t$ path in $T$ has at least one edge of the form $(f_v(x_v),f_\lar(y_v))$, added on \line{combine-T}; this edge has weight $w(\pt_GS^i_v)\le(1+\e)\la$. Therefore, the minimum-weight edge on the $s$--$t$ path in $T$ has weight at least $(1+\e)^{-\lg|U|}\la$ and at most $(1+\e)\la$; in particular, it is a $(1+\e)^{\lg|U|}$-approximation of $\mincut_G(s,t)$. If the edge is of the form $(f_v(x_v),f_\lar(y_v))$, then by construction, the relevant set $f\inv(U')$ is exactly $S^i_v$, which is a $(1+\e)$-approximate $(s,t)$-mincut in $G$. If the edge is in $T_\lar$ or $T_v$ or $T_{v'}$, then we can apply the same arguments used previously. %\alert{(sketch) Can only go to $G_v$ at most $\lg|U|$ times, picks up $(1+\e)$ factor each time}
+There are two remaining cases: $s\in U_v$ and $t\in U_{v'}$ for distinct $v,v'\in R^i$, and $s\in U_v$ and $t\in U_\lar$; we treat both cases simultaneously. Since $G$ has Steiner mincut $\la$, each of the contracted graphs $G_\lar$ and $G_v$ has Steiner mincut at least $\la$. Since all edges on the approximate Gomory-Hu Steiner tree correspond to actual cuts in the graph, every edge in $T_v$ and $T_\lar$ has weight at least $\la$. By construction, the $s$--$t$ path in $T$ has at least one edge of the form $(f_v(x_v),f_\lar(y_v))$, added on \line{combine-T}; this edge has weight $w(\pt_GS^i_v)\le(1+\e)\la$. Therefore, the minimum-weight edge on the $s$--$t$ path in $T$ has weight at least $\la$ and at most $(1+\e)\la$; in particular, it is a $(1+\e)$-approximation of $\mincut_G(s,t)$. If the edge is of the form $(f_v(x_v),f_\lar(y_v))$, then by construction, the relevant set $f\inv(U')$ is exactly $S^i_v$, which is a $(1+\e)$-approximate $(s,t)$-mincut in $G$. If the edge is in $T_\lar$ or $T_v$ or $T_{v'}$, then we can apply the same arguments used previously. %\alert{(sketch) Can only go to $G_v$ at most $\lg|U|$ times, picks up $(1+\e)$ factor each time}
 \EP
 
 \subsection{Running Time Bound}\secl{running}
@@ -131,7 +131,7 @@ W.h.p., after $\Om(\log^3n)$ recursive calls along $G_\lar$ (replacing $G\gets G
 \EC
 \BP
 Let $W=(1+\e)\la_0$.
-Initially, we trivially have\linebreak $|P(G,U,W)|\le\bn{|U|}2$. The global Steiner mincut can only increase in the recursive calls, since $G_\lar$ is always a contraction of $G$, so we always have $W\le(1+\e)\la$ for the current global Steiner mincut $\la$. By \lem{P}, the value $|P(G,U,W)|$ drops by factor $1-\Om(\f1{\log^2n})$ in expectation on each recursive call, so after $\Om(\log^3n)$ calls, we have
+Initially, we trivially have $|P(G,U,W)|\le\bn{|U|}2$. The global Steiner mincut can only increase in the recursive calls, since $G_\lar$ is always a contraction of $G$, so we always have $W\le(1+\e)\la$ for the current global Steiner mincut $\la$. By \lem{P}, the value $|P(G,U,W)|$ drops by factor $1-\Om(\f1{\log^2n})$ in expectation on each recursive call, so after $\Om(\log^3n)$ calls, we have
 \[ \E[|P(G,U,W)|]\le\bn{|U|}2\cd\lp1-\Om\lp\f1{\log^2n}\rp\rp^{\Om(\log^3n)}\le\f1{\poly(n)} .\]
 In other words, w.h.p., we have $|P(G,U,W)|=0$ at the end, or equivalently, the Steiner mincut of $G$ is at least $(1+\e)\la$.
 \EP
@@ -149,10 +149,10 @@ For any $\Th(\log^3n)$ successive recursive calls down the recursion tree, eithe
 We state the next theorem for \emph{unweighted} graphs only. For weighted graphs, there is no nice bound on the number of new edges created throughout the algorithm, and therefore no easy bound on the overall running time. In the next section, we introduce a graph sparsification step to handle this issue.
 
 \BL\leml{runtime}
-For an \emph{unweighted} graph $G=(V,E)$, and terminals $U\s V$, $\ref{approxGH}(G,V,\e)$ takes time $\tO(m\e\inv)$ plus calls to max-flow on instances with a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges.% many calls to max-flow on $O(n)$-vertex, $O(m)$-edge graphs.
+For an \emph{unweighted} graph $G=(V,E)$, and terminals $U\s V$,\linebreak $\ref{approxGH}(G,V,\e)$ takes time $\tO(m\e\inv)$ plus calls to max-flow on instances with a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges.% many calls to max-flow on $O(n)$-vertex, $O(m)$-edge graphs.
 \EL
 \BP
-For a given recursion level, consider the instances\linebreak $\{ (G_i,U_i,W_i)\}$ across that level. By construction, the terminals $U_i$ partition $U$. Moreover, the total number of vertices over all $G_i$ is at most $n+2(|U|-1)=O(n)$ since each branch creates $2$ new vertices and there are at most $|U|-1$ branches. The total number of new edges created is at most the sum of weights of the edges in the final $(1+\e)$-approximate Gomory-Hu Steiner tree. For an unweighted graph, this is $O(m)$ by the following well-known argument. Root the Gomory-Hu Steiner tree $T$ at any vertex $r\in U$; for any $v\in U\sm r$ with parent $u$, the cut $\pt\{v\}$ in $G$ is a $(u,v)$-cut of value $\deg(v)$, so $w_T(u,v)\le\deg(v)$. Overall, the sum of the edge weights in $T$ is at most $\sum_{v\in U}\deg(v)\le2m$.
+For a given recursion level, consider the instances $\{ (G_i,U_i,W_i)\}$ across that level. By construction, the terminals $U_i$ partition $U$. Moreover, the total number of vertices over all $G_i$ is at most $n+2(|U|-1)=O(n)$ since each branch creates $2$ new vertices and there are at most $|U|-1$ branches. The total number of new edges created is at most the sum of weights of the edges in the final $(1+\e)$-approximate Gomory-Hu Steiner tree. For an unweighted graph, this is $O(m)$ by the following well-known argument. Root the Gomory-Hu Steiner tree $T$ at any vertex $r\in U$; for any $v\in U\sm r$ with parent $u$, the cut $\pt\{v\}$ in $G$ is a $(u,v)$-cut of value $\deg(v)$, so $w_T(u,v)\le\deg(v)$. Overall, the sum of the edge weights in $T$ is at most $\sum_{v\in U}\deg(v)\le2m$.
 
 Therefore, there are $O(n)$ vertices and $O(m)$ edges in each recursion level. By \lem{depth}, there are $O(\e\inv\log^4n)$ levels (since $\De=1$ for an unweighted graph), for a total of $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges. In particular, the instances to the max-flow calls have $\tO(n\e\inv)$ vertices and $\tO(m\e\inv)$ edges in total.
 \EP
@@ -186,16 +186,16 @@ Taking expectations and applying (d),
 Moreover,
 \[ |U|\cd|D^*| \ge \E\big[\big| \{(u,v): u\in D^*\} \big|\big] \ge \f12|P_{\text{ordered}}(G,U,W)|,  \]
 where the second inequality follows by (b). Putting everything together, we obtain
-\BAL &\E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \\&\ge \Om\lp\f{|P_{\text{ordered}}(G,U,W)|}{\log|U|}\rp   .\EAL
+\BAL &\E[|P_{\text{ordered}}(G,U,W)\sm P_{\text{ordered}}(G_\lar,U_\lar,W)|] \\&\ge \Om\lp\f{|P_{\text{ordered}}(G,U,W)|}{\log^2|U|}\rp   .\EAL
 Finally, applying (a) gives
-\BG \E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|] \ge \Om\lp\f{|P(G,U,W)|}{\log|U|}\rp .\nonumber%\eqnl{P}
+\BG \E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|] \ge \Om\lp\f{|P(G,U,W)|}{\log^2|U|}\rp .\nonumber%\eqnl{P}
 \EG
 Finally, we have $P(G_\lar,U_\lar,W) \s P(G,U,W)$ since the $(u,v)$-mincut for $u,v\in U_\lar$ can only increase in $G_\lar$ due to $G_\lar$ being a contraction of $G$ (in fact it says the same by \lem{large}). Therefore,
 \BAL &|P(G,U,W)| - |P(G_\lar,U_\lar,W)| \\&= |P(G,U,W) \sm P(G_\lar,U_\lar,W)| ,\EAL
-and combining with the bound on \linebreak $\E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|]$ concludes the proof.
+and combining with the bound on  $\E[|P(G,U,W) \sm P(G_\lar,U_\lar,W)|]$ concludes the proof.
 \EP
 
-\subsection{Weighted graphs}
+\subsection{Weighted Graphs}
 
 %Include a sparsification step to force linear number of edges on each recursive instance
 

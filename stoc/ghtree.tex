@@ -1,15 +1,14 @@
-%
-% \documentclass[11pt]{article}
-\documentclass[sigconf,screen]{acmart}
+\documentclass[11pt]{article}
+%\documentclass[sigconf,screen]{acmart}
 
-%\usepackage{amsmath,amssymb,bbm,amsthm}
-%\usepackage{fullpage}
+\usepackage{amsmath,amssymb,bbm,amsthm}
+\usepackage{fullpage}
 \usepackage{thm-restate,color,xcolor,xspace,graphicx}
 \usepackage{hyperref,cleveref}
 \usepackage{algorithm,algorithmicx}
 \usepackage[noend]{algpseudocode}
-%\usepackage{ulem}
-%\bibliographystyle{alpha}
+\usepackage{ulem}
+\bibliographystyle{alpha}
 \usepackage{balance}
 
 %%
@@ -205,7 +204,6 @@
 \makeatother
 
 
-%\renewcommand{\emph}[1]{\textbf{\textup{#1}}}
 \newcommand{\mincut}{\textsf{\textup{mincut}}}
 \newcommand{\Rsmall}{R_\textup{small}}
 \newcommand{\sma}{{\textup{small}}}
@@ -215,88 +213,29 @@
 \newcommand{\apc}{{\sc APMC}\xspace}
 \newcommand{\ct}{{\sc CT}\xspace}
 
-               \title{Approximate Gomory-Hu Tree Is Faster than $n-1$ Max-Flows}
-
-               \titlenote{JL's research is supported in part by NSF awards CCF-1907820, CCF-1955785, and CCF-2006953. DP's research is supported in part by NSF awards CCF-1750140 and CCF-1955703.}
-
-
-\author{Jason Li}
-% \authornotemark[1]
-\email{jmli@cs.cmu.edu}
-\affiliation{%
-  \institution{Carnegie Mellon University}
-  \streetaddress{TODO}
-  \city{Pittsburgh}
-  \state{PA}
-  \country{USA}
-%  \postcode{XXXX}
-}
-\author{Debmalya Panigrahi}%\titlenote{Research supported by NSF Grant 1841954}}
-% \authornotemark[1]
-\email{debmalya@cs.duke.edu}
-\affiliation{%
-  \institution{Duke University}
-  \streetaddress{TODO}
-  \city{Durham}
-  \state{NC}
-  \country{USA}
-%  \postcode{XXXX}
-}
-
-\setcopyright{rightsretained}
+% Not sure why \em is underlining, not italicizing. Force it to italicize.
+\renewcommand{\em}{\it}
 
 \begin{document}
 
-\begin{abstract}
-    The Gomory-Hu tree or cut tree (Gomory and Hu, 1961) is a classic data structure for reporting $s-t$ mincuts (and by duality, the values of $s-t$ maxflows) for all pairs of vertices $s$ and $t$ in an undirected graph. Gomory and Hu showed that it can be computed using $n-1$ exact maxflow computations. Surprisingly, this remains the best algorithm for Gomory-Hu trees more than 50 years later, {\em even for approximate mincuts}. In this paper, we break this longstanding barrier and give an algorithm for computing a $(1+\e)$-approximate Gomory-Hu tree using $\polylog(n)$ maxflow computations. Specifically, we obtain the following runtime bounds:
-    \begin{itemize}
-        \item We obtain a randomized (Monte Carlo) algorithm for undirected, weighted graphs that runs in $\tO(m + n^{3/2})$ time and returns a $(1+\e)$-approximate Gomory-Hu tree algorithm whp. Previously, the best running time known was $\tO(n^{5/2})$, which is obtained by running Gomory and Hu's original algorithm on a cut sparsifier of the graph.
-        \item We obtain a randomized (Monte Carlo) algorithm for undirected, unweighted graphs that runs in $m^{4/3+o(1)}$ time and returns a $(1+\e)$-approximate Gomory-Hu tree algorithm whp. This improves on our first result for sparse graphs, namely $m = o(n^{9/8})$. Previously, the best running time known for unweighted graphs was $\tO(mn)$ for an exact Gomory-Hu tree (Bhalgat {\em et al.}, STOC 2007); no better result was known if approximations are allowed.
-        \item As a consequence of our Gomory-Hu tree algorithms, we also solve the $(1+\e)$-approximate all pairs mincut (\apc) and single source mincut (\ssc) problems in the same time bounds. (These problems are simpler in that the goal is to only return the $s-t$ mincut values, and not the mincuts.) This improves on the recent algorithm for these problems in $\tO(n^2)$ time due to Abboud~{\em et al.} (FOCS 2020).
-    \end{itemize}
-\end{abstract}
-
-%%% The following is specific to STOC '21 and the paper
-%%% 'Approximate Gomory-Hu Tree Is Faster Than $n-1$ Max-flows'
-%%% by Jason Li and Debmalya Panigrahi.
-%%%
-%\setcopyright{rightsretained}
-\acmPrice{}
-\acmDOI{10.1145/3406325.3451112}
-\acmYear{2021}
-\copyrightyear{2021}
-\acmSubmissionID{stoc21main-p417-p}
-\acmISBN{978-1-4503-8053-9/21/06}
-\acmConference[STOC '21]{Proceedings of the 53rd Annual ACM SIGACT Symposium on Theory of Computing}{June 21--25, 2021}{Virtual, Italy}
-\acmBooktitle{Proceedings of the 53rd Annual ACM SIGACT Symposium on Theory of Computing (STOC '21), June 21--25, 2021, Virtual, Italy}
-
-\begin{CCSXML}
-<ccs2012>
-<concept>
-<concept_id>10003752.10003809.10003635.10003644</concept_id>
-<concept_desc>Theory of computation~Network flows</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10003752.10003809.10003635</concept_id>
-<concept_desc>Theory of computation~Graph algorithms analysis</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-</ccs2012>
-\end{CCSXML}
-
-\ccsdesc[500]{Theory of computation~Network flows}
-\ccsdesc[500]{Theory of computation~Graph algorithms analysis}
-
-
-
-
-%%
-%% Keywords. The author(s) should pick words that accurately describe
-%% the work being presented. Separate the keywords with commas. 
-\keywords{graph algorithm, Gomory-Hu tree, graph connectivity}
-
+\title{Approximate Gomory--Hu Tree Is Faster Than $n-1$ Max-Flows}
+\author{
+{Jason Li\\Carnegie Mellon University\\Email: {\tt jmli@cs.cmu.edu}} 
+\and 
+{Debmalya Panigrahi\\Duke University\\Email: {\tt debmalya@cs.duke.edu}}
+}
+\date{}
 \maketitle
+
+\begin{abstract}
+    The Gomory-Hu tree or cut tree (Gomory and Hu, 1961) is a classic data structure for reporting $s-t$ mincuts (and by duality, the values of $s-t$ maxflows) for all pairs of vertices $s$ and $t$ in an undirected graph. Gomory and Hu showed that it can be computed using $n-1$ exact maxflow computations. Surprisingly, this remains the best algorithm for Gomory-Hu trees more than 50 years later, {\em even for approximate mincuts}. In this paper, we break this longstanding barrier and give an algorithm for computing a $(1+\e)$-approximate Gomory-Hu tree using $\polylog(n)$ maxflow computations. Specifically, we obtain the runtime bounds we describe below.
+    
+    We obtain a randomized (Monte Carlo) algorithm for undirected, weighted graphs that runs in $\tO(m + n^{3/2})$ time and returns a $(1+\e)$-approximate Gomory-Hu tree algorithm whp. Previously, the best running time known was $\tO(n^{5/2})$, which is obtained by running Gomory and Hu's original algorithm on a cut sparsifier of the graph.
+    
+    Next, we obtain a randomized (Monte Carlo) algorithm for undirected, unweighted graphs that runs in $m^{4/3+o(1)}$ time and returns a $(1+\e)$-approximate Gomory-Hu tree algorithm whp. This improves on our first result for sparse graphs, namely $m = o(n^{9/8})$. Previously, the best running time known for unweighted graphs was $\tO(mn)$ for an exact Gomory-Hu tree (Bhalgat {\em et al.}, STOC 2007); no better result was known if approximations are allowed.
+    
+    As a consequence of our Gomory-Hu tree algorithms, we also solve the $(1+\e)$-approximate all pairs mincut (\apc) and single source mincut (\ssc) problems in the same time bounds. (These problems are simpler in that the goal is to only return the $s-t$ mincut values, and not the mincuts.) This improves on the recent algorithm for these problems in $\tO(n^2)$ time due to Abboud~{\em et al.} (FOCS 2020).
+\end{abstract}
 
 
 \section{Introduction}
